@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Dokumen_detail;
+use App\Http\Controllers\Dokumen_isi;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Manajemen_user;
@@ -33,7 +34,8 @@ Route::controller(Search::class)->group(function () {
 });
 
 Route::controller(Dokumen_detail::class)->group(function () {
-    Route::get('dokumen_detail', 'ShowDokumenDetailPage')->name('dokumen_detail.page');
+    Route::get('dokumen/{id}', [Dokumen_detail::class, 'ShowDokumenDetailPage'])
+        ->name('dokumen.detail');
 });
 
 Route::controller(Dokumen_isi::class)->group(function () {
@@ -41,8 +43,13 @@ Route::controller(Dokumen_isi::class)->group(function () {
 });
 
 Route::controller(Scan_dokumen::class)->group(function () {
-    Route::get('scan_dokumen', 'ShowScanDokumenPage')->name('scan_dokumen.page');
+    Route::get('scan_dokumen', 'ShowScanDokumenPage')
+        ->name('scan_dokumen.page');
+
+    Route::post('scan_dokumen', 'store')
+        ->name('scan_dokumen.store');
 });
+
 
 Route::controller(Manajemen_user::class)->group(function () {
     Route::get('manajemen_user', 'ShowManajemenUserPage')->name('manajemen_user.page');
@@ -51,3 +58,6 @@ Route::controller(Manajemen_user::class)->group(function () {
 Route::controller(Tambah_user::class)->group(function () {
     Route::get('tambah_user', 'ShowTambahUserPage')->name('tambah_user.page');
 });
+
+Route::get('/dokumen/{id}/download', [Search::class, 'download'])
+    ->name('dokumen.download');

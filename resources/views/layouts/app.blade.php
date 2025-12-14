@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-        <style>
-            /* Dropdown on hover for navbar */
-            @media (min-width: 992px) {
-                .navbar-nav .dropdown:hover .dropdown-menu {
-                    display: block;
-                    margin-top: 0;
-                    z-index: 1051;
-                }
-                .navbar-nav .dropdown-menu {
-                    z-index: 1051;
-                }
+    <style>
+        /* Dropdown on hover for navbar */
+        @media (min-width: 992px) {
+            .navbar-nav .dropdown:hover .dropdown-menu {
+                display: block;
+                margin-top: 0;
+                z-index: 1051;
             }
-        </style>
+
+            .navbar-nav .dropdown-menu {
+                z-index: 1051;
+            }
+        }
+    </style>
     <meta charset="UTF-8">
     <title>SIMARDAS</title>
 
@@ -86,6 +88,7 @@
     <div class="container-fluid p-0">
         @yield('content')
     </div>
+    @stack('scripts')
 </body>
 
 <footer class="bg-primary text-white pt-5 mt-5">
@@ -102,7 +105,7 @@
                     </div>
                 </div>
                 <p class="small">
-                    Sistem Digitalisasi dan Manajemen Arsip Daerah Kabupaten Serang – 
+                    Sistem Digitalisasi dan Manajemen Arsip Daerah Kabupaten Serang –
                     Mewujudkan tata kelola arsip yang modern dan efisien.
                 </p>
             </div>
@@ -179,26 +182,27 @@
     </div>
 
 </footer>
+
 </html>
-    <!-- Bootstrap JS (wajib untuk dropdown) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6DQD1Cj6kHkRb114F8C26EwAOH8WgZl5F49z6Q4b6B7x" crossorigin="anonymous"></script>
-    <script>
-        // Bootstrap 5: keep dropdown open on hover for all dropdowns in navbar
-        document.addEventListener('DOMContentLoaded', function() {
-            if(window.innerWidth >= 992) {
-                var dropdowns = document.querySelectorAll('.navbar .dropdown');
-                dropdowns.forEach(function(dropdown) {
-                    dropdown.addEventListener('mouseenter', function() {
-                        this.classList.add('show');
-                        var menu = this.querySelector('.dropdown-menu');
-                        if(menu) menu.classList.add('show');
-                    });
-                    dropdown.addEventListener('mouseleave', function() {
-                        this.classList.remove('show');
-                        var menu = this.querySelector('.dropdown-menu');
-                        if(menu) menu.classList.remove('show');
-                    });
+<!-- Bootstrap JS (wajib untuk dropdown) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6DQD1Cj6kHkRb114F8C26EwAOH8WgZl5F49z6Q4b6B7x" crossorigin="anonymous"></script>
+<script>
+    // Bootstrap 5: keep dropdown open on hover for all dropdowns in navbar
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth >= 992) {
+            var dropdowns = document.querySelectorAll('.navbar .dropdown');
+            dropdowns.forEach(function(dropdown) {
+                dropdown.addEventListener('mouseenter', function() {
+                    this.classList.add('show');
+                    var menu = this.querySelector('.dropdown-menu');
+                    if (menu) menu.classList.add('show');
                 });
-            }
-        });
-    </script>
+                dropdown.addEventListener('mouseleave', function() {
+                    this.classList.remove('show');
+                    var menu = this.querySelector('.dropdown-menu');
+                    if (menu) menu.classList.remove('show');
+                });
+            });
+        }
+    });
+</script>

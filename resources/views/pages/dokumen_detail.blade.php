@@ -8,14 +8,14 @@
 				<div class="card-body">
 					<div class="d-flex align-items-center mb-4">
 						<div class="bg-danger bg-opacity-10 rounded d-flex align-items-center justify-content-center me-3" style="width:70px; height:70px;">
-							<strong>{{ $document->type ?? '-' }}</strong>
+							<strong>{{ $document->tipe_file ?? '-' }}</strong>
 						</div>
 						<div>
-							<h3 class="fw-bold text-primary mb-1">{{ $document->title ?? 'Judul Dokumen' }}</h3>
+							<h3 class="fw-bold text-primary mb-1">{{ $document->judul ?? 'Judul Dokumen' }}</h3>
 							<div class="text-muted small">
-								{{ $document->category ?? '-' }} •
-								{{ $document->uploaded_at ?? '-' }} •
-								{{ $document->uploaded_by ?? '-' }} •
+								{{ $document->kategori ?? '-' }} •
+								{{ $document->tanggal_upload ?? '-' }} •
+								{{ $document->user->nama ?? '-' }} •
 								{{ $document->file_size ?? '-' }}
 							</div>
 						</div>
@@ -23,7 +23,7 @@
 
 					<div class="mb-3">
 						<h6 class="fw-bold">Deskripsi</h6>
-						<p>{{ $document->description ?? '-' }}</p>
+						<p>{{ $document->deskripsi ?? '-' }}</p>
 					</div>
 
 					<div class="mb-3">
@@ -31,23 +31,23 @@
 						<table class="table table-bordered">
 							<tr>
 								<th width="200">Nama File</th>
-								<td>{{ $document->file_name ?? '-' }}</td>
+								<td>{{ $document->judul ?? '-' }}</td>
 							</tr>
 							<tr>
 								<th>Kategori</th>
-								<td>{{ $document->category ?? '-' }}</td>
+								<td>{{ $document->kategori ?? '-' }}</td>
 							</tr>
 							<tr>
 								<th>Tipe</th>
-								<td>{{ $document->type ?? '-' }}</td>
+								<td>{{ $document->tipe_file ?? '-' }}</td>
 							</tr>
 							<tr>
 								<th>Diunggah Oleh</th>
-								<td>{{ $document->uploaded_by ?? '-' }}</td>
+								<td>{{ $document->user->nama ?? '-' }}</td>
 							</tr>
 							<tr>
 								<th>Tanggal Upload</th>
-								<td>{{ $document->uploaded_at ?? '-' }}</td>
+								<td>{{ $document->tanggal_upload ?? '-' }}</td>
 							</tr>
 							<tr>
 								<th>Ukuran File</th>
