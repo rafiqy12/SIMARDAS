@@ -3,6 +3,7 @@
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Dokumen_detail;
 use App\Http\Controllers\Dokumen_isi;
+use App\Http\Controllers\Edit_user;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Manajemen_user;
@@ -13,7 +14,7 @@ use App\Http\Controllers\Tambah_user;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(LoginController::class)->group(function () {
-    Route::get('login', 'showLoginPage')->name('login.page');
+    Route::get('/', 'showLoginPage')->name('login.page');
     Route::post('login', 'login')->name('login.submit');
 });
 
@@ -57,6 +58,10 @@ Route::controller(Manajemen_user::class)->group(function () {
 
 Route::controller(Tambah_user::class)->group(function () {
     Route::get('tambah_user', 'ShowTambahUserPage')->name('tambah_user.page');
+});
+
+Route::controller(Edit_user::class)->group(function () {
+    Route::get('edit_user', 'showEditUserPage')->name('edit_user.page');
 });
 
 Route::get('/dokumen/{id}/download', [Search::class, 'download'])

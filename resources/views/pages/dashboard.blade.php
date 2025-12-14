@@ -20,7 +20,7 @@
                 <i class="bi bi-cloud-arrow-down me-2"></i> Backup dan restore data
             </a>
 
-            <a href="#" class="nav-link btn btn-light text-start border">
+            <a href="{{ route('manajemen_user.page') }}" class="nav-link btn btn-light text-start border">
                 <i class="bi bi-people me-2"></i> Manajemen Pengguna
             </a>
         </nav>

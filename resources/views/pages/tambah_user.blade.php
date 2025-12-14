@@ -133,14 +133,51 @@
                 <small class="text-muted">Sistem Digitalisasi dan Manajemen Arsip Daerah</small>
             </div>
         </div>
-        <!-- TABEL MANAJEMEN USER -->
+        <!-- Konten -->
         <div class="p-3">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold m-0">Edit Akun Pengguna</h5>
-                        <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-arrow-bar-left"></i>  Kembali</a>
+                        <h5 class="fw-bold m-0">Tambah Akun Pengguna</h5>
+                        <a href="{{ route("manajemen_user.page") }}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-bar-left"></i>  Kembali</a>
                     </div>
+                    <form method="POST" action="/home">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label" for="formName">Nama Lengkap Pengguna</label>
+                            <input type="text" id="formName" name="name" class="form-control form-control-lg" required autofocus />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formRole">Role</label>
+                            <select name="role" id="formRole" class="form-select form-control-lg">
+                                <option value="admin">Admin</option>
+                                <option value="user">Petugas Arsip</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formEmail">Email Address</label>
+                            <input type="email" id="formEmail" name="email" class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formPassword">Password</label>
+                            <input type="password" id="formPassword" name="password" class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formPasswordConfirm">Confirm Password</label>
+                            <input type="password" id="formPasswordConfirm" name="password_confirmation" class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="pt-1 mb-4 text-center">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                Register
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

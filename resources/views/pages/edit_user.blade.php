@@ -133,75 +133,51 @@
                 <small class="text-muted">Sistem Digitalisasi dan Manajemen Arsip Daerah</small>
             </div>
         </div>
-        <!-- TABEL MANAJEMEN USER -->
+        <!-- Konten -->
         <div class="p-3">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold m-0">Daftar Pengguna</h5>
-                        <a href="{{ route('tambah_user.page') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Tambah User</a>
+                        <h5 class="fw-bold m-0">Edit Akun Pengguna</h5>
+                        <a href="{{ route("manajemen_user.page") }}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-bar-left"></i>  Kembali</a>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Mika Rendang</td>
-                                    <td>mika@serangkab.go.id</td>
-                                    <td>Admin</td>
-                                    <td><span class="badge bg-success">Aktif</span></td>
-                                    <td>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Kazuha</td>
-                                    <td>zunazana@gmail.com</td>
-                                    <td>User</td>
-                                    <td><span class="badge bg-secondary">Nonaktif</span></td>
-                                    <td>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Kim Chaewon</td>
-                                    <td>Chaechae1@serangkab.go.id</td>
-                                    <td>Petugas Arsip</td>
-                                    <td><span class="badge bg-secondary">Nonaktif</span></td>
-                                    <td>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>An Yujin</td>
-                                    <td>Yujinie@serangkab.go.id</td>
-                                    <td>User</td>
-                                    <td><span class="badge bg-secondary">Aktif</span></td>
-                                    <td>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <a href="{{route("edit_user.page")}}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <!-- Tambahkan baris user lain di sini -->
-                            </tbody>
-                        </table>
-                    </div>
+                    <form method="POST" action="/home">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label" for="formName">Nama Lengkap Pengguna</label>
+                            <input type="text" id="formName" name="name" class="form-control form-control-lg" required autofocus />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formRole">Role</label>
+                            <select name="role" id="formRole" class="form-select form-control-lg">
+                                <option value="admin">Admin</option>
+                                <option value="user">Petugas Arsip</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formEmail">Email Address</label>
+                            <input type="email" id="formEmail" name="email" class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formPassword">Password</label>
+                            <input type="password" id="formPassword" name="password" class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formPasswordConfirm">Confirm Password</label>
+                            <input type="password" id="formPasswordConfirm" name="password_confirmation" class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="pt-1 mb-4 text-center">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                Konfirmasi Edit Pengguna
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
