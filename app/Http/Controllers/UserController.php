@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController
 {
     /**
      * Display a listing of the resource.
@@ -44,7 +44,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('pages.edit_user', [
+            'user' => $user
+        ]);
     }
 
     /**
@@ -52,7 +54,22 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:user,email,' . $user->id_user . ',id_user',
+            'role' => 'required',
+            'password' => 'nullable|min:6|confirmed',
+        ]);
+
+        $user->nama = $request->nama;
+        $user->email = $request->email;
+        $user->role = $request->role;
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+        $user->save();
+
+        return redirect()->route('manajemen_user.page')->with('success', 'User berhasil diupdate');
     }
 
     /**
@@ -60,6 +77,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $user->delete();
+        return redirect()->route('manajemen_user.page')->with('success', 'User berhasil dihapus');
     }
 }

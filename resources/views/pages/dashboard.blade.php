@@ -185,21 +185,21 @@
                     <div class="row text-center">
 
                         <div class="col-md-4 mb-3">
-                            <button class="btn btn-outline-primary w-100 py-3">
-                                <i class="bi bi-upc-scan fs-3 d-block"></i> Scan Dokumen
-                            </button>
+                            <a class="btn btn-outline-primary w-100 py-3" href="{{ route('dokumen_upload.page') }}">
+                                <i class="bi bi-file-earmark-arrow-up fs-3 d-block"></i> Upload Dokumen
+                            </a>
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <button class="btn btn-outline-primary w-100 py-3">
+                            <a class="btn btn-outline-primary w-100 py-3" href="{{ route('search.page') }}">
                                 <i class="bi bi-search fs-3 d-block"></i> Cari Arsip
-                            </button>
+                            </a>
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <button class="btn btn-outline-primary w-100 py-3">
+                            <a class="btn btn-outline-primary w-100 py-3" href="{{ route('home.page') }}">
                                 <i class="bi bi-house fs-3 d-block"></i> Home Page
-                            </button>
+                            </a>
                         </div>
 
                     </div>

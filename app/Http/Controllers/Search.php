@@ -89,7 +89,7 @@ class Search
             ->orderBy('tipe_file')
             ->pluck('tipe_file');
 
-        $users = User::where('role', 'Petugas')
+        $users = User::whereIn('role', ['Admin', 'Petugas', 'Petugas Arsip'])
             ->orderBy('nama')
             ->get();
 
@@ -115,9 +115,12 @@ class Search
             abort(404, 'File tidak ditemukan');
         }
 
+        // Bersihkan nama file dari karakter yang tidak valid
+        $cleanFileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $document->judul);
+
         return response()->download(
             $fullPath,
-            $document->judul . '.' . $document->tipe_file
+            $cleanFileName . '.' . $document->tipe_file
         );
     }
 }

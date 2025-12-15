@@ -12,20 +12,23 @@
                 <button id="sidebarCloseBtn" class="btn rounded-circle position-absolute" style="top: 10px; right: 10px; background:#adb5bd; color:#fff; border:none; width:44px; height:44px; display:none;" title="Tutup Sidebar"><i class="bi bi-chevron-left"></i></button>
             </div>
             <nav class="nav flex-column p-3 gap-2">
-                <a href="#" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
+                <a href="{{ route('dashboard.page') }}" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
                     <i class="bi bi-speedometer2 me-2"></i> Dashboard
                 </a>
                 <a href="#" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
                     <i class="bi bi-cloud-arrow-down me-2"></i> Backup dan restore data
                 </a>
-                <a href="#" class="nav-link btn active-menu text-start border" style="border-color:#adb5bd;">
+                <a href="{{ route('manajemen_arsip.page') }}" class="nav-link btn active-menu text-start border" style="border-color:#adb5bd;">
+                    <i class="bi bi-folder me-2"></i> Manajemen Arsip
+                </a>
+                <a href="{{ route('manajemen_user.page') }}" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
                     <i class="bi bi-people me-2"></i> Manajemen Pengguna
                 </a>
             </nav>
         </div>
         <div class="p-3 position-relative">
             <button id="sidebarCloseBtn" class="btn btn-light border shadow-sm rounded-circle mb-2" style="display:none; position:static;" title="Tutup Sidebar"><i class="bi bi-chevron-left"></i></button>
-            <a href="{{ route("login.page") }}" class="btn btn-danger w-100"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+            <a href="{{ route('login.page') }}" class="btn btn-danger w-100"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
         </div>
     </aside>
     <!-- SIDEBAR OPEN BUTTON -->
@@ -34,7 +37,7 @@
     <main class="flex-grow-1">
         <!-- HEADER BAR -->
         <div class="bg-primary text-white py-2 px-3 d-flex align-items-center position-relative">
-            <h6 class="m-0">Manajemen Pengguna</h6>
+            <h6 class="m-0">Edit Arsip</h6>
         </div>
         <!-- IDENTITAS -->
         <div class="p-3 bg-white border-bottom d-flex align-items-center">
@@ -49,51 +52,65 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold m-0">Edit Akun Pengguna</h5>
-                        <a href="{{ route("manajemen_user.page") }}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-bar-left"></i>  Kembali</a>
+                        <h5 class="fw-bold m-0">Edit Data Arsip</h5>
+                        <a href="{{ route('manajemen_arsip.page') }}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-bar-left"></i> Kembali</a>
                     </div>
-                    <form method="POST" action="{{ route('user.update', $user->id_user) }}">
+
+                    @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('arsip.update', $dokumen->id_dokumen) }}">
                         @csrf
                         @method('PUT')
+                        
                         <div class="mb-3">
-                            <label class="form-label" for="formName">Nama Lengkap Pengguna</label>
-                            <input type="text" id="formName" name="nama" class="form-control form-control-lg" value="{{ old('nama', $user->nama) }}" required autofocus />
+                            <label class="form-label" for="formJudul">Judul Dokumen</label>
+                            <input type="text" id="formJudul" name="judul" class="form-control form-control-lg" value="{{ old('judul', $dokumen->judul) }}" required autofocus />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="formRole">Role</label>
-                            <select name="role" id="formRole" class="form-select form-control-lg">
-                                <option value="Admin" {{ old('role', $user->role)==='Admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="Petugas Arsip" {{ old('role', $user->role)==='Petugas Arsip' ? 'selected' : '' }}>Petugas Arsip</option>
-                                <option value="User" {{ old('role', $user->role)==='User' ? 'selected' : '' }}>User</option>
+                            <label class="form-label" for="formKategori">Kategori</label>
+                            <select name="kategori" id="formKategori" class="form-select form-control-lg" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <option value="Administrasi" {{ old('kategori', $dokumen->kategori) == 'Administrasi' ? 'selected' : '' }}>Administrasi</option>
+                                <option value="Keuangan" {{ old('kategori', $dokumen->kategori) == 'Keuangan' ? 'selected' : '' }}>Keuangan</option>
+                                <option value="Notulen" {{ old('kategori', $dokumen->kategori) == 'Notulen' ? 'selected' : '' }}>Notulen</option>
+                                <option value="Surat" {{ old('kategori', $dokumen->kategori) == 'Surat' ? 'selected' : '' }}>Surat</option>
+                                <option value="Laporan" {{ old('kategori', $dokumen->kategori) == 'Laporan' ? 'selected' : '' }}>Laporan</option>
+                                <option value="Data" {{ old('kategori', $dokumen->kategori) == 'Data' ? 'selected' : '' }}>Data</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="formEmail">Email Address</label>
-                            <input type="email" id="formEmail" name="email" class="form-control form-control-lg" value="{{ old('email', $user->email) }}" required />
+                            <label class="form-label" for="formDeskripsi">Deskripsi</label>
+                            <textarea id="formDeskripsi" name="deskripsi" class="form-control" rows="4">{{ old('deskripsi', $dokumen->deskripsi) }}</textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="formPassword">Password (isi jika ingin ganti)</label>
-                            <input type="password" id="formPassword" name="password" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="formPasswordConfirm">Confirm Password</label>
-                            <input type="password" id="formPasswordConfirm" name="password_confirmation" class="form-control form-control-lg" />
+                            <label class="form-label">Informasi File</label>
+                            <div class="p-3 bg-light rounded">
+                                <p class="mb-1"><strong>Tipe File:</strong> {{ strtoupper($dokumen->tipe_file) }}</p>
+                                <p class="mb-1"><strong>Tanggal Upload:</strong> {{ $dokumen->tanggal_upload }}</p>
+                                <p class="mb-0"><strong>Path:</strong> {{ $dokumen->path_file }}</p>
+                            </div>
                         </div>
 
                         <div class="pt-1 mb-4 text-center">
                             <button class="btn btn-primary btn-lg w-100" type="submit">
-                                Konfirmasi Edit Pengguna
+                                Simpan Perubahan
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </main>
     </main>
 </div>
 <script>
