@@ -4,26 +4,52 @@
 <div class="d-flex">
 
     <!-- SIDEBAR -->
-    <aside class="bg-white border-end" style="width: 250px; min-height: 100vh;">
-        <div class="text-center py-4 border-bottom">
-            <img src="{{ asset('images/Logo_kabupaten_serang.png') }}" width="70" class="mb-2">
-            <h6 class="fw-bold m-0">SIMARDAS</h6>
-            <small class="text-muted">Sistem Manajemen Arsip</small>
+    <aside id="sidebar" class="border-end d-flex flex-column justify-content-between">
+        <div>
+            <div class="text-center py-4 border-bottom position-relative">
+                <img src="{{ asset('images/Logo_kabupaten_serang.png') }}" width="70" class="mb-2">
+                <h6 class="fw-bold m-0">SIMARDAS</h6>
+                <small class="text-muted">Sistem Manajemen Arsip</small>
+                <button id="sidebarCloseBtn" class="btn rounded-circle position-absolute" style="top: 10px; right: 10px; background:#adb5bd; color:#fff; border:none; width:44px; height:44px; display:none;" title="Tutup Sidebar"><i class="bi bi-chevron-left"></i></button>
+            </div>
+            <nav class="nav flex-column p-3 gap-2">
+                <a href="{{ route('dashboard.page') }}"
+                class="nav-link btn active-menu sidebar-item border d-flex align-items-center gap-3">
+                    <span class="menu-icon">
+                        <i class="bi bi-people"></i>
+                    </span>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+
+                <a href="#"
+                class="nav-link btn btn-light sidebar-item border d-flex align-items-center gap-3">
+                    <span class="menu-icon">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                    </span>
+                    <span class="menu-text">Backup dan Restore Data</span>
+                </a>
+
+                <a href="#"
+                class="nav-link btn btn-light sidebar-item border d-flex align-items-center gap-3">
+                    <span class="menu-icon">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                    </span>
+                    <span class="menu-text">Manajemen Arsip</span>
+                </a>
+
+                <a href="{{ route('manajemen_user.page') }}"
+                class="nav-link btn btn-light sidebar-item border d-flex align-items-center gap-3">
+                    <span class="menu-icon">
+                        <i class="bi bi-speedometer2"></i>
+                    </span>
+                    <span class="menu-text">Manajemen Pengguna</span>
+                </a>
+            </nav>
         </div>
-
-        <nav class="nav flex-column p-3 gap-2">
-            <a href="#" class="nav-link btn btn-primary text-white text-start">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
-            </a>
-
-            <a href="#" class="nav-link btn btn-light text-start border">
-                <i class="bi bi-cloud-arrow-down me-2"></i> Backup dan restore data
-            </a>
-
-            <a href="{{ route('manajemen_user.page') }}" class="nav-link btn btn-light text-start border">
-                <i class="bi bi-people me-2"></i> Manajemen Pengguna
-            </a>
-        </nav>
+        <div class="p-3 position-relative">
+            <button id="sidebarCloseBtn" class="btn btn-light border shadow-sm rounded-circle mb-2" style="display:none; position:static;" title="Tutup Sidebar"><i class="bi bi-chevron-left"></i></button>
+            <a href="{{ route("login.page") }}" class="btn btn-danger w-100"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+        </div>
     </aside>
 
     <!-- MAIN CONTENT -->

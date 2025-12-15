@@ -3,6 +3,7 @@
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Dokumen_detail;
 use App\Http\Controllers\Dokumen_isi;
+use App\Http\Controllers\Dokumen_upload;
 use App\Http\Controllers\Edit_user;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\LoginController;
@@ -14,8 +15,24 @@ use App\Http\Controllers\Tambah_user;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(LoginController::class)->group(function () {
-    Route::get('/', 'showLoginPage')->name('login.page');
-    Route::post('login', 'login')->name('login.submit');
+    Route::get('/login', [LoginController::class, 'showLoginPage'])
+    ->name('login.page');
+
+    Route::post('/login', [LoginController::class, 'login'])
+        ->name('login.process');
+
+    Route::post('/logout', [LoginController::class, 'logout'])
+        ->name('logout');
+});
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('home', [Home::class, 'ShowHomePage'])
+        ->name('home.page');
+
+    Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])
+        ->name('dashboard.page');
+
 });
 
 Route::controller(Register::class)->group(function () {
@@ -51,6 +68,14 @@ Route::controller(Scan_dokumen::class)->group(function () {
         ->name('scan_dokumen.store');
 });
 
+Route::controller(Dokumen_upload::class)->group(function () {
+    Route::get('dokumen_upload', 'showDokumenUploadPage')
+        ->name('dokumen_upload.page');
+
+    Route::post('/dokumen/upload', [Dokumen_upload::class, 'store'])
+    ->name('dokumen_upload.store');
+
+});
 
 Route::controller(Manajemen_user::class)->group(function () {
     Route::get('manajemen_user', 'ShowManajemenUserPage')->name('manajemen_user.page');

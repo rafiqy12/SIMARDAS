@@ -62,7 +62,7 @@
                         <ul class="dropdown-menu" aria-labelledby="fiturDropdown">
                             <li><a class="dropdown-item" href="{{ route('search.page') }}">Search</a></li>
                             <li><a class="dropdown-item" href="{{ route('scan_dokumen.page') }}">Scan</a></li>
-                            <li><a class="dropdown-item" href="#">Upload</a></li>
+                            <li><a class="dropdown-item" href="{{ route('dokumen_upload.page') }}">Upload</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -74,9 +74,12 @@
                 </ul>
 
                 <!-- LOGOUT -->
-                <a href="{{ route('login.page') }}" class="btn btn-primary btn-sm px-3 py-1">
-                    Logout
-                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn-danger">
+                        Logout
+                    </button>
+                </form>
 
             </div>
         </div>
