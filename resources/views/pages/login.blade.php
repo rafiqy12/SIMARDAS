@@ -5,9 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
-
-        @vite(['resources/scss/app.scss', 'resources/js/app.js'])
-
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -33,7 +30,7 @@
                                 <div class="card-body p-4 p-lg-5 text-black">
 
 
-                                    <form method="GET" action="{{ route('home.page') }}">
+                                    <form method="POST" action="{{ route('login.process') }}">
                                         @csrf
                                         <!-- LOGO CENTER -->
                                         <div class="mb-4">
@@ -54,13 +51,13 @@
                                         <!-- INPUT EMAIL (LABEL DI ATAS) -->
                                         <div class="mb-3">
                                             <label class="form-label" for="formEmail">Email Address</label>
-                                            <input type="email" id="formEmail" class="form-control form-control-lg" />
+                                            <input type="email" name="email" class="form-control form-control-lg" required>
                                         </div>
 
                                         <!-- INPUT PASSWORD (LABEL DI ATAS) -->
                                         <div class="mb-3">
                                             <label class="form-label" for="formPassword">Password</label>
-                                            <input type="password" id="formPassword" class="form-control form-control-lg" />
+                                            <input type="password" name="password" class="form-control form-control-lg" required>
                                         </div>
 
                                         <div class="pt-1 mb-4 text-center">
