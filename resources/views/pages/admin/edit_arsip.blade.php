@@ -18,10 +18,10 @@
                 <a href="#" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
                     <i class="bi bi-cloud-arrow-down me-2"></i> Backup dan restore data
                 </a>
-                <a href="{{ route('manajemen_arsip.page') }}" class="nav-link btn active-menu text-start border" style="border-color:#adb5bd;">
+                <a href="{{ route('dokumen.index') }}" class="nav-link btn active-menu text-start border" style="border-color:#adb5bd;">
                     <i class="bi bi-folder me-2"></i> Manajemen Arsip
                 </a>
-                <a href="{{ route('manajemen_user.page') }}" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
+                <a href="{{ route('user.index') }}" class="nav-link btn btn-light text-start border" style="border-color:#adb5bd;">
                     <i class="bi bi-people me-2"></i> Manajemen Pengguna
                 </a>
             </nav>
@@ -37,7 +37,7 @@
     <main class="flex-grow-1">
         <!-- HEADER BAR -->
         <div class="bg-primary text-white py-2 px-3 d-flex align-items-center position-relative">
-            <h6 class="m-0">Manajemen Arsip</h6>
+            <h6 class="m-0">Edit Arsip</h6>
         </div>
         <!-- IDENTITAS -->
         <div class="p-3 bg-white border-bottom d-flex align-items-center">
@@ -47,62 +47,67 @@
                 <small class="text-muted">Sistem Digitalisasi dan Manajemen Arsip Daerah</small>
             </div>
         </div>
-        <!-- TABEL MANAJEMEN ARSIP -->
+        <!-- Konten -->
         <div class="p-3">
-            @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            @endif
-
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold m-0">Daftar Arsip/Dokumen</h5>
-                        <a href="{{ route('dokumen_upload.page') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Upload Dokumen</a>
+                        <h5 class="fw-bold m-0">Edit Data Arsip</h5>
+                        <a href="{{ route('dokumen.index') }}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-bar-left"></i> Kembali</a>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>No</th>
-                                    <th>Judul</th>
-                                    <th>Kategori</th>
-                                    <th>Tipe File</th>
-                                    <th>Tanggal Upload</th>
-                                    <th>Diunggah Oleh</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($dokumens as $index => $dokumen)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $dokumen->judul }}</td>
-                                    <td>{{ $dokumen->kategori }}</td>
-                                    <td><span class="badge bg-secondary">{{ strtoupper($dokumen->tipe_file) }}</span></td>
-                                    <td>{{ $dokumen->tanggal_upload }}</td>
-                                    <td>{{ $dokumen->user->nama ?? '-' }}</td>
-                                    <td>
-                                        <a href="{{ route('dokumen.detail', $dokumen->id_dokumen) }}" class="btn btn-info btn-sm" title="Detail"><i class="bi bi-eye"></i></a>
-                                        <a href="{{ route('dokumen.download', $dokumen->id_dokumen) }}" class="btn btn-success btn-sm" title="Download"><i class="bi bi-download"></i></a>
-                                        <a href="{{ route('arsip.edit', $dokumen->id_dokumen) }}" class="btn btn-warning btn-sm" title="Edit"><i class="bi bi-pencil"></i></a>
-                                        <form action="{{ route('arsip.destroy', $dokumen->id_dokumen) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus dokumen ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus"><i class="bi bi-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="7" class="text-center">Belum ada data arsip/dokumen</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+
+                    @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('dokumen.update', $dokumen->id_dokumen) }}">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="mb-3">
+                            <label class="form-label" for="formJudul">Judul Dokumen</label>
+                            <input type="text" id="formJudul" name="judul" class="form-control form-control-lg" value="{{ old('judul', $dokumen->judul) }}" required autofocus />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formKategori">Kategori</label>
+                            <select name="kategori" id="formKategori" class="form-select form-control-lg" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <option value="Administrasi" {{ old('kategori', $dokumen->kategori) == 'Administrasi' ? 'selected' : '' }}>Administrasi</option>
+                                <option value="Keuangan" {{ old('kategori', $dokumen->kategori) == 'Keuangan' ? 'selected' : '' }}>Keuangan</option>
+                                <option value="Notulen" {{ old('kategori', $dokumen->kategori) == 'Notulen' ? 'selected' : '' }}>Notulen</option>
+                                <option value="Surat" {{ old('kategori', $dokumen->kategori) == 'Surat' ? 'selected' : '' }}>Surat</option>
+                                <option value="Laporan" {{ old('kategori', $dokumen->kategori) == 'Laporan' ? 'selected' : '' }}>Laporan</option>
+                                <option value="Data" {{ old('kategori', $dokumen->kategori) == 'Data' ? 'selected' : '' }}>Data</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="formDeskripsi">Deskripsi</label>
+                            <textarea id="formDeskripsi" name="deskripsi" class="form-control" rows="4">{{ old('deskripsi', $dokumen->deskripsi) }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Informasi File</label>
+                            <div class="p-3 bg-light rounded">
+                                <p class="mb-1"><strong>Tipe File:</strong> {{ strtoupper($dokumen->tipe_file) }}</p>
+                                <p class="mb-1"><strong>Tanggal Upload:</strong> {{ $dokumen->tanggal_upload }}</p>
+                                <p class="mb-0"><strong>Path:</strong> {{ $dokumen->path_file }}</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-1 mb-4 text-center">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

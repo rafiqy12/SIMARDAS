@@ -14,7 +14,7 @@ class LoginController
      */
     public function showLoginPage()
     {
-        return view('pages.login');
+        return view('pages.public.login');
     }
 
     /**

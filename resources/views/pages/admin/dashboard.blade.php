@@ -29,7 +29,7 @@
                     <span class="menu-text">Backup dan Restore Data</span>
                 </a>
 
-                <a href="#"
+                <a href="{{ route('dokumen.index') }}"
                 class="nav-link btn btn-light sidebar-item border d-flex align-items-center gap-3">
                     <span class="menu-icon">
                         <i class="bi bi-cloud-arrow-down"></i>
@@ -37,7 +37,7 @@
                     <span class="menu-text">Manajemen Arsip</span>
                 </a>
 
-                <a href="{{ route('manajemen_user.page') }}"
+                <a href="{{ route('user.index') }}"
                 class="nav-link btn btn-light sidebar-item border d-flex align-items-center gap-3">
                     <span class="menu-icon">
                         <i class="bi bi-speedometer2"></i>
