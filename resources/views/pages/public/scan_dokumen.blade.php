@@ -6,7 +6,9 @@
 		<div class="col-lg-7">
 			<div class="card shadow-sm mb-4">
 				<div class="card-body">
-					<h4 class="fw-bold text-primary mb-4 text-center">Scan & Upload Dokumen</h4>
+					<h4 class="fw-bold text-primary mb-4 text-center">
+						Scan & Upload Dokumen
+					</h4>
 
 					@if(session('success'))
 					<div class="alert alert-success">
@@ -14,35 +16,62 @@
 					</div>
 					@endif
 
-					<form method="POST" action="{{ route('scan_dokumen.store') }}" enctype="multipart/form-data" id="scanForm">
+					<form method="POST"
+						action="{{ route('scan_dokumen.store') }}"
+						enctype="multipart/form-data"
+						id="scanForm">
 						@csrf
+
+						{{-- CAMERA --}}
 						<div class="mb-3">
 							<label class="form-label">Scan Dokumen dengan Kamera</label>
-							<div class="position-relative mb-2" style="width:100%; max-width:400px; margin:auto;">
-								<video id="cameraPreview" autoplay playsinline style="width:100%; border-radius:12px; background:#000;"></video>
+
+							<div class="position-relative mb-2"
+								style="width:100%;max-width:400px;margin:auto;">
+								<video id="cameraPreview"
+									autoplay
+									playsinline
+									style="width:100%;border-radius:12px;background:#000;"></video>
+
 								<canvas id="captureCanvas" style="display:none;"></canvas>
-								<div id="frameOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
-									<svg width="100%" height="100%" viewBox="0 0 400 300" style="position:absolute; top:0; left:0;">
-										<rect x="40" y="30" width="320" height="240" fill="none" stroke="red" stroke-width="4" rx="12" />
+
+								<div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
+									<svg width="100%" height="100%" viewBox="0 0 400 300">
+										<rect x="40" y="30"
+											width="320" height="240"
+											fill="none"
+											stroke="red"
+											stroke-width="4"
+											rx="12" />
 									</svg>
 								</div>
 							</div>
-							<div class="text-center mb-2">
-								<button type="button" class="btn btn-danger" id="captureBtn">Ambil Foto</button>
+
+							<div class="text-center">
+								<button type="button"
+									class="btn btn-danger"
+									id="captureBtn">
+									Ambil Foto
+								</button>
 							</div>
 						</div>
 
+						{{-- PREVIEW --}}
 						<div class="mb-3" id="previewContainer" style="display:none;">
-							<label class="form-label">Preview Hasil Scan:</label>
-							<img id="imgPreview" src="#" alt="Preview Scan" class="img-fluid rounded mx-auto d-block" style="max-height:400px;" />
+							<label class="form-label">Preview Hasil Scan</label>
+							<div id="previewList" class="d-flex flex-wrap gap-2"></div>
 						</div>
 
-						<input type="hidden" name="scan_file_base64" id="scanFileBase64">
-						<input type="file" id="hiddenFileInput" name="scan_file" style="display:none;" accept="image/jpeg">
+						{{-- HIDDEN INPUT --}}
+						<input type="file" id="hiddenFileInput" name="scan_files[]" multiple hidden>
 
+						{{-- FORM DATA --}}
 						<div class="mb-3">
 							<label class="form-label">Judul Dokumen</label>
-							<input type="text" name="judul" class="form-control" required>
+							<input type="text"
+								name="judul"
+								class="form-control"
+								required>
 						</div>
 
 						<div class="mb-3">
@@ -59,12 +88,22 @@
 
 						<div class="mb-3">
 							<label class="form-label">Deskripsi (Opsional)</label>
-							<textarea name="deskripsi" class="form-control" rows="3"></textarea>
+							<textarea name="deskripsi"
+								class="form-control"
+								rows="3"></textarea>
 						</div>
 
 						<div class="d-flex gap-2">
-							<button type="submit" class="btn btn-primary" id="uploadBtn" style="display:none;">Upload</button>
-							<a href="{{ url()->previous() }}" class="btn btn-secondary">Kembali</a>
+							<button type="submit"
+								class="btn btn-primary"
+								id="uploadBtn"
+								style="display:none;">
+								Upload Dokumen
+							</button>
+							<a href="{{ url()->previous() }}"
+								class="btn btn-secondary">
+								Kembali
+							</a>
 						</div>
 					</form>
 
@@ -73,88 +112,76 @@
 						const video = document.getElementById('cameraPreview');
 						const canvas = document.getElementById('captureCanvas');
 						const captureBtn = document.getElementById('captureBtn');
-						const imgPreview = document.getElementById('imgPreview');
 						const previewContainer = document.getElementById('previewContainer');
-						const scanFileBase64 = document.getElementById('scanFileBase64');
+						const previewList = document.getElementById('previewList');
 						const uploadBtn = document.getElementById('uploadBtn');
-						const scanForm = document.getElementById('scanForm');
 						const hiddenFileInput = document.getElementById('hiddenFileInput');
+						const scanForm = document.getElementById('scanForm');
 
 						let cameraStream = null;
+						let capturedFiles = [];
 
-						function startCamera() {
-							if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-								navigator.mediaDevices.getUserMedia({
-										video: {
-											facingMode: {
-												ideal: 'environment'
-											}
-										}
-									})
-									.then(function(stream) {
-										cameraStream = stream;
-										video.srcObject = stream;
-										video.onloadedmetadata = function() {
-											video.play();
-										};
-									})
-									.catch(function(err) {
-										alert('Tidak dapat mengakses kamera: ' + err.message);
-									});
-							} else {
-								alert('Browser tidak mendukung kamera.');
+						navigator.mediaDevices.getUserMedia({
+							video: {
+								facingMode: {
+									ideal: "environment"
+								}
 							}
-						}
-						startCamera();
+						}).then(stream => {
+							cameraStream = stream;
+							video.srcObject = stream;
+						}).catch(err => {
+							alert('Gagal membuka kamera: ' + err.message);
+						});
 
-						captureBtn.addEventListener('click', function() {
-							if (video.readyState < 2) {
-								alert('Kamera belum siap. Mohon tunggu beberapa detik.');
-								return;
-							}
-							const width = video.videoWidth;
-							const height = video.videoHeight;
-							if (!width || !height) {
-								alert('Kamera belum siap. Mohon tunggu beberapa detik.');
-								return;
-							}
-							canvas.width = width;
-							canvas.height = height;
+						captureBtn.addEventListener('click', () => {
+							canvas.width = video.videoWidth;
+							canvas.height = video.videoHeight;
+
 							const ctx = canvas.getContext('2d');
-							ctx.drawImage(video, 0, 0, width, height);
+							ctx.drawImage(video, 0, 0);
+
 							const dataUrl = canvas.toDataURL('image/jpeg');
-							imgPreview.src = dataUrl;
+
+							const arr = dataUrl.split(',');
+							const mime = arr[0].match(/:(.*?);/)[1];
+							const bstr = atob(arr[1]);
+							let n = bstr.length;
+							const u8arr = new Uint8Array(n);
+							while (n--) u8arr[n] = bstr.charCodeAt(n);
+
+							const file = new File(
+								[u8arr],
+								`scan_${Date.now()}.jpg`, {
+									type: mime
+								}
+							);
+
+							capturedFiles.push(file);
+
+							const img = document.createElement('img');
+							img.src = dataUrl;
+							img.style.height = '120px';
+							img.classList.add('rounded', 'border');
+							previewList.appendChild(img);
+
 							previewContainer.style.display = 'block';
-							scanFileBase64.value = dataUrl;
 							uploadBtn.style.display = 'inline-block';
 						});
 
-						scanForm.addEventListener('submit', function(e) {
-							if (scanFileBase64.value) {
-								const arr = scanFileBase64.value.split(','),
-									mime = arr[0].match(/:(.*?);/)[1],
-									bstr = atob(arr[1]),
-									n = bstr.length,
-									u8arr = new Uint8Array(n);
-								for (let i = 0; i < n; i++) u8arr[i] = bstr.charCodeAt(i);
-								const file = new File([u8arr], 'scan.jpg', {
-									type: mime
-								});
-								const dataTransfer = new DataTransfer();
-								dataTransfer.items.add(file);
-								hiddenFileInput.files = dataTransfer.files;
-							}
+						scanForm.addEventListener('submit', () => {
+							const dt = new DataTransfer();
+							capturedFiles.forEach(f => dt.items.add(f));
+							hiddenFileInput.files = dt.files;
 						});
 
-						window.addEventListener('beforeunload', function() {
+						window.addEventListener('beforeunload', () => {
 							if (cameraStream) {
-								cameraStream.getTracks().forEach(track => track.stop());
+								cameraStream.getTracks().forEach(t => t.stop());
 							}
 						});
 					</script>
 					@endpush
-
-
 				</div>
 			</div>
 		</div>

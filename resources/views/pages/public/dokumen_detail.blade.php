@@ -55,6 +55,32 @@
 							</tr>
 						</table>
 					</div>
+					
+					<div class="mb-4">
+						<h6 class="fw-bold">Barcode Arsip</h6>
+						<div class="card shadow-sm">
+							<div class="card-body text-center">
+								@if($document->barcode)
+								{{-- IMAGE BARCODE --}}
+								<img
+									src="https://barcode.tec-it.com/barcode.ashx?data={{ $document->barcode->kode_barcode }}&code=Code128&translate-esc=true"
+									alt="Barcode Dokumen"
+									class="img-fluid mb-2">
+								{{-- TEXT BARCODE --}}
+								<div class="mt-2">
+									<span class="badge bg-secondary fs-6">
+										{{ $document->barcode->kode_barcode }}
+									</span>
+								</div>
+								<small class="text-muted d-block mt-1">
+									Digenerate: {{ $document->barcode->tanggal_generate }}
+								</small>
+								@else
+								<span class="text-muted">Barcode belum tersedia</span>
+								@endif
+							</div>
+						</div>
+					</div>
 
 					<div class="d-flex gap-2">
 						<a href="{{ $document->preview_url ?? '#' }}" class="btn btn-outline-primary" target="_blank">Preview</a>

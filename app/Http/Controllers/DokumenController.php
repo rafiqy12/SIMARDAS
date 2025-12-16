@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\Dokumen;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class DokumenController
 {
@@ -102,20 +104,15 @@ class DokumenController
      */
     public function download($id)
     {
-        $document = Dokumen::findOrFail($id);
+        $doc = Dokumen::findOrFail($id);
 
-        $fullPath = storage_path('app/public/' . $document->path_file);
-
-        if (!file_exists($fullPath)) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        $cleanFileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $document->judul);
-
-        return response()->download(
-            $fullPath,
-            $cleanFileName . '.' . $document->tipe_file
+        $fullPath = storage_path(
+            'app/public/documents/' . $doc->path_file
         );
+
+        abort_if(!file_exists($fullPath), 404);
+
+        return response()->download($fullPath, $doc->path_file);
     }
 
     /**
@@ -123,7 +120,7 @@ class DokumenController
      */
     public function show($id)
     {
-        $document = Dokumen::findOrFail($id);
+        $document = Dokumen::with('barcode')->findOrFail($id);
         return view('pages.public.dokumen_detail', compact('document'));
     }
 
@@ -149,30 +146,57 @@ class DokumenController
     public function scanStore(Request $request)
     {
         $request->validate([
-            'scan_file' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-            'judul'     => 'required|string|max:255',
-            'kategori'  => 'required|string',
+            'scan_files'   => 'required|array|min:1',
+            'scan_files.*' => 'image|mimes:jpg,jpeg,png|max:5120',
+            'judul'        => 'required|string|max:255',
+            'kategori'     => 'required|string',
         ]);
 
-        $file = $request->file('scan_file');
-        $judulSlug = Str::slug($request->judul);
-        $fileName = $judulSlug . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $images = [];
 
-        $path = $file->storeAs('documents', $fileName, 'public');
+        /** 1️⃣ Simpan gambar sementara */
+        foreach ($request->file('scan_files') as $file) {
+            $path = $file->store('temp_scan', 'public');
+            $images[] = storage_path('app/public/' . $path);
+        }
 
+        /** 2️⃣ Nama PDF = judul */
+        $pdfName = Str::slug($request->judul) . '.pdf';
+
+        /** 3️⃣ Generate PDF */
+        $pdf = Pdf::loadView('pdf.scan', [
+            'images' => $images
+        ])->setPaper('A4');
+
+        /** 4️⃣ Simpan PDF */
+        Storage::disk('public')->put(
+            'documents/' . $pdfName,
+            $pdf->output()
+        );
+
+        /** 5️⃣ Ambil ukuran PDF */
+        $fileSize = Storage::disk('public')->size(
+            'documents/' . $pdfName
+        );
+
+        /** 6️⃣ Simpan ke DB (HANYA NAMA FILE) */
         Dokumen::create([
             'judul'          => $request->judul,
             'deskripsi'      => $request->deskripsi,
             'kategori'       => $request->kategori,
-            'tipe_file'      => $file->getClientOriginalExtension(),
+            'tipe_file'      => 'pdf',
             'tanggal_upload' => now(),
-            'path_file'      => $path,
-            'id_user'        => auth()->id() ?? 2,
+            'path_file'      => $pdfName, // 🔥 PENTING
+            'ukuran_file'    => $fileSize,
+            'id_user'        => 2,
         ]);
+
+        /** 7️⃣ Hapus file temp */
+        Storage::disk('public')->deleteDirectory('temp_scan');
 
         return redirect()
             ->route('scan_dokumen.page')
-            ->with('success', 'Dokumen berhasil discan dan diupload');
+            ->with('success', 'Dokumen berhasil dibuat menjadi PDF');
     }
 
     /**
@@ -192,7 +216,7 @@ class DokumenController
             'dokumen'  => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',
             'judul'    => 'required|string|max:255',
             'kategori' => 'required|string|max:100',
-            'deskripsi'=> 'nullable|string'
+            'deskripsi' => 'nullable|string'
         ]);
 
         $file = $request->file('dokumen');
