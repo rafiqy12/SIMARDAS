@@ -7,84 +7,110 @@
 
 		<title>{{ config('app.name', 'Laravel') }} - Register</title>
 
-		@vite(['resources/scss/app.scss', 'resources/js/app.js'])
-
 		<!-- Fonts -->
 		<link rel="preconnect" href="https://fonts.bunny.net">
 		<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
-		<!-- Styles / Scripts -->
-		@if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-			@vite(['resources/css/app.css', 'resources/js/app.js'])
-		@else
-			<style>
-				body { font-family: 'Instrument Sans', sans-serif; }
-			</style>
-		@endif
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <style>
+            body {
+                font-family: 'Instrument Sans', sans-serif;
+            }
+            .register-bg {
+                background: linear-gradient(135deg, #0d6efd 60%, #6a11cb 100%);
+                min-height: 100vh;
+            }
+            .register-card {
+                border-radius: 1rem;
+            }
+            .logo-img {
+                height: 60px;
+            }
+            @media (max-width: 576px) {
+                .register-card .card-body {
+                    padding: 1.5rem !important;
+                }
+                .logo-img {
+                    height: 50px;
+                }
+                .register-title {
+                    font-size: 1.2rem !important;
+                }
+                .form-control-lg {
+                    font-size: 1rem;
+                    padding: 0.6rem 0.8rem;
+                }
+                .btn-lg {
+                    font-size: 1rem;
+                    padding: 0.6rem 1rem;
+                }
+            }
+        </style>
 	</head>
 	<body>
-		<section class="vh-100" style="background-color: #0d6efd;">
-			<div class="container py-5 h-100">
-				<div class="row d-flex justify-content-center align-items-center h-100">
-					<div class="col col-xl-5">
-						<div class="card" style="border-radius: 1rem;">
-							<div class="d-flex align-items-center">
-								<div class="card-body p-4 p-lg-5 text-black">
+		<section class="register-bg d-flex align-items-center justify-content-center py-4">
+			<div class="container">
+				<div class="row d-flex justify-content-center align-items-center">
+					<div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+						<div class="card register-card shadow">
+							<div class="card-body p-4 p-lg-5 text-black">
+								<form method="POST" action="/home">
+									@csrf
 
-									<form method="POST" action="/home">
-										@csrf
-
-										<!-- LOGO CENTER -->
-										<div class="text-center mb-4">
-											<i class="fas fa-cubes fa-3x mb-2" style="color: #ff6219;"></i>
-											<h1 class="fw-bold mb-0">Logo</h1>
+									<!-- LOGO CENTER -->
+									<div class="text-center mb-4">
+										<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+											<img src="{{ asset('images/Logo_kabupaten_serang.png') }}" alt="Logo" class="logo-img">
+											<div class="d-flex flex-column lh-1">
+												<span class="fw-bold register-title" style="font-size: 1.4rem; color: #222;">SIMARDAS</span>
+												<span class="small" style="font-weight: 500; color: #222;">Pemerintah Kabupaten Serang</span>
+											</div>
 										</div>
+									</div>
 
-										<!-- JUDUL REGISTER CENTER -->
-										<h5 class="fw-normal mb-4 text-center" style="letter-spacing: 1px;">
-											Create your account
-										</h5>
+									<!-- JUDUL REGISTER CENTER -->
+									<h5 class="fw-normal mb-4 text-center" style="letter-spacing: 1px;">
+										Create your account
+									</h5>
 
-										<!-- INPUT NAME -->
-										<div class="mb-3">
-											<label class="form-label" for="formName">Full Name</label>
-											<input type="text" id="formName" name="name" class="form-control form-control-lg" required autofocus />
-										</div>
+									<!-- INPUT NAME -->
+									<div class="mb-3">
+										<label class="form-label small fw-semibold" for="formName">Full Name</label>
+										<input type="text" id="formName" name="name" class="form-control form-control-lg" required autofocus />
+									</div>
 
-										<!-- INPUT EMAIL -->
-										<div class="mb-3">
-											<label class="form-label" for="formEmail">Email Address</label>
-											<input type="email" id="formEmail" name="email" class="form-control form-control-lg" required />
-										</div>
+									<!-- INPUT EMAIL -->
+									<div class="mb-3">
+										<label class="form-label small fw-semibold" for="formEmail">Email Address</label>
+										<input type="email" id="formEmail" name="email" class="form-control form-control-lg" required />
+									</div>
 
-										<!-- INPUT PASSWORD -->
-										<div class="mb-3">
-											<label class="form-label" for="formPassword">Password</label>
-											<input type="password" id="formPassword" name="password" class="form-control form-control-lg" required />
-										</div>
+									<!-- INPUT PASSWORD -->
+									<div class="mb-3">
+										<label class="form-label small fw-semibold" for="formPassword">Password</label>
+										<input type="password" id="formPassword" name="password" class="form-control form-control-lg" required />
+									</div>
 
-										<!-- INPUT PASSWORD CONFIRMATION -->
-										<div class="mb-3">
-											<label class="form-label" for="formPasswordConfirm">Confirm Password</label>
-											<input type="password" id="formPasswordConfirm" name="password_confirmation" class="form-control form-control-lg" required />
-										</div>
+									<!-- INPUT PASSWORD CONFIRMATION -->
+									<div class="mb-3">
+										<label class="form-label small fw-semibold" for="formPasswordConfirm">Confirm Password</label>
+										<input type="password" id="formPasswordConfirm" name="password_confirmation" class="form-control form-control-lg" required />
+									</div>
 
-										<div class="pt-1 mb-4 text-center">
-											<button class="btn btn-dark btn-lg w-100" type="submit">
-												Register
-											</button>
-										</div>
+									<div class="pt-1 mb-4 text-center">
+										<button class="btn btn-dark btn-lg w-100" type="submit">
+											Register
+										</button>
+									</div>
 
-										<div class="text-center">
-											<p class="mt-3" style="color: #393f81;">
-												Already have an account?
-												<a href="{{ route('login.page') }}" style="color: #393f81;">Login di sini</a>
-											</p>
-										</div>
-									</form>
-								</div>
+									<div class="text-center">
+										<p class="mt-3 small" style="color: #393f81;">
+											Already have an account?
+											<a href="{{ route('login.page') }}" style="color: #393f81;">Login di sini</a>
+										</p>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>

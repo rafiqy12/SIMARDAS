@@ -15,8 +15,80 @@
                 z-index: 1051;
             }
         }
+
+        /* Custom container width */
+        .container {
+            max-width: 1400px;
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+
+        /* Mobile responsive improvements */
+        @media (max-width: 767.98px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            /* Header top bar mobile */
+            .header-title h5 {
+                font-size: 1rem;
+            }
+
+            .header-title small {
+                font-size: 0.7rem;
+            }
+
+            /* Navbar mobile spacing */
+            .navbar-collapse {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .navbar-nav {
+                gap: 0 !important;
+            }
+
+            .navbar-nav .nav-link {
+                padding: 0.75rem 0.5rem !important;
+                border-bottom: 1px solid #eee;
+            }
+
+            /* User greeting mobile */
+            .user-greeting-section {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.75rem !important;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #eee;
+            }
+
+            /* Footer mobile */
+            footer .col-md-3 {
+                text-align: center;
+            }
+
+            footer .d-flex.gap-2 {
+                justify-content: center;
+            }
+        }
+
+        /* Tablet responsive */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+        }
     </style>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIMARDAS</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -26,12 +98,16 @@
     <!-- BAGIAN ATAS (biru, kecil, elegan) -->
     <div class="bg-primary py-2 border-bottom shadow-sm">
         <div class="container d-flex align-items-center">
-            <img src="{{ asset('images/Logo_kabupaten_serang.png') }}" alt="Logo" width="45" class="me-2">
+            <img src="{{ asset('images/Logo_kabupaten_serang.png') }}" alt="Logo" width="45" class="me-2 d-none d-sm-block">
+            <img src="{{ asset('images/Logo_kabupaten_serang.png') }}" alt="Logo" width="35" class="me-2 d-sm-none">
 
-            <div class="d-flex flex-column lh-1">
+            <div class="d-flex flex-column lh-1 header-title">
                 <h5 class="m-0 fw-bold text-white">SIMARDAS</h5>
-                <small class="text-white-50" style="margin-top:-2px;">
+                <small class="text-white-50 d-none d-md-block" style="margin-top:-2px;">
                     Sistem Informasi Manajemen Arsip Daerah Serang
+                </small>
+                <small class="text-white-50 d-md-none" style="margin-top:-2px; font-size: 0.65rem;">
+                    Manajemen Arsip Daerah
                 </small>
             </div>
         </div>
@@ -52,6 +128,11 @@
                     <li class="nav-item">
                         <a class="nav-link small active py-2 px-2" href="{{ route('home.page') }}">Beranda</a>
                     </li>
+                    @if(Auth::check() && Auth::user()->role === 'Admin')
+                    <li class="nav-item">
+                        <a class="nav-link small py-2 px-2" href="{{ route('dashboard.page') }}">Dashboard</a>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link small py-2 px-2" href="#">Profil</a>
                     </li>
@@ -63,23 +144,31 @@
                             <li><a class="dropdown-item" href="{{ route('search.page') }}">Search</a></li>
                             <li><a class="dropdown-item" href="{{ route('scan_dokumen.page') }}">Scan</a></li>
                             <li><a class="dropdown-item" href="{{ route('dokumen_upload.page') }}">Upload</a></li>
+                            @if(Auth::check() && in_array(Auth::user()->role, ['Admin', 'Petugas']))
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('arsip.public') }}">Manajemen Arsip</a></li>
+                            @endif
                         </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link small py-2 px-2" href="#">Layanan</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link small py-2 px-2" href="#">Kontak</a>
                     </li>
                 </ul>
 
-                <!-- LOGOUT -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="btn btn-danger">
-                        Logout
-                    </button>
-                </form>
+                <!-- USER GREETING & LOGOUT -->
+                <div class="d-flex align-items-center gap-2 user-greeting-section">
+                    @auth
+                    <span class="text-muted small me-1">
+                        Halo, <strong>{{ Auth::user()->nama }}</strong>
+                    </span>
+                    @endauth
+                    <form method="POST" action="{{ route('logout') }}" class="m-0">
+                        @csrf
+                        <button class="btn btn-danger btn-sm">
+                            <i class="bi bi-box-arrow-right"></i> <span class="d-none d-sm-inline">Logout</span>
+                        </button>
+                    </form>
+                </div>
 
             </div>
         </div>

@@ -1,41 +1,38 @@
 @extends('layouts.app')
+
+@section('title', 'Upload Dokumen - SIMARDAS')
+
 @section('content')
-
 <div class="container py-4">
-	<div class="row justify-content-center">
-		<div class="col-lg-7">
-			<div class="card shadow-sm mb-4">
-				<div class="card-body">
-					<h4 class="fw-bold text-primary mb-4 text-center">Upload Dokumen</h4>
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-2">
+                        <h5 class="fw-bold m-0">
+                            <i class="bi bi-cloud-arrow-up text-primary me-2"></i>Upload Dokumen Baru
+                        </h5>
+                        <a href="{{ route('arsip.public') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-arrow-bar-left"></i> Kembali ke Arsip
+                        </a>
+                    </div>
 
-					@if(session('success'))
-					<div class="alert alert-success">
-						{{ session('success') }}
-					</div>
-					@endif
-
-					<form method="POST"
-                        action="{{ route('dokumen_upload.store') }}"
-                        enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('dokumen_upload.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
-                            <label class="form-label">File Dokumen</label>
-                            <input type="file"
-                                name="dokumen"
-                                class="form-control"
-                                required
-                                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                            <label class="form-label small fw-semibold">File Dokumen</label>
+                            <input type="file" name="dokumen" class="form-control form-control-sm" required accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
                             <small class="text-muted">PDF, Word, Excel, PowerPoint</small>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Judul Dokumen</label>
+                            <label class="form-label small fw-semibold">Judul Dokumen</label>
                             <input type="text" name="judul" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Kategori Dokumen</label>
+                            <label class="form-label small fw-semibold">Kategori Dokumen</label>
                             <select name="kategori" class="form-select" required>
                                 <option value="">-- Pilih Kategori --</option>
                                 <option value="Administrasi">Administrasi</option>
@@ -48,16 +45,19 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Deskripsi (Opsional)</label>
-                            <textarea name="deskripsi" class="form-control"></textarea>
+                            <label class="form-label small fw-semibold">Deskripsi (Opsional)</label>
+                            <textarea name="deskripsi" class="form-control" rows="3"></textarea>
                         </div>
 
-                        <button class="btn btn-primary">Upload Dokumen</button>
+                        <div class="text-center">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-upload me-2"></i>Upload Dokumen
+                            </button>
+                        </div>
                     </form>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 @endsection

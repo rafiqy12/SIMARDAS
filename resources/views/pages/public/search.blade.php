@@ -1,30 +1,30 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="container py-4">
+<div class="container py-3 py-md-4">
 
     {{-- Card Pencarian --}}
     <div class="card shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body p-3 p-md-4">
 
-            <h4 class="text-center mb-4">Cari Dokumen Arsip</h4>
+            <h4 class="text-center mb-3 mb-md-4 fs-5 fs-md-4">Cari Dokumen Arsip</h4>
 
             <form method="GET" action="{{ route('search.page') }}">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control"
                         name="q"
                         value="{{ request('q') }}"
-                        placeholder="Ketikkan nama dokumen arsip yang ingin dicari...">
-                    <button class="btn btn-primary">Cari</button>
+                        placeholder="Ketikkan nama dokumen arsip...">
+                    <button class="btn btn-primary"><i class="bi bi-search"></i><span class="d-none d-sm-inline ms-1">Cari</span></button>
                 </div>
 
                 {{-- Filter --}}
-                <div class="border rounded p-3 bg-light">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Kategori Dokumen</label>
-                            <select class="form-select" name="kategori">
-                                <option value="">Semua Kategori</option>
+                <div class="border rounded p-2 p-md-3 bg-light">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-6 col-md-3">
+                            <label class="form-label small mb-1">Kategori</label>
+                            <select class="form-select form-select-sm" name="kategori">
+                                <option value="">Semua</option>
                                 @foreach ($categories as $category)
                                 <option value="{{ $category }}"
                                     {{ request('kategori') == $category ? 'selected' : '' }}>
@@ -34,10 +34,10 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Tipe Dokumen</label>
-                            <select class="form-select" name="tipe">
-                                <option value="">Semua Tipe</option>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label small mb-1">Tipe</label>
+                            <select class="form-select form-select-sm" name="tipe">
+                                <option value="">Semua</option>
                                 @foreach ($types as $type)
                                 <option value="{{ strtoupper($type) }}"
                                     {{ request('tipe') == strtoupper($type) ? 'selected' : '' }}>
@@ -47,10 +47,10 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Diunggah Oleh</label>
-                            <select class="form-select" name="user">
-                                <option value="">Semua Pengguna</option>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label small mb-1">Diunggah Oleh</label>
+                            <select class="form-select form-select-sm" name="user">
+                                <option value="">Semua</option>
 
                                 @foreach ($users as $user)
                                 <option value="{{ $user->id_user }}"
@@ -61,30 +61,32 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Urutkan</label>
-                            <select class="form-select" name="sort">
+                        <div class="col-6 col-md-3">
+                            <label class="form-label small mb-1">Urutkan</label>
+                            <select class="form-select form-select-sm" name="sort">
                                 <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
                                 <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
-                                <option value="nama" {{ request('sort') == 'nama' ? 'selected' : '' }}>Nama Dokumen</option>
+                                <option value="nama" {{ request('sort') == 'nama' ? 'selected' : '' }}>Nama</option>
                             </select>
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Tanggal Mulai</label>
-                            <input type="date" class="form-control" name="start" value="{{ request('start') }}">
+                        <div class="col-6 col-md-3">
+                            <label class="form-label small mb-1">Tanggal Mulai</label>
+                            <input type="date" class="form-control form-control-sm" name="start" value="{{ request('start') }}">
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Tanggal Akhir</label>
-                            <input type="date" class="form-control" name="end" value="{{ request('end') }}">
+                        <div class="col-6 col-md-3">
+                            <label class="form-label small mb-1">Tanggal Akhir</label>
+                            <input type="date" class="form-control form-control-sm" name="end" value="{{ request('end') }}">
                         </div>
 
-                        <div class="col-md-6 d-flex align-items-end">
-                            <a href="{{ route('search.page') }}" class="btn btn-outline-secondary me-2">
-                                Reset Filter
+                        <div class="col-12 col-md-6 d-flex align-items-end gap-2 mt-2 mt-md-0">
+                            <a href="{{ route('search.page') }}" class="btn btn-outline-secondary btn-sm flex-grow-1 flex-md-grow-0">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset
                             </a>
-                            <button class="btn btn-primary">Terapkan Filter</button>
+                            <button class="btn btn-primary btn-sm flex-grow-1 flex-md-grow-0">
+                                <i class="bi bi-funnel"></i> Terapkan
+                            </button>
                         </div>
 
                     </div>

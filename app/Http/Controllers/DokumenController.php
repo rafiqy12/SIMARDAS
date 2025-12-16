@@ -274,10 +274,24 @@ class DokumenController
     /**
      * Halaman manajemen arsip (admin)
      */
-    public function index()
+    public function index(Request $request)
     {
-        $dokumens = Dokumen::with('user')->orderBy('tanggal_upload', 'desc')->get();
-        return view('pages.admin.manajemen_arsip', compact('dokumens'));
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search', '');
+
+        $query = Dokumen::with('user');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('kategori', 'like', '%' . $search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $search . '%');
+            });
+        }
+
+        $dokumens = $query->orderBy('tanggal_upload', 'desc')->paginate($perPage)->appends($request->query());
+        
+        return view('pages.admin.manajemen_arsip', compact('dokumens', 'search', 'perPage'));
     }
 
     /**
@@ -325,5 +339,34 @@ class DokumenController
         $dokumen->delete();
 
         return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil dihapus');
+    }
+
+    /**
+     * Halaman arsip untuk user biasa (dengan layout navbar)
+     * Diakses oleh Petugas dengan tampilan halaman biasa
+     */
+    public function publicIndex(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search', '');
+
+        $query = Dokumen::with('user');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('kategori', 'like', '%' . $search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $search . '%');
+            });
+        }
+
+        $dokumens = $query->orderBy('tanggal_upload', 'desc')->paginate($perPage)->appends($request->query());
+        
+        // Petugas bisa upload dan edit
+        $user = auth()->user();
+        $canUpload = $user && in_array($user->role, ['Admin', 'Petugas']);
+        $canEdit = $user && in_array($user->role, ['Admin', 'Petugas']);
+
+        return view('pages.public.arsip', compact('dokumens', 'search', 'perPage', 'canUpload', 'canEdit'));
     }
 }

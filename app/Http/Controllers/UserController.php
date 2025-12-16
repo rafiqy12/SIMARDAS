@@ -10,10 +10,24 @@ class UserController
     /**
      * Display a listing of the resource (Manajemen User Page).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('pages.admin.manajemen_user', compact('users'));
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search', '');
+
+        $query = User::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhere('role', 'like', '%' . $search . '%');
+            });
+        }
+
+        $users = $query->orderBy('id_user', 'desc')->paginate($perPage)->appends($request->query());
+        
+        return view('pages.admin.manajemen_user', compact('users', 'search', 'perPage'));
     }
 
     /**

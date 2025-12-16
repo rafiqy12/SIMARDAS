@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="container py-4">
+<div class="container py-3 py-md-4">
 	<div class="row justify-content-center">
-		<div class="col-lg-7">
+		<div class="col-12 col-lg-7">
 			<div class="card shadow-sm mb-4">
-				<div class="card-body">
-					<h4 class="fw-bold text-primary mb-4 text-center">
+				<div class="card-body p-3 p-md-4">
+					<h4 class="fw-bold text-primary mb-4 text-center fs-5 fs-md-4">
 						Scan & Upload Dokumen
 					</h4>
 
@@ -24,10 +24,10 @@
 
 						{{-- CAMERA --}}
 						<div class="mb-3">
-							<label class="form-label">Scan Dokumen dengan Kamera</label>
+							<label class="form-label small fw-semibold">Scan Dokumen dengan Kamera</label>
 
 							<div class="position-relative mb-2"
-								style="width:100%;max-width:400px;margin:auto;">
+								style="width:100%;max-width:100%;margin:auto;">
 								<video id="cameraPreview"
 									autoplay
 									playsinline
@@ -36,7 +36,7 @@
 								<canvas id="captureCanvas" style="display:none;"></canvas>
 
 								<div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
-									<svg width="100%" height="100%" viewBox="0 0 400 300">
+									<svg width="100%" height="100%" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
 										<rect x="40" y="30"
 											width="320" height="240"
 											fill="none"
@@ -51,14 +51,14 @@
 								<button type="button"
 									class="btn btn-danger"
 									id="captureBtn">
-									Ambil Foto
+									<i class="bi bi-camera me-1"></i> Ambil Foto
 								</button>
 							</div>
 						</div>
 
 						{{-- PREVIEW --}}
 						<div class="mb-3" id="previewContainer" style="display:none;">
-							<label class="form-label">Preview Hasil Scan</label>
+							<label class="form-label small fw-semibold">Preview Hasil Scan</label>
 							<div id="previewList" class="d-flex flex-wrap gap-2"></div>
 						</div>
 
@@ -67,7 +67,7 @@
 
 						{{-- FORM DATA --}}
 						<div class="mb-3">
-							<label class="form-label">Judul Dokumen</label>
+							<label class="form-label small fw-semibold">Judul Dokumen</label>
 							<input type="text"
 								name="judul"
 								class="form-control"
@@ -75,7 +75,7 @@
 						</div>
 
 						<div class="mb-3">
-							<label class="form-label">Kategori Dokumen</label>
+							<label class="form-label small fw-semibold">Kategori Dokumen</label>
 							<select name="kategori" class="form-select" required>
 								<option value="">-- Pilih Kategori --</option>
 								<option value="Administrasi">Administrasi</option>
@@ -87,22 +87,22 @@
 						</div>
 
 						<div class="mb-3">
-							<label class="form-label">Deskripsi (Opsional)</label>
+							<label class="form-label small fw-semibold">Deskripsi (Opsional)</label>
 							<textarea name="deskripsi"
 								class="form-control"
 								rows="3"></textarea>
 						</div>
 
-						<div class="d-flex gap-2">
+						<div class="d-flex gap-2 flex-wrap">
 							<button type="submit"
 								class="btn btn-primary"
 								id="uploadBtn"
 								style="display:none;">
-								Upload Dokumen
+								<i class="bi bi-upload me-1"></i> Upload Dokumen
 							</button>
 							<a href="{{ url()->previous() }}"
 								class="btn btn-secondary">
-								Kembali
+								<i class="bi bi-arrow-left me-1"></i> Kembali
 							</a>
 						</div>
 					</form>
@@ -161,7 +161,7 @@
 
 							const img = document.createElement('img');
 							img.src = dataUrl;
-							img.style.height = '120px';
+							img.style.height = '100px';
 							img.classList.add('rounded', 'border');
 							previewList.appendChild(img);
 
