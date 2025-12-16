@@ -106,14 +106,25 @@ class DokumenController
     {
         $doc = Dokumen::findOrFail($id);
 
+        // path_file hanya nama file, contoh: laporan-rapat.pdf
         $fullPath = storage_path(
             'app/public/documents/' . $doc->path_file
         );
 
-        abort_if(!file_exists($fullPath), 404);
+        abort_if(!file_exists($fullPath), 404, 'File tidak ditemukan');
 
-        return response()->download($fullPath, $doc->path_file);
+        // Nama file saat diunduh (pakai judul dokumen)
+        $downloadName = Str::slug($doc->judul) . '.pdf';
+
+        return response()->download(
+            $fullPath,
+            $downloadName,
+            [
+                'Content-Type' => 'application/pdf'
+            ]
+        );
     }
+
 
     /**
      * Detail dokumen
@@ -127,9 +138,23 @@ class DokumenController
     /**
      * Halaman isi dokumen
      */
-    public function isi()
+    public function preview($id)
     {
-        return view('pages.public.dokumen_isi');
+        $dokumen = Dokumen::findOrFail($id);
+
+        $path = 'documents/' . $dokumen->path_file;
+
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->file(
+            storage_path('app/public/' . $path),
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $dokumen->path_file . '"'
+            ]
+        );
     }
 
     /**

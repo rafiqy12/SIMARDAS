@@ -22,24 +22,27 @@
 
 					<div class="mb-4">
 						@if(isset($document->type) && $document->type === 'PDF')
-							<iframe src="{{ $document->file_url ?? '#' }}" width="100%" height="600" style="border:1px solid #ccc; border-radius:8px;"></iframe>
+						<iframe src="{{ $document->file_url ?? '#' }}" width="100%" height="600" style="border:1px solid #ccc; border-radius:8px;"></iframe>
 						@elseif(isset($document->type) && in_array($document->type, ['Word', 'Excel']))
-							<div class="alert alert-info text-center">
-								Pratinjau file {{ $document->type }} belum didukung. <br>
-								<a href="{{ $document->file_url ?? '#' }}" class="btn btn-success mt-2">Unduh File</a>
-							</div>
+						<div class="alert alert-info text-center">
+							Pratinjau file {{ $document->type }} belum didukung. <br>
+							<a href="{{ $document->file_url ?? '#' }}" class="btn btn-success mt-2">Unduh File</a>
+						</div>
 						@elseif(isset($document->type) && $document->type === 'Gambar')
-							<img src="{{ $document->file_url ?? '#' }}" alt="Preview Gambar" class="img-fluid rounded mx-auto d-block" style="max-height:600px;" />
+						<img src="{{ $document->file_url ?? '#' }}" alt="Preview Gambar" class="img-fluid rounded mx-auto d-block" style="max-height:600px;" />
 						@else
-							<div class="alert alert-secondary text-center">
-								Pratinjau tidak tersedia untuk tipe dokumen ini.
-							</div>
+						<div class="alert alert-secondary text-center">
+							Pratinjau tidak tersedia untuk tipe dokumen ini.
+						</div>
 						@endif
 					</div>
 
 					<div class="d-flex gap-2">
 						<a href="{{ url()->previous() }}" class="btn btn-secondary">Kembali</a>
-						<a href="{{ $document->download_url ?? '#' }}" class="btn btn-success">Unduh</a>
+						<a href="{{ route('dokumen.download', $document->id) }}"
+							class="btn btn-success">
+							Unduh
+						</a>
 					</div>
 				</div>
 			</div>

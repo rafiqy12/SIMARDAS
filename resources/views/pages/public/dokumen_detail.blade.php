@@ -55,7 +55,7 @@
 							</tr>
 						</table>
 					</div>
-					
+
 					<div class="mb-4">
 						<h6 class="fw-bold">Barcode Arsip</h6>
 						<div class="card shadow-sm">
@@ -83,8 +83,15 @@
 					</div>
 
 					<div class="d-flex gap-2">
-						<a href="{{ $document->preview_url ?? '#' }}" class="btn btn-outline-primary" target="_blank">Preview</a>
-						<a href="{{ $document->download_url ?? '#' }}" class="btn btn-success">Unduh</a>
+						<a href="{{ route('dokumen.preview', $document->id_dokumen) }}"
+							class="btn btn-outline-primary"
+							target="_blank">
+							Preview
+						</a>
+						<a href="{{ route('dokumen.download', $document->id_dokumen) }}"
+							class="btn btn-success">
+							Unduh
+						</a>
 						<a href="{{ url()->previous() }}" class="btn btn-secondary">Kembali</a>
 					</div>
 				</div>

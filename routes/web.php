@@ -50,6 +50,8 @@ Route::controller(DokumenController::class)->group(function () {
     Route::get('dokumen_isi', 'isi')->name('dokumen_isi.page');
     Route::get('scan_dokumen', 'scanPage')->name('scan_dokumen.page');
     Route::post('scan_dokumen', 'scanStore')->name('scan_dokumen.store');
+    Route::get('/dokumen/{id}/preview', [DokumenController::class, 'preview'])
+    ->name('dokumen.preview');
 
     // Admin routes
     Route::get('dokumen_upload', 'uploadPage')->name('dokumen_upload.page');
