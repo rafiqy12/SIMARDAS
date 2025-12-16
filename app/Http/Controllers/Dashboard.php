@@ -8,6 +8,6 @@ class Dashboard
 {
     public function ShowDashboardPage()
     {
-        return view('pages.dashboard');
+        return view('pages.admin.dashboard');
     }
 }

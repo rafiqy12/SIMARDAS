@@ -50,7 +50,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold m-0">Daftar Pengguna</h5>
-                        <a href="{{ route('tambah_user.page') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Tambah User</a>
+                        <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Tambah User</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle">

@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 class UserController
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource (Manajemen User Page).
      */
     public function index()
     {
-        //
+        $users = User::all();
+        return view('pages.admin.manajemen_user', compact('users'));
     }
 
     /**
@@ -20,7 +21,7 @@ class UserController
      */
     public function create()
     {
-        //
+        return view('pages.admin.tambah_user');
     }
 
     /**
@@ -28,7 +29,21 @@ class UserController
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:user,email',
+            'role' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        User::create([
+            'nama' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => bcrypt($request->password),
+        ]);
+
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
     }
 
     /**
@@ -36,7 +51,7 @@ class UserController
      */
     public function show(User $user)
     {
-        //
+        return view('pages.admin.show_user', compact('user'));
     }
 
     /**
@@ -44,9 +59,7 @@ class UserController
      */
     public function edit(User $user)
     {
-        return view('pages.edit_user', [
-            'user' => $user
-        ]);
+        return view('pages.admin.edit_user', compact('user'));
     }
 
     /**
@@ -69,7 +82,7 @@ class UserController
         }
         $user->save();
 
-        return redirect()->route('manajemen_user.page')->with('success', 'User berhasil diupdate');
+        return redirect()->route('user.index')->with('success', 'User berhasil diupdate');
     }
 
     /**
@@ -78,6 +91,6 @@ class UserController
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('manajemen_user.page')->with('success', 'User berhasil dihapus');
+        return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
     }
 }

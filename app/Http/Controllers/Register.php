@@ -8,6 +8,6 @@ class Register
 {
     public function ShowRegisterpage()
     {
-        return view('pages.register');
+        return view('pages.public.register');
     }
 }

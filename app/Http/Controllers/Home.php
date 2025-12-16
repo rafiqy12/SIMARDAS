@@ -8,6 +8,6 @@ class Home
 {
     public function ShowHomePage()
     {
-        return view('pages.home');
+        return view('pages.public.home');
     }
 }
