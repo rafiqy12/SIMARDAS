@@ -8,66 +8,68 @@ use App\Http\Controllers\Register;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+// =============================================
+// GUEST ROUTES (Tidak perlu login)
+// =============================================
 Route::controller(LoginController::class)->group(function () {
-    Route::get('/', [LoginController::class, 'showLoginPage'])
-    ->name('login.page');
-
-    Route::post('/login', [LoginController::class, 'login'])
-        ->name('login.process');
-
-    Route::post('/logout', [LoginController::class, 'logout'])
-        ->name('logout');
+    Route::get('/', 'showLoginPage')->name('login.page');
+    Route::post('/login', 'login')->name('login.process');
+    Route::post('/logout', 'logout')->name('logout');
 });
 
+Route::get('register', [Register::class, 'ShowRegisterpage'])->name('register.page');
+
+// =============================================
+// AUTH ROUTES (Harus login - semua role)
+// =============================================
 Route::middleware('auth')->group(function () {
+    // Home page untuk user yang sudah login
+    Route::get('home', [Home::class, 'ShowHomePage'])->name('home.page');
 
-    Route::get('home', [Home::class, 'ShowHomePage'])
-        ->name('home.page');
-
-    Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])
-        ->name('dashboard.page');
-
+    // Dokumen - akses untuk semua user yang sudah login
+    Route::controller(DokumenController::class)->group(function () {
+        Route::get('search', 'search')->name('search.page');
+        Route::get('dokumen/{id}', 'show')->name('dokumen.detail');
+        Route::get('dokumen/{id}/download', 'download')->name('dokumen.download');
+        Route::get('dokumen/{id}/preview', 'preview')->name('dokumen.preview');
+        Route::get('dokumen_isi', 'isi')->name('dokumen_isi.page');
+        Route::get('scan_dokumen', 'scanPage')->name('scan_dokumen.page');
+        Route::post('scan_dokumen', 'scanStore')->name('scan_dokumen.store');
+        
+        // Halaman arsip dengan tampilan public (navbar biasa) - untuk Petugas
+        Route::get('arsip', 'publicIndex')->name('arsip.public');
+    });
 });
 
-Route::controller(Register::class)->group(function () {
-    Route::get('register', 'ShowRegisterpage')->name('register.page');
+// =============================================
+// PETUGAS ROUTES (Harus login + role Admin/Petugas)
+// =============================================
+Route::middleware(['auth', 'petugas'])->group(function () {
+    // Manajemen Arsip/Dokumen - bisa diakses Admin dan Petugas
+    Route::controller(DokumenController::class)->group(function () {
+        Route::get('dokumen_upload', 'uploadPage')->name('dokumen_upload.page');
+        Route::post('dokumen/upload', 'uploadStore')->name('dokumen_upload.store');
+        Route::get('manajemen_arsip', 'index')->name('dokumen.index');
+        Route::get('arsip/{id}/edit', 'edit')->name('dokumen.edit');
+        Route::put('arsip/{id}', 'update')->name('dokumen.update');
+        Route::delete('arsip/{id}', 'destroy')->name('dokumen.destroy');
+    });
 });
 
-Route::controller(Home::class)->group(function () {
-    Route::get('home', 'ShowHomePage')->name('home.page');
-});
+// =============================================
+// ADMIN ROUTES (Harus login + role Admin saja)
+// =============================================
+Route::middleware(['auth', 'admin'])->group(function () {
+    // Dashboard Admin
+    Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])->name('dashboard.page');
 
-Route::controller(Dashboard::class)->group(function () {
-    Route::get('dashboard', 'ShowDashboardPage')->name('dashboard.page');
-});
-
-// Dokumen management (gunakan DokumenController)
-Route::controller(DokumenController::class)->group(function () {
-    // Public routes
-    Route::get('search', 'search')->name('search.page');
-    Route::get('dokumen/{id}', 'show')->name('dokumen.detail');
-    Route::get('dokumen/{id}/download', 'download')->name('dokumen.download');
-    Route::get('dokumen_isi', 'isi')->name('dokumen_isi.page');
-    Route::get('scan_dokumen', 'scanPage')->name('scan_dokumen.page');
-    Route::post('scan_dokumen', 'scanStore')->name('scan_dokumen.store');
-    Route::get('/dokumen/{id}/preview', [DokumenController::class, 'preview'])
-    ->name('dokumen.preview');
-
-    // Admin routes
-    Route::get('dokumen_upload', 'uploadPage')->name('dokumen_upload.page');
-    Route::post('dokumen/upload', 'uploadStore')->name('dokumen_upload.store');
-    Route::get('manajemen_arsip', 'index')->name('dokumen.index');
-    Route::get('arsip/{id}/edit', 'edit')->name('dokumen.edit');
-    Route::put('arsip/{id}', 'update')->name('dokumen.update');
-    Route::delete('arsip/{id}', 'destroy')->name('dokumen.destroy');
-});
-
-// User management (resourceful, gunakan UserController)
-Route::middleware('auth')->group(function () {
-    Route::get('manajemen_user', [UserController::class, 'index'])->name('user.index');
-    Route::get('user/create', [UserController::class, 'create'])->name('user.create');
-    Route::post('user', [UserController::class, 'store'])->name('user.store');
-    Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
-    Route::put('user/{user}', [UserController::class, 'update'])->name('user.update');
-    Route::delete('user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+    // Manajemen User - hanya Admin
+    Route::controller(UserController::class)->group(function () {
+        Route::get('manajemen_user', 'index')->name('user.index');
+        Route::get('user/create', 'create')->name('user.create');
+        Route::post('user', 'store')->name('user.store');
+        Route::get('user/{user}/edit', 'edit')->name('user.edit');
+        Route::put('user/{user}', 'update')->name('user.update');
+        Route::delete('user/{user}', 'destroy')->name('user.destroy');
+    });
 });
