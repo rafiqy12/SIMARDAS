@@ -6,6 +6,7 @@
     <title>@yield('title', 'Admin - SIMARDAS')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    @stack('styles')
 </head>
 <style>
     .admin-flex {
@@ -161,14 +162,22 @@
                             <span class="menu-icon"><i class="bi bi-cloud-arrow-down"></i></span>
                             <span class="menu-text">Backup dan Restore Data</span>
                         </a>
-                        @endif
 
-                        {{-- Menu Manajemen Arsip - untuk Admin dan Petugas Arsip --}}
                         <a href="{{ route('dokumen.index') }}"
                            class="nav-link btn {{ in_array($currentRoute, ['dokumen.index', 'dokumen.edit', 'dokumen_upload.page']) ? 'active-menu' : 'btn-light' }} sidebar-item border d-flex align-items-center gap-3">
                             <span class="menu-icon"><i class="bi bi-folder"></i></span>
                             <span class="menu-text">Manajemen Arsip</span>
                         </a>
+                        @endif
+
+                        {{-- Menu Manajemen Arsip - hanya untuk Petugas (bukan Admin, karena Admin pakai sidebar) --}}
+                        @if($userRole === 'Petugas')
+                        <a href="{{ route('dokumen.index') }}"
+                           class="nav-link btn {{ in_array($currentRoute, ['dokumen.index', 'dokumen.edit', 'dokumen_upload.page']) ? 'active-menu' : 'btn-light' }} sidebar-item border d-flex align-items-center gap-3">
+                            <span class="menu-icon"><i class="bi bi-folder"></i></span>
+                            <span class="menu-text">Manajemen Arsip</span>
+                        </a>
+                        @endif
 
                         {{-- Menu Manajemen Pengguna - hanya untuk Admin --}}
                         @if($isAdmin)
@@ -270,5 +279,6 @@
             handleResize();
         });
     </script>
+    @stack('scripts')
 </body>
 </html>

@@ -74,16 +74,45 @@
                                         Sign into your account
                                     </h5>
 
+                                    {{-- Alert untuk pesan sukses --}}
+                                    @if(session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
+
+                                    {{-- Alert untuk pesan error --}}
+                                    @if(session('error'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
+
+                                    {{-- Alert untuk validation errors --}}
+                                    @if($errors->any())
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <ul class="mb-0 ps-3">
+                                            @foreach($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
+
                                     <!-- INPUT EMAIL -->
                                     <div class="mb-3">
                                         <label class="form-label small fw-semibold" for="formEmail">Email Address</label>
-                                        <input type="email" id="formEmail" name="email" class="form-control form-control-lg" required>
+                                        <input type="email" id="formEmail" name="email" class="form-control form-control-lg @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
                                     </div>
 
                                     <!-- INPUT PASSWORD -->
                                     <div class="mb-3">
                                         <label class="form-label small fw-semibold" for="formPassword">Password</label>
-                                        <input type="password" id="formPassword" name="password" class="form-control form-control-lg" required>
+                                        <input type="password" id="formPassword" name="password" class="form-control form-control-lg @error('password') is-invalid @enderror" required>
                                     </div>
 
                                     <div class="pt-1 mb-4 text-center">
@@ -106,5 +135,6 @@
                 </div>
             </div>
         </section>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

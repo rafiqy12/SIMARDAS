@@ -26,18 +26,13 @@ Route::middleware('auth')->group(function () {
     // Home page untuk user yang sudah login
     Route::get('home', [Home::class, 'ShowHomePage'])->name('home.page');
 
-    // Dokumen - akses untuk semua user yang sudah login
+    // Dokumen - akses untuk semua user yang sudah login (hanya baca/lihat)
     Route::controller(DokumenController::class)->group(function () {
         Route::get('search', 'search')->name('search.page');
         Route::get('dokumen/{id}', 'show')->name('dokumen.detail');
         Route::get('dokumen/{id}/download', 'download')->name('dokumen.download');
         Route::get('dokumen/{id}/preview', 'preview')->name('dokumen.preview');
         Route::get('dokumen_isi', 'isi')->name('dokumen_isi.page');
-        Route::get('scan_dokumen', 'scanPage')->name('scan_dokumen.page');
-        Route::post('scan_dokumen', 'scanStore')->name('scan_dokumen.store');
-        
-        // Halaman arsip dengan tampilan public (navbar biasa) - untuk Petugas
-        Route::get('arsip', 'publicIndex')->name('arsip.public');
     });
 });
 
@@ -47,9 +42,17 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'petugas'])->group(function () {
     // Manajemen Arsip/Dokumen - bisa diakses Admin dan Petugas
     Route::controller(DokumenController::class)->group(function () {
+        // Scan dokumen - hanya Petugas dan Admin
+        Route::get('scan_dokumen', 'scanPage')->name('scan_dokumen.page');
+        Route::post('scan_dokumen', 'scanStore')->name('scan_dokumen.store');
+        
+        // Upload dokumen
         Route::get('dokumen_upload', 'uploadPage')->name('dokumen_upload.page');
         Route::post('dokumen/upload', 'uploadStore')->name('dokumen_upload.store');
+        
+        // Manajemen arsip
         Route::get('manajemen_arsip', 'index')->name('dokumen.index');
+        Route::get('arsip', 'publicIndex')->name('arsip.public');
         Route::get('arsip/{id}/edit', 'edit')->name('dokumen.edit');
         Route::put('arsip/{id}', 'update')->name('dokumen.update');
         Route::delete('arsip/{id}', 'destroy')->name('dokumen.destroy');
@@ -68,8 +71,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('manajemen_user', 'index')->name('user.index');
         Route::get('user/create', 'create')->name('user.create');
         Route::post('user', 'store')->name('user.store');
-        Route::get('user/{user}/edit', 'edit')->name('user.edit');
-        Route::put('user/{user}', 'update')->name('user.update');
-        Route::delete('user/{user}', 'destroy')->name('user.destroy');
+        Route::get('user/{user:id_user}/edit', 'edit')->name('user.edit');
+        Route::put('user/{user:id_user}', 'update')->name('user.update');
+        Route::delete('user/{user:id_user}', 'destroy')->name('user.destroy');
     });
 });
