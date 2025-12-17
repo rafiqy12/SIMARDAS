@@ -74,27 +74,51 @@
 										Create your account
 									</h5>
 
-									<!-- INPUT NAME -->
-									<div class="mb-3">
-										<label class="form-label small fw-semibold" for="formName">Full Name</label>
-										<input type="text" id="formName" name="name" class="form-control form-control-lg" required autofocus />
-									</div>
+                                    {{-- Alert untuk pesan sukses --}}
+                                    @if(session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
 
-									<!-- INPUT EMAIL -->
-									<div class="mb-3">
-										<label class="form-label small fw-semibold" for="formEmail">Email Address</label>
-										<input type="email" id="formEmail" name="email" class="form-control form-control-lg" required />
-									</div>
+                                    {{-- Alert untuk pesan error --}}
+                                    @if(session('error'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
 
-									<!-- INPUT PASSWORD -->
-									<div class="mb-3">
-										<label class="form-label small fw-semibold" for="formPassword">Password</label>
-										<input type="password" id="formPassword" name="password" class="form-control form-control-lg" required />
-									</div>
+                                    {{-- Alert untuk validation errors --}}
+                                    @if($errors->any())
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <ul class="mb-0 ps-3">
+                                            @foreach($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
 
-									<!-- INPUT PASSWORD CONFIRMATION -->
-									<div class="mb-3">
-										<label class="form-label small fw-semibold" for="formPasswordConfirm">Confirm Password</label>
+                                    <!-- INPUT NAME -->
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" for="formName">Full Name</label>
+                                        <input type="text" id="formName" name="name" class="form-control form-control-lg @error('name') is-invalid @enderror" value="{{ old('name') }}" required autofocus />
+                                    </div>
+
+                                    <!-- INPUT EMAIL -->
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" for="formEmail">Email Address</label>
+                                        <input type="email" id="formEmail" name="email" class="form-control form-control-lg @error('email') is-invalid @enderror" value="{{ old('email') }}" required />
+                                    </div>
+
+                                    <!-- INPUT PASSWORD -->
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" for="formPassword">Password</label>
+                                        <input type="password" id="formPassword" name="password" class="form-control form-control-lg @error('password') is-invalid @enderror" required />
 										<input type="password" id="formPasswordConfirm" name="password_confirmation" class="form-control form-control-lg" required />
 									</div>
 
@@ -117,5 +141,4 @@
 				</div>
 			</div>
 		</section>
-	</body>
-</html>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>

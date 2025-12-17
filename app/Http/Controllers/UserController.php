@@ -44,14 +44,14 @@ class UserController
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:user,email',
             'role' => 'required',
             'password' => 'required|min:6|confirmed',
         ]);
 
         User::create([
-            'nama' => $request->name,
+            'nama' => $request->nama,
             'email' => $request->email,
             'role' => $request->role,
             'password' => bcrypt($request->password),

@@ -142,9 +142,11 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="fiturDropdown">
                             <li><a class="dropdown-item" href="{{ route('search.page') }}">Search</a></li>
+                            @if(Auth::check() && in_array(Auth::user()->role, ['Admin', 'Petugas']))
                             <li><a class="dropdown-item" href="{{ route('scan_dokumen.page') }}">Scan</a></li>
                             <li><a class="dropdown-item" href="{{ route('dokumen_upload.page') }}">Upload</a></li>
-                            @if(Auth::check() && in_array(Auth::user()->role, ['Admin', 'Petugas']))
+                            @endif
+                            @if(Auth::check() && Auth::user()->role === 'Petugas')
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('arsip.public') }}">Manajemen Arsip</a></li>
                             @endif

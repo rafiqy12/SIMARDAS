@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\Dokumen;
 use App\Models\User;
+use App\Models\LogAktivitas;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
@@ -251,21 +252,21 @@ class DokumenController
 
         $path = $file->storeAs('documents', $namaFile, 'public');
 
-        Dokumen::create([
+        $dokumen = Dokumen::create([
             'id_user'        => auth()->user()->id_user,
             'judul'          => $request->judul,
             'deskripsi'      => $request->deskripsi,
             'kategori'       => $request->kategori,
             'tipe_file'      => $ext,
-            'tanggal_upload' => now()->toDateString(),
+            'tanggal_upload' => now(),
             'path_file'      => $path
         ]);
 
-        DB::table('log_aktivitas')->insert([
+        LogAktivitas::create([
             'id_user' => auth()->user()->id_user,
             'waktu_aktivitas' => now(),
-            'jenis_aktivitas' => 'Upload Dokumen',
-            'deskripsi' => 'Upload dokumen: ' . $request->judul
+            'jenis_aktivitas' => 'Upload Arsip',
+            'deskripsi' => 'Mengupload arsip: ' . $request->judul
         ]);
 
         return back()->with('success', 'Dokumen berhasil diupload');
@@ -315,10 +316,18 @@ class DokumenController
         ]);
 
         $dokumen = Dokumen::findOrFail($id);
+        $judulLama = $dokumen->judul;
         $dokumen->judul = $request->judul;
         $dokumen->kategori = $request->kategori;
         $dokumen->deskripsi = $request->deskripsi;
         $dokumen->save();
+
+        LogAktivitas::create([
+            'id_user' => auth()->user()->id_user,
+            'waktu_aktivitas' => now(),
+            'jenis_aktivitas' => 'Update Arsip',
+            'deskripsi' => 'Mengupdate arsip: ' . $request->judul
+        ]);
 
         return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil diupdate');
     }
@@ -329,6 +338,7 @@ class DokumenController
     public function destroy($id)
     {
         $dokumen = Dokumen::findOrFail($id);
+        $judulDokumen = $dokumen->judul;
 
         DB::table('barcode')->where('id_dokumen', $id)->delete();
 
@@ -337,6 +347,13 @@ class DokumenController
         }
 
         $dokumen->delete();
+
+        LogAktivitas::create([
+            'id_user' => auth()->user()->id_user,
+            'waktu_aktivitas' => now(),
+            'jenis_aktivitas' => 'Hapus Arsip',
+            'deskripsi' => 'Menghapus arsip: ' . $judulDokumen
+        ]);
 
         return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil dihapus');
     }

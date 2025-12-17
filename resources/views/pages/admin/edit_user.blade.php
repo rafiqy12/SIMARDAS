@@ -15,28 +15,51 @@
                 <form method="POST" action="{{ route('user.update', $user->id_user) }}">
                     @csrf
                     @method('PUT')
+
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
                     <div class="mb-3">
                         <label class="form-label small fw-semibold" for="formName">Nama Lengkap Pengguna</label>
-                        <input type="text" id="formName" name="nama" class="form-control" value="{{ old('nama', $user->nama) }}" required autofocus />
+                        <input type="text" id="formName" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $user->nama) }}" required autofocus />
+                        @error('nama')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-semibold" for="formRole">Role</label>
-                        <select name="role" id="formRole" class="form-select">
+                        <select name="role" id="formRole" class="form-select @error('role') is-invalid @enderror">
                             <option value="Admin" {{ old('role', $user->role)==='Admin' ? 'selected' : '' }}>Admin</option>
                             <option value="Petugas" {{ old('role', $user->role)==='Petugas' ? 'selected' : '' }}>Petugas</option>
-                            <option value="User" {{ old('role', $user->role)==='User' ? 'selected' : '' }}>User</option>
+                            <option value="Umum" {{ old('role', $user->role)==='Umum' ? 'selected' : '' }}>Umum</option>
                         </select>
+                        @error('role')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-semibold" for="formEmail">Email Address</label>
-                        <input type="email" id="formEmail" name="email" class="form-control" value="{{ old('email', $user->email) }}" required />
+                        <input type="email" id="formEmail" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required />
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-semibold" for="formPassword">Password (isi jika ingin ganti)</label>
-                        <input type="password" id="formPassword" name="password" class="form-control" />
+                        <input type="password" id="formPassword" name="password" class="form-control @error('password') is-invalid @enderror" />
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">

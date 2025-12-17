@@ -31,6 +31,9 @@ class Dokumen extends Model
         return $this->hasOne(\App\Models\Barcode::class, 'id_dokumen', 'id_dokumen');
     }
 
+    /**
+     * Get formatted file size
+     */
     public function getFileSizeAttribute()
     {
         if (is_null($this->ukuran_file)) {
