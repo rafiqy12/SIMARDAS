@@ -514,8 +514,8 @@
                             <span class="menu-text">Dashboard</span>
                         </a>
 
-                        <a href="#"
-                           class="nav-link btn btn-light sidebar-item d-flex align-items-center gap-3">
+                        <a href="{{ route('backup.index') }}"
+                           class="nav-link btn btn-light sidebar-item border d-flex align-items-center gap-3">
                             <span class="menu-icon"><i class="bi bi-cloud-arrow-down"></i></span>
                             <span class="menu-text">Backup dan Restore Data</span>
                         </a>

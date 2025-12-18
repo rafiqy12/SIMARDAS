@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\Home;
@@ -44,11 +45,11 @@ Route::middleware(['auth', 'petugas'])->group(function () {
         // Scan dokumen - hanya Petugas dan Admin
         Route::get('scan_dokumen', 'scanPage')->name('scan_dokumen.page');
         Route::post('scan_dokumen', 'scanStore')->name('scan_dokumen.store');
-        
+
         // Upload dokumen
         Route::get('dokumen_upload', 'uploadPage')->name('dokumen_upload.page');
         Route::post('dokumen/upload', 'uploadStore')->name('dokumen_upload.store');
-        
+
         // Manajemen arsip
         Route::get('manajemen_arsip', 'index')->name('dokumen.index');
         Route::get('arsip', 'publicIndex')->name('arsip.public');
@@ -61,6 +62,16 @@ Route::middleware(['auth', 'petugas'])->group(function () {
 // =============================================
 // ADMIN ROUTES (Harus login + role Admin saja)
 // =============================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');
+    Route::post('/backup/create', [BackupController::class, 'create'])->name('backup.create');
+    Route::get('/backup/download/{id}', [BackupController::class, 'download'])->name('backup.download');
+    Route::post('/backup/restore', [BackupController::class, 'restore'])
+        ->name('backup.restore');
+    Route::post('/backup/{id}/restore', [BackupController::class, 'restoreById'])
+        ->name('backup.restore.byid');
+});
+
 Route::middleware(['auth', 'admin'])->group(function () {
     // Dashboard Admin
     Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])->name('dashboard.page');
