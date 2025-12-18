@@ -107,23 +107,25 @@ class DokumenController
     {
         $doc = Dokumen::findOrFail($id);
 
-        // path_file hanya nama file, contoh: laporan-rapat.pdf
-        $fullPath = storage_path(
-            'app/public/documents/' . $doc->path_file
-        );
+        // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
+        $pathFile = $doc->path_file;
+        
+        // Jika path sudah include "documents/", gunakan langsung
+        if (str_starts_with($pathFile, 'documents/')) {
+            $storagePath = $pathFile;
+        } else {
+            $storagePath = 'documents/' . $pathFile;
+        }
+
+        $fullPath = storage_path('app/public/' . $storagePath);
 
         abort_if(!file_exists($fullPath), 404, 'File tidak ditemukan');
 
         // Nama file saat diunduh (pakai judul dokumen)
-        $downloadName = Str::slug($doc->judul) . '.pdf';
+        $ext = pathinfo($pathFile, PATHINFO_EXTENSION) ?: 'pdf';
+        $downloadName = Str::slug($doc->judul) . '.' . $ext;
 
-        return response()->download(
-            $fullPath,
-            $downloadName,
-            [
-                'Content-Type' => 'application/pdf'
-            ]
-        );
+        return response()->download($fullPath, $downloadName);
     }
 
 
@@ -137,25 +139,42 @@ class DokumenController
     }
 
     /**
-     * Halaman isi dokumen
+     * Halaman isi dokumen / Preview
      */
     public function preview($id)
     {
-        $dokumen = Dokumen::findOrFail($id);
+        $dokumen = Dokumen::with('user')->findOrFail($id);
 
-        $path = 'documents/' . $dokumen->path_file;
+        // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
+        $pathFile = $dokumen->path_file;
+        
+        if (str_starts_with($pathFile, 'documents/')) {
+            $storagePath = $pathFile;
+        } else {
+            $storagePath = 'documents/' . $pathFile;
+        }
 
-        if (!Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('public')->exists($storagePath)) {
             abort(404, 'File tidak ditemukan');
         }
 
-        return response()->file(
-            storage_path('app/public/' . $path),
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . $dokumen->path_file . '"'
-            ]
-        );
+        $ext = strtolower(pathinfo($pathFile, PATHINFO_EXTENSION));
+        $previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $canPreview = in_array($ext, $previewableTypes);
+
+        // Jika tidak bisa preview, redirect ke halaman detail
+        if (!$canPreview) {
+            return redirect()->route('dokumen.detail', $id);
+        }
+
+        // Jika bisa preview (PDF/gambar), tampilkan langsung
+        $fullPath = storage_path('app/public/' . $storagePath);
+        $mimeType = mime_content_type($fullPath) ?: 'application/octet-stream';
+
+        return response()->file($fullPath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . basename($pathFile) . '"'
+        ]);
     }
 
     /**

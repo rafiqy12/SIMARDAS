@@ -12,10 +12,12 @@
         transition: all 0.3s ease;
         overflow: hidden;
         position: relative;
+        border: 1px solid var(--primary-100);
     }
     .stat-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15) !important;
+        border-color: var(--primary-300);
     }
     .stat-card .stat-icon {
         width: 60px;
@@ -30,6 +32,10 @@
         font-size: 2rem;
         font-weight: 700;
         line-height: 1.2;
+        background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     .stat-card .stat-label {
         font-size: 0.85rem;
@@ -42,20 +48,6 @@
         border-radius: 20px;
     }
     
-    /* Gradient backgrounds - Harmonious Color Palette */
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    }
-    .bg-gradient-success {
-        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-    }
-    .bg-gradient-warning {
-        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-    }
-    .bg-gradient-info {
-        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-    }
-    
     /* Activity Card */
     .activity-item {
         padding: 12px;
@@ -64,13 +56,13 @@
         border-left: 3px solid transparent;
     }
     .activity-item:hover {
-        background: #f8f9fa;
+        background: var(--primary-50);
     }
     .activity-item.upload {
         border-left-color: #10b981;
     }
     .activity-item.update {
-        border-left-color: #3b82f6;
+        border-left-color: var(--primary-500);
     }
     .activity-item.delete {
         border-left-color: #ef4444;
@@ -89,7 +81,7 @@
     }
     .activity-icon.update {
         background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
+        color: var(--primary-500);
     }
     .activity-icon.delete {
         background: rgba(239, 68, 68, 0.1);
@@ -98,14 +90,14 @@
     
     /* Quick Action Buttons */
     .quick-action-btn {
-        border: 2px dashed #dee2e6;
+        border: 2px dashed var(--primary-200);
         border-radius: 16px;
         transition: all 0.3s ease;
         background: #fff;
     }
     .quick-action-btn:hover {
-        border-color: #6366f1;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+        border-color: var(--primary-500);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
         transform: scale(1.02);
     }
     .quick-action-btn i {
@@ -113,11 +105,13 @@
     }
     .quick-action-btn:hover i {
         transform: scale(1.2);
+        color: var(--primary-600);
     }
     
     /* Progress bar animation */
     .progress-animated .progress-bar {
         animation: progressAnimation 1.5s ease-out;
+        background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-600) 100%);
     }
     @keyframes progressAnimation {
         from { width: 0; }
@@ -130,7 +124,7 @@
         transition: all 0.2s ease;
     }
     .kategori-item:hover {
-        background: rgba(99, 102, 241, 0.1);
+        background: var(--primary-50);
     }
     
     /* Counter animation */
@@ -141,9 +135,11 @@
     /* Card hover effect */
     .card-hover {
         transition: all 0.3s ease;
+        border: 1px solid var(--primary-100);
     }
     .card-hover:hover {
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 5px 20px rgba(37, 99, 235, 0.1) !important;
+        border-color: var(--primary-200);
     }
     
     /* Pulse animation for online status */
@@ -156,9 +152,9 @@
         100% { opacity: 1; }
     }
     
-    /* Welcome section */
+    /* Welcome section - Blue Theme */
     .welcome-section {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
         border-radius: 20px;
         position: relative;
         overflow: hidden;
@@ -183,6 +179,20 @@
         background: rgba(255,255,255,0.05);
         border-radius: 50%;
     }
+    
+    /* Gradient backgrounds - Blue Primary Theme */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    }
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    }
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+    }
 </style>
 @endpush
 
@@ -200,7 +210,7 @@
                 </p>
             </div>
             <div class="mt-3 mt-md-0">
-                <span class="badge bg-white px-3 py-2 fs-6" style="color: #6366f1;">
+                <span class="badge bg-white px-3 py-2 fs-6" style="color: #2563eb;">
                     <i class="bi bi-shield-check me-1"></i>{{ Auth::user()->role ?? 'Admin' }}
                 </span>
             </div>

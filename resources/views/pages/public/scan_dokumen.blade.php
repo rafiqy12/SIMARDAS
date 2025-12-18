@@ -1,14 +1,74 @@
 @extends('layouts.app')
+
+@push('styles')
+<style>
+    .scan-card {
+        border-radius: 16px;
+        border: 1px solid #dbeafe;
+        transition: all 0.3s ease;
+    }
+    .scan-card:hover {
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+    }
+    .scan-title {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .camera-container {
+        border: 3px solid #3b82f6;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #000;
+    }
+    .btn-capture {
+        border-radius: 50px;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border: none;
+        padding: 12px 24px;
+        transition: all 0.3s ease;
+    }
+    .btn-capture:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+    }
+    .btn-upload {
+        border-radius: 10px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(37, 99, 235, 0.35);
+    }
+    .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(37, 99, 235, 0.35);
+    }
+    .preview-img {
+        border: 2px solid #3b82f6 !important;
+        border-radius: 8px !important;
+    }
+</style>
+@endpush
+
 @section('content')
 
 <div class="container py-3 py-md-4">
 	<div class="row justify-content-center">
 		<div class="col-12 col-lg-7">
-			<div class="card shadow-sm mb-4">
+			<div class="card shadow-sm scan-card mb-4">
 				<div class="card-body p-3 p-md-4">
-					<h4 class="fw-bold text-primary mb-4 text-center fs-5 fs-md-4">
-						Scan & Upload Dokumen
-					</h4>
+					<div class="text-center mb-4">
+                        <div class="mx-auto mb-3" style="width: 60px; height: 60px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-camera-fill" style="color: #2563eb; font-size: 1.8rem;"></i>
+                        </div>
+                        <h4 class="fw-bold scan-title mb-1 fs-5 fs-md-4">
+                            Scan & Upload Dokumen
+                        </h4>
+                        <p class="text-muted small mb-0">Gunakan kamera untuk memindai dokumen</p>
+                    </div>
 
 					{{-- Alert untuk pesan sukses --}}
 					@if(session('success'))
@@ -47,14 +107,16 @@
 
 						{{-- CAMERA --}}
 						<div class="mb-3">
-							<label class="form-label small fw-semibold">Scan Dokumen dengan Kamera</label>
+							<label class="form-label small fw-semibold" style="color: #374151;">
+                                <i class="bi bi-camera me-1" style="color: #3b82f6;"></i>Scan Dokumen dengan Kamera
+                            </label>
 
-							<div class="position-relative mb-2"
+							<div class="position-relative mb-3 camera-container"
 								style="width:100%;max-width:100%;margin:auto;">
 								<video id="cameraPreview"
 									autoplay
 									playsinline
-									style="width:100%;border-radius:12px;background:#000;"></video>
+									style="width:100%;background:#000;"></video>
 
 								<canvas id="captureCanvas" style="display:none;"></canvas>
 
@@ -63,7 +125,7 @@
 										<rect x="40" y="30"
 											width="320" height="240"
 											fill="none"
-											stroke="red"
+											stroke="#3b82f6"
 											stroke-width="4"
 											rx="12" />
 									</svg>
@@ -72,7 +134,7 @@
 
 							<div class="text-center">
 								<button type="button"
-									class="btn btn-danger"
+									class="btn btn-capture text-white"
 									id="captureBtn">
 									<i class="bi bi-camera me-1"></i> Ambil Foto
 								</button>
@@ -81,7 +143,9 @@
 
 						{{-- PREVIEW --}}
 						<div class="mb-3" id="previewContainer" style="display:none;">
-							<label class="form-label small fw-semibold">Preview Hasil Scan</label>
+							<label class="form-label small fw-semibold" style="color: #374151;">
+                                <i class="bi bi-images me-1" style="color: #3b82f6;"></i>Preview Hasil Scan
+                            </label>
 							<div id="previewList" class="d-flex flex-wrap gap-2"></div>
 						</div>
 
@@ -90,15 +154,20 @@
 
 						{{-- FORM DATA --}}
 						<div class="mb-3">
-							<label class="form-label small fw-semibold">Judul Dokumen</label>
+							<label class="form-label small fw-semibold" style="color: #374151;">
+                                <i class="bi bi-file-earmark-text me-1" style="color: #3b82f6;"></i>Judul Dokumen
+                            </label>
 							<input type="text"
 								name="judul"
 								class="form-control"
-								required>
+								required
+                                placeholder="Masukkan judul dokumen">
 						</div>
 
 						<div class="mb-3">
-							<label class="form-label small fw-semibold">Kategori Dokumen</label>
+							<label class="form-label small fw-semibold" style="color: #374151;">
+                                <i class="bi bi-folder me-1" style="color: #3b82f6;"></i>Kategori Dokumen
+                            </label>
 							<select name="kategori" class="form-select" required>
 								<option value="">-- Pilih Kategori --</option>
 								<option value="Administrasi">Administrasi</option>
@@ -109,22 +178,25 @@
 							</select>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label small fw-semibold">Deskripsi (Opsional)</label>
+						<div class="mb-4">
+							<label class="form-label small fw-semibold" style="color: #374151;">
+                                <i class="bi bi-card-text me-1" style="color: #3b82f6;"></i>Deskripsi (Opsional)
+                            </label>
 							<textarea name="deskripsi"
 								class="form-control"
-								rows="3"></textarea>
+								rows="3"
+                                placeholder="Tambahkan deskripsi dokumen (opsional)"></textarea>
 						</div>
 
 						<div class="d-flex gap-2 flex-wrap">
 							<button type="submit"
-								class="btn btn-primary"
+								class="btn btn-upload text-white"
 								id="uploadBtn"
 								style="display:none;">
 								<i class="bi bi-upload me-1"></i> Upload Dokumen
 							</button>
 							<a href="{{ url()->previous() }}"
-								class="btn btn-secondary">
+								class="btn btn-back text-white">
 								<i class="bi bi-arrow-left me-1"></i> Kembali
 							</a>
 						</div>
@@ -185,7 +257,7 @@
 							const img = document.createElement('img');
 							img.src = dataUrl;
 							img.style.height = '100px';
-							img.classList.add('rounded', 'border');
+							img.classList.add('rounded', 'border', 'preview-img');
 							previewList.appendChild(img);
 
 							previewContainer.style.display = 'block';
