@@ -70,7 +70,7 @@ class BackupController
             'id_user' => auth()->user()->id_user,
             'tanggal_backup' => now(),
             'lokasi_file' => "backup/{$backupName}.zip",
-            'status' => 'SUCCESS',
+            'status' => 'success',
             'ukuran_file' => filesize($zipPath),
         ]);
 
@@ -190,6 +190,64 @@ class BackupController
             }
         }
     }
+
+    public function restoreById($id)
+    {
+        $backup = Backup::findOrFail($id);
+        $zipPath = storage_path('app/' . $backup->lokasi_file);
+
+        if (!file_exists($zipPath)) {
+            return redirect()->route('backup.index')->with('error', 'File backup tidak ditemukan');
+        }
+
+        try {
+            $restoreDir = storage_path('app/restore_temp');
+
+            // Bersihkan folder sementara jika ada
+            $this->deleteDirectory($restoreDir);
+            mkdir($restoreDir, 0755, true);
+
+            // Extract ZIP
+            $zip = new \ZipArchive;
+            if ($zip->open($zipPath) !== true) {
+                throw new \Exception('Gagal membuka file ZIP');
+            }
+            $zip->extractTo($restoreDir);
+            $zip->close();
+
+            $sqlFile = $restoreDir . '/database.sql';
+            if (!file_exists($sqlFile)) {
+                throw new \Exception('File database.sql tidak ditemukan di backup');
+            }
+
+            // Restore Database
+            $db = config('database.connections.mysql');
+            $mysql = 'C:\xampp\mysql\bin\mysql'; // sesuaikan dengan path MySQL
+
+            $command = "\"$mysql\" --user={$db['username']} --password={$db['password']} {$db['database']} < \"$sqlFile\"";
+            exec($command, $output, $result);
+
+            if ($result !== 0) {
+                throw new \Exception('Restore database gagal');
+            }
+
+            // Restore Dokumen
+            $sourceDocs = $restoreDir . '/documents';
+            $targetDocs = storage_path('app/public/documents');
+
+            if (file_exists($sourceDocs)) {
+                $this->copyFolder($sourceDocs, $targetDocs);
+            }
+
+            // Bersihkan folder sementara
+            $this->deleteDirectory($restoreDir);
+
+            return redirect()->route('backup.index')->with('success', 'Restore sistem berhasil');
+        } catch (\Exception $e) {
+            return redirect()->route('backup.index')->with('error', 'Restore gagal: ' . $e->getMessage());
+        }
+    }
+
 
     /** =========================
      * HELPER FUNCTIONS

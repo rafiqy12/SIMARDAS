@@ -98,24 +98,22 @@
                                 </span>
                                 @endif
                             </td>
-
+                            
                             <td class="text-center">
                                 <a href="{{ route('backup.download', $b->id_backup) }}"
                                     class="btn btn-success btn-sm mb-1">
                                     <i class="bi bi-download"></i>
                                 </a>
-
                                 <form action="{{ route('backup.restore.byid', $b->id_backup) }}"
                                     method="POST"
                                     class="d-inline"
-                                    onsubmit="return confirmRestore()">
+                                    onsubmit="return confirm('Apakah Anda yakin ingin merestore backup ini? Semua data saat ini akan tergantikan.')">
                                     @csrf
                                     <button class="btn btn-danger btn-sm">
                                         <i class="bi bi-arrow-clockwise"></i>
                                     </button>
                                 </form>
                             </td>
-
                         </tr>
                         @empty
                         <tr>
