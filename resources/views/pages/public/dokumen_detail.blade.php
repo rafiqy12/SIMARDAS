@@ -1,56 +1,84 @@
 @extends('layouts.app')
 @section('content')
 
+<style>
+    .detail-card {
+        border-radius: 16px;
+        border: 1px solid #dbeafe;
+    }
+    .doc-icon {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border: 2px solid #93c5fd;
+        border-radius: 12px;
+    }
+    .info-table th {
+        background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+        color: #1e40af;
+    }
+    .barcode-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+    }
+    .btn-action {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
 <div class="container py-3 py-md-4">
 	<div class="row justify-content-center">
 		<div class="col-12 col-lg-8">
-			<div class="card shadow-sm mb-4">
+			<div class="card shadow-sm mb-4 detail-card">
 				<div class="card-body p-3 p-md-4">
 					<div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center mb-4 gap-3">
-						<div class="bg-danger bg-opacity-10 rounded d-flex align-items-center justify-content-center flex-shrink-0" style="width:60px; height:60px;">
-							<strong class="small">{{ $document->tipe_file ?? '-' }}</strong>
+						<div class="doc-icon d-flex align-items-center justify-content-center flex-shrink-0" style="width:60px; height:60px;">
+							<strong class="small" style="color: #1d4ed8;">{{ $document->tipe_file ?? '-' }}</strong>
 						</div>
 						<div>
-							<h4 class="fw-bold text-primary mb-1 fs-5 fs-md-4">{{ $document->judul ?? 'Judul Dokumen' }}</h4>
+							<h4 class="fw-bold mb-1 fs-5 fs-md-4" style="color: #1d4ed8;">{{ $document->judul ?? 'Judul Dokumen' }}</h4>
 							<div class="text-muted small">
-								{{ $document->kategori ?? '-' }} •
-								{{ $document->tanggal_upload ?? '-' }} •
-								{{ $document->user->nama ?? '-' }}
+								<span class="badge" style="background: #dbeafe; color: #1d4ed8;">{{ $document->kategori ?? '-' }}</span>
+								<span class="ms-1"><i class="bi bi-calendar"></i> {{ $document->tanggal_upload ?? '-' }}</span>
+								<span class="ms-1"><i class="bi bi-person"></i> {{ $document->user->nama ?? '-' }}</span>
 							</div>
 						</div>
 					</div>
 
 					<div class="mb-3">
-						<h6 class="fw-bold">Deskripsi</h6>
-						<p class="small">{{ $document->deskripsi ?? '-' }}</p>
+						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-file-text me-2" style="color: #3b82f6;"></i>Deskripsi</h6>
+						<p class="small text-muted">{{ $document->deskripsi ?? '-' }}</p>
 					</div>
 
 					<div class="mb-3">
-						<h6 class="fw-bold">Informasi Dokumen</h6>
+						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-info-circle me-2" style="color: #3b82f6;"></i>Informasi Dokumen</h6>
 						<div class="table-responsive">
-							<table class="table table-bordered table-sm">
+							<table class="table table-bordered table-sm info-table" style="border-radius: 8px; overflow: hidden;">
 								<tr>
-									<th class="bg-light" style="width: 40%;">Nama File</th>
+									<th style="width: 140px; white-space: nowrap;">Nama File</th>
 									<td>{{ $document->judul ?? '-' }}</td>
 								</tr>
 								<tr>
-									<th class="bg-light">Kategori</th>
+									<th>Kategori</th>
 									<td>{{ $document->kategori ?? '-' }}</td>
 								</tr>
 								<tr>
-									<th class="bg-light">Tipe</th>
-									<td>{{ $document->tipe_file ?? '-' }}</td>
+									<th>Tipe</th>
+									<td><span class="badge" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">{{ $document->tipe_file ?? '-' }}</span></td>
 								</tr>
 								<tr>
-									<th class="bg-light">Diunggah Oleh</th>
+									<th>Diunggah Oleh</th>
 									<td>{{ $document->user->nama ?? '-' }}</td>
 								</tr>
 								<tr>
-									<th class="bg-light">Tanggal Upload</th>
+									<th>Tanggal Upload</th>
 									<td>{{ $document->tanggal_upload ?? '-' }}</td>
 								</tr>
 								<tr>
-									<th class="bg-light">Ukuran File</th>
+									<th>Ukuran File</th>
 									<td>{{ $document->file_size ?? '-' }}</td>
 								</tr>
 							</table>
@@ -58,8 +86,8 @@
 					</div>
 
 					<div class="mb-4">
-						<h6 class="fw-bold">Barcode Arsip</h6>
-						<div class="card shadow-sm">
+						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-upc-scan me-2" style="color: #3b82f6;"></i>Barcode Arsip</h6>
+						<div class="card barcode-card">
 							<div class="card-body text-center p-3">
 								@if($document->barcode)
 								{{-- IMAGE BARCODE --}}
@@ -69,31 +97,48 @@
 									class="img-fluid mb-2" style="max-width: 250px;">
 								{{-- TEXT BARCODE --}}
 								<div class="mt-2">
-									<span class="badge bg-secondary">
+									<span class="badge" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
 										{{ $document->barcode->kode_barcode }}
 									</span>
 								</div>
 								<small class="text-muted d-block mt-1">
-									Digenerate: {{ $document->barcode->tanggal_generate }}
+									<i class="bi bi-clock me-1"></i>Digenerate: {{ $document->barcode->tanggal_generate }}
 								</small>
 								@else
-								<span class="text-muted">Barcode belum tersedia</span>
+								<i class="bi bi-upc display-4" style="color: #93c5fd;"></i>
+								<p class="text-muted mt-2 mb-0">Barcode belum tersedia</p>
 								@endif
 							</div>
 						</div>
 					</div>
 
 					<div class="d-flex flex-wrap gap-2">
+						@php
+							$previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+							$canPreview = in_array(strtolower($document->tipe_file), $previewableTypes);
+						@endphp
+						
+						@if($canPreview)
 						<a href="{{ route('dokumen.preview', $document->id_dokumen) }}"
-							class="btn btn-outline-primary btn-sm"
+							class="btn btn-outline-primary btn-sm btn-action"
 							target="_blank">
 							<i class="bi bi-eye"></i> Preview
 						</a>
+						@else
+						<button type="button" 
+							class="btn btn-outline-primary btn-sm btn-action btn-preview-unavailable"
+							data-title="{{ $document->judul }}"
+							data-type="{{ strtoupper($document->tipe_file) }}"
+							data-download-url="{{ route('dokumen.download', $document->id_dokumen) }}">
+							<i class="bi bi-eye"></i> Preview
+						</button>
+						@endif
+						
 						<a href="{{ route('dokumen.download', $document->id_dokumen) }}"
-							class="btn btn-success btn-sm">
+							class="btn btn-success btn-sm btn-action">
 							<i class="bi bi-download"></i> Unduh
 						</a>
-						<a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm">
+						<a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm btn-action">
 							<i class="bi bi-arrow-left"></i> Kembali
 						</a>
 					</div>
@@ -104,3 +149,47 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-preview-unavailable').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const title = this.dataset.title;
+            const type = this.dataset.type;
+            const downloadUrl = this.dataset.downloadUrl;
+            
+            Swal.fire({
+                title: '<i class="bi bi-exclamation-circle" style="color: #f59e0b;"></i>',
+                html: `
+                    <div style="text-align: center;">
+                        <h5 style="color: #1e293b; margin-bottom: 0.5rem;">Preview Tidak Tersedia</h5>
+                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                            File dengan format <strong style="color: #3b82f6;">${type}</strong> tidak dapat ditampilkan di browser.
+                        </p>
+                        <div style="background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                            <small style="color: #64748b;">Nama File:</small><br>
+                            <strong style="color: #1e293b; font-size: 0.9rem;">${title}</strong>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-download me-1"></i> Download',
+                cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Tutup',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#64748b',
+                customClass: {
+                    popup: 'swal-popup-custom',
+                    confirmButton: 'swal-confirm-custom',
+                    cancelButton: 'swal-cancel-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = downloadUrl;
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush

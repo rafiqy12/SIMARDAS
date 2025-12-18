@@ -1,10 +1,59 @@
 {{-- Partial view untuk konten manajemen arsip (reusable di admin dan user) --}}
-<div class="card shadow-sm">
+<style>
+    .arsip-card {
+        border-radius: 16px;
+        border: 1px solid #dbeafe;
+        transition: all 0.3s ease;
+    }
+    .arsip-card:hover {
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+    }
+    .table-arsip thead {
+        background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+    }
+    .table-arsip thead th {
+        color: #1e40af;
+        font-weight: 600;
+        border-bottom: 2px solid #93c5fd;
+    }
+    .table-arsip tbody tr {
+        transition: all 0.2s ease;
+    }
+    .table-arsip tbody tr:hover {
+        background: #eff6ff;
+    }
+    .btn-action {
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    .badge-type {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border-radius: 6px;
+    }
+    .mobile-arsip-card {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    .mobile-arsip-card:hover {
+        border-color: #93c5fd;
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.1);
+    }
+</style>
+<div class="card shadow-sm arsip-card">
     <div class="card-body p-2 p-md-3">
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
-            <h5 class="fw-bold m-0 fs-6 fs-md-5">Daftar Arsip/Dokumen</h5>
+            <h5 class="fw-bold m-0 fs-6 fs-md-5" style="color: #1e293b;">
+                <i class="bi bi-folder2-open me-2" style="color: #3b82f6;"></i>Daftar Arsip/Dokumen
+            </h5>
             @if($canUpload ?? false)
-            <a href="{{ route('dokumen_upload.page') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> <span class="d-none d-sm-inline">Upload Dokumen</span><span class="d-sm-none">Upload</span></a>
+            <a href="{{ route('dokumen_upload.page') }}" class="btn btn-primary btn-sm" style="border-radius: 8px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none;">
+                <i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">Upload Dokumen</span><span class="d-sm-none">Upload</span>
+            </a>
             @endif
         </div>
 
@@ -12,19 +61,23 @@
         <div class="row mb-3 g-2">
             <div class="col-12 col-md-6">
                 <form method="GET" action="{{ $searchRoute ?? route('dokumen.index') }}" class="d-flex gap-2">
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari judul, kategori..." value="{{ $search ?? '' }}">
+                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari judul, kategori..." value="{{ $search ?? '' }}" style="border-radius: 8px; border: 1px solid #e2e8f0;">
                     <input type="hidden" name="per_page" value="{{ $perPage ?? 10 }}">
-                    <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 8px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none;">
+                        <i class="bi bi-search"></i>
+                    </button>
                     @if($search ?? false)
-                    <a href="{{ ($searchRoute ?? route('dokumen.index')) . '?per_page=' . ($perPage ?? 10) }}" class="btn btn-secondary btn-sm"><i class="bi bi-x-lg"></i></a>
+                    <a href="{{ ($searchRoute ?? route('dokumen.index')) . '?per_page=' . ($perPage ?? 10) }}" class="btn btn-secondary btn-sm" style="border-radius: 8px;">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
                     @endif
                 </form>
             </div>
             <div class="col-12 col-md-6 text-md-end">
                 <form method="GET" action="{{ $searchRoute ?? route('dokumen.index') }}" class="d-inline-flex align-items-center gap-2">
                     <input type="hidden" name="search" value="{{ $search ?? '' }}">
-                    <label class="mb-0 small">Tampilkan:</label>
-                    <select name="per_page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                    <label class="mb-0 small text-muted">Tampilkan:</label>
+                    <select name="per_page" class="form-select form-select-sm" style="width: auto; border-radius: 8px;" onchange="this.form.submit()">
                         <option value="5" {{ ($perPage ?? 10) == 5 ? 'selected' : '' }}>5</option>
                         <option value="10" {{ ($perPage ?? 10) == 10 ? 'selected' : '' }}>10</option>
                         <option value="25" {{ ($perPage ?? 10) == 25 ? 'selected' : '' }}>25</option>
@@ -38,41 +91,44 @@
         {{-- Mobile Card View --}}
         <div class="d-md-none">
             @forelse($dokumens as $index => $dokumen)
-            <div class="card mb-2">
+            <div class="card mb-2 mobile-arsip-card">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
-                            <h6 class="fw-bold mb-1">{{ $dokumen->judul }}</h6>
-                            <small class="text-muted">{{ $dokumen->kategori }} • <span class="badge bg-secondary">{{ strtoupper($dokumen->tipe_file) }}</span></small>
+                            <h6 class="fw-bold mb-1" style="color: #1e293b;">{{ $dokumen->judul }}</h6>
+                            <small class="text-muted">{{ $dokumen->kategori }} • <span class="badge badge-type">{{ strtoupper($dokumen->tipe_file) }}</span></small>
                         </div>
-                        <span class="badge bg-light text-dark">{{ $dokumens->firstItem() + $index }}</span>
+                        <span class="badge" style="background: #dbeafe; color: #1d4ed8;">{{ $dokumens->firstItem() + $index }}</span>
                     </div>
                     <div class="small text-muted mb-2">
-                        <i class="bi bi-calendar"></i> {{ $dokumen->tanggal_upload }} • <i class="bi bi-person"></i> {{ $dokumen->user->nama ?? '-' }}
+                        <i class="bi bi-calendar" style="color: #3b82f6;"></i> {{ $dokumen->tanggal_upload }} • <i class="bi bi-person" style="color: #3b82f6;"></i> {{ $dokumen->user->nama ?? '-' }}
                     </div>
                     <div class="d-flex gap-1 flex-wrap">
-                        <a href="{{ route('dokumen.detail', $dokumen->id_dokumen) }}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i></a>
-                        <a href="{{ route('dokumen.download', $dokumen->id_dokumen) }}" class="btn btn-success btn-sm"><i class="bi bi-download"></i></a>
+                        <a href="{{ route('dokumen.detail', $dokumen->id_dokumen) }}" class="btn btn-info btn-sm btn-action"><i class="bi bi-eye"></i></a>
+                        <a href="{{ route('dokumen.download', $dokumen->id_dokumen) }}" class="btn btn-success btn-sm btn-action"><i class="bi bi-download"></i></a>
                         @if($canEdit ?? false)
-                        <a href="{{ route('dokumen.edit', $dokumen->id_dokumen) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                        <form action="{{ route('dokumen.destroy', $dokumen->id_dokumen) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                        <a href="{{ route('dokumen.edit', $dokumen->id_dokumen) }}" class="btn btn-warning btn-sm btn-action"><i class="bi bi-pencil"></i></a>
+                        <form action="{{ route('dokumen.destroy', $dokumen->id_dokumen) }}" method="POST" class="d-inline delete-form" data-name="{{ $dokumen->judul }}">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-action"><i class="bi bi-trash"></i></button>
                         </form>
                         @endif
                     </div>
                 </div>
             </div>
             @empty
-            <div class="text-center text-muted py-4">Belum ada data arsip/dokumen</div>
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-4" style="color: #93c5fd;"></i>
+                <p class="text-muted mt-2">Belum ada data arsip/dokumen</p>
+            </div>
             @endforelse
         </div>
 
         {{-- Desktop Table View --}}
         <div class="table-responsive d-none d-md-block">
-            <table class="table table-bordered table-hover align-middle table-sm">
-                <thead class="table-light">
+            <table class="table table-hover align-middle table-sm table-arsip" style="border-radius: 12px; overflow: hidden;">
+                <thead>
                     <tr>
                         <th>No</th>
                         <th>Judul</th>
@@ -86,22 +142,22 @@
                 <tbody>
                     @forelse($dokumens as $index => $dokumen)
                     <tr>
-                        <td>{{ $dokumens->firstItem() + $index }}</td>
-                        <td>{{ $dokumen->judul }}</td>
+                        <td><span class="badge" style="background: #dbeafe; color: #1d4ed8;">{{ $dokumens->firstItem() + $index }}</span></td>
+                        <td class="fw-semibold" style="color: #1e293b;">{{ $dokumen->judul }}</td>
                         <td>{{ $dokumen->kategori }}</td>
-                        <td><span class="badge bg-secondary">{{ strtoupper($dokumen->tipe_file) }}</span></td>
+                        <td><span class="badge badge-type">{{ strtoupper($dokumen->tipe_file) }}</span></td>
                         <td>{{ $dokumen->tanggal_upload }}</td>
                         <td>{{ $dokumen->user->nama ?? '-' }}</td>
                         <td>
                             <div class="d-flex gap-1">
-                                <a href="{{ route('dokumen.detail', $dokumen->id_dokumen) }}" class="btn btn-info btn-sm" title="Detail"><i class="bi bi-eye"></i></a>
-                                <a href="{{ route('dokumen.download', $dokumen->id_dokumen) }}" class="btn btn-success btn-sm" title="Download"><i class="bi bi-download"></i></a>
+                                <a href="{{ route('dokumen.detail', $dokumen->id_dokumen) }}" class="btn btn-info btn-sm btn-action" title="Detail"><i class="bi bi-eye"></i></a>
+                                <a href="{{ route('dokumen.download', $dokumen->id_dokumen) }}" class="btn btn-success btn-sm btn-action" title="Download"><i class="bi bi-download"></i></a>
                                 @if($canEdit ?? false)
-                                <a href="{{ route('dokumen.edit', $dokumen->id_dokumen) }}" class="btn btn-warning btn-sm" title="Edit"><i class="bi bi-pencil"></i></a>
-                                <form action="{{ route('dokumen.destroy', $dokumen->id_dokumen) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus dokumen ini?')">
+                                <a href="{{ route('dokumen.edit', $dokumen->id_dokumen) }}" class="btn btn-warning btn-sm btn-action" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <form action="{{ route('dokumen.destroy', $dokumen->id_dokumen) }}" method="POST" class="d-inline delete-form" data-name="{{ $dokumen->judul }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="btn btn-danger btn-sm btn-action" title="Hapus"><i class="bi bi-trash"></i></button>
                                 </form>
                                 @endif
                             </div>
@@ -109,7 +165,10 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center">Belum ada data arsip/dokumen</td>
+                        <td colspan="7" class="text-center py-4">
+                            <i class="bi bi-inbox display-6" style="color: #93c5fd;"></i>
+                            <p class="text-muted mt-2 mb-0">Belum ada data arsip/dokumen</p>
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -120,6 +179,7 @@
         @if($dokumens->hasPages() || $dokumens->total() > 0)
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2">
             <div class="text-muted small">
+                <i class="bi bi-info-circle me-1" style="color: #3b82f6;"></i>
                 Menampilkan {{ $dokumens->firstItem() ?? 0 }} - {{ $dokumens->lastItem() ?? 0 }} dari {{ $dokumens->total() }} data
             </div>
             <div>

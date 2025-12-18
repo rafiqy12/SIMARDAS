@@ -32,7 +32,6 @@ Route::middleware('auth')->group(function () {
         Route::get('dokumen/{id}', 'show')->name('dokumen.detail');
         Route::get('dokumen/{id}/download', 'download')->name('dokumen.download');
         Route::get('dokumen/{id}/preview', 'preview')->name('dokumen.preview');
-        Route::get('dokumen_isi', 'isi')->name('dokumen_isi.page');
     });
 });
 
