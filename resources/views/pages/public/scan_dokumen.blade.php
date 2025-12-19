@@ -23,14 +23,14 @@
     }
     .btn-capture {
         border-radius: 50px;
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         border: none;
         padding: 12px 24px;
         transition: all 0.3s ease;
     }
     .btn-capture:hover {
         transform: scale(1.05);
-        box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+        box-shadow: 0 5px 20px rgba(37, 99, 235, 0.4);
     }
     .btn-upload {
         border-radius: 10px;
@@ -45,6 +45,18 @@
     .btn-upload:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 20px rgba(37, 99, 235, 0.35);
+    }
+    .btn-kembali {
+        border-radius: 10px;
+        background: transparent;
+        border: 2px solid #3b82f6;
+        color: #3b82f6 !important;
+        transition: all 0.3s ease;
+    }
+    .btn-kembali:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white !important;
+        transform: translateX(-3px);
     }
     .preview-img {
         border: 2px solid #3b82f6 !important;
@@ -116,20 +128,9 @@
 								<video id="cameraPreview"
 									autoplay
 									playsinline
-									style="width:100%;background:#000;"></video>
+									style="width:100%;display:block;background:#000;"></video>
 
 								<canvas id="captureCanvas" style="display:none;"></canvas>
-
-								<div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
-									<svg width="100%" height="100%" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
-										<rect x="40" y="30"
-											width="320" height="240"
-											fill="none"
-											stroke="#3b82f6"
-											stroke-width="4"
-											rx="12" />
-									</svg>
-								</div>
 							</div>
 
 							<div class="text-center">
@@ -196,7 +197,7 @@
 								<i class="bi bi-upload me-1"></i> Upload Dokumen
 							</button>
 							<a href="{{ url()->previous() }}"
-								class="btn btn-back text-white">
+								class="btn btn-kembali">
 								<i class="bi bi-arrow-left me-1"></i> Kembali
 							</a>
 						</div>

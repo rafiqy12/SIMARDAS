@@ -62,14 +62,6 @@ Route::middleware(['auth', 'petugas'])->group(function () {
 // =============================================
 // ADMIN ROUTES (Harus login + role Admin saja)
 // =============================================
-Route::middleware(['auth'])->group(function () {
-    Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');
-    Route::post('/backup/create', [BackupController::class, 'create'])->name('backup.create');
-    Route::get('/backup/download/{id}', [BackupController::class, 'download'])->name('backup.download');
-    Route::post('/backup/restore', [BackupController::class, 'restore'])->name('backup.restore');
-    Route::post('/backup/restore/{id}', [BackupController::class, 'restoreById'])->name('backup.restore.byid');
-});
-
 Route::middleware(['auth', 'admin'])->group(function () {
     // Dashboard Admin
     Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])->name('dashboard.page');
@@ -83,4 +75,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::put('user/{user:id_user}', 'update')->name('user.update');
         Route::delete('user/{user:id_user}', 'destroy')->name('user.destroy');
     });
+
+    // Backup dan Restore Data - hanya Admin
+    Route::controller(BackupController::class)->group(function () {
+        Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');
+        Route::post('/backup/create', [BackupController::class, 'create'])->name('backup.create');
+        Route::get('/backup/download/{id}', [BackupController::class, 'download'])->name('backup.download');
+        Route::post('/backup/restore', [BackupController::class, 'restore'])->name('backup.restore');
+        Route::post('/backup/restore/{id}', [BackupController::class, 'restoreById'])->name('backup.restore.byid');
+    });
+
+
 });

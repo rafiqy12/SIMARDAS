@@ -509,6 +509,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    
+    @stack('styles')
 </head>
 <body class="bg-light">
     <header>

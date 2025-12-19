@@ -1,4 +1,4 @@
-@extends('layouts.app_admin')
+@extends(Auth::check() && Auth::user()->role === 'Admin' ? 'layouts.app_admin' : 'layouts.app')
 
 @section('title', 'Manajemen Arsip - SIMARDAS')
 @section('page-title', 'Manajemen Arsip')
