@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use ZipArchive;
+use Google\Client;
+use Google\Service\Drive;
+use Google\Service\Drive\DriveFile;
 
 class BackupController
 {
@@ -62,6 +65,8 @@ class BackupController
         $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         $this->zipFolder($basePath, $zip);
         $zip->close();
+
+        $this->uploadToGoogleDrive($zipPath, basename($zipPath));
 
         /** =========================
          * 4️⃣ SIMPAN KE DB
@@ -248,11 +253,48 @@ class BackupController
         }
     }
 
-
     /** =========================
      * HELPER FUNCTIONS
      ========================= */
 
+    private function uploadToGoogleDrive(string $filePath, string $fileName)
+    {
+        $token = session('google_drive_token');
+
+        if (!$token) {
+            return false;
+        }
+
+        $client = new Client();
+        $client->setClientId(config('services.google.client_id'));
+        $client->setClientSecret(config('services.google.client_secret'));
+        $client->setAccessToken($token);
+
+        // refresh token otomatis
+        if ($client->isAccessTokenExpired()) {
+            if ($client->getRefreshToken()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                session(['google_drive_token' => $client->getAccessToken()]);
+            }
+        }
+
+        $service = new Drive($client);
+
+        $fileMetadata = new DriveFile([
+            'name' => $fileName,
+            'parents' => ['1BoHRF5PUbtX_tdcXVb6dIsdRnyI-lctZ']
+        ]);
+
+        $service->files->create(
+            $fileMetadata,
+            [
+                'data' => file_get_contents($filePath),
+                'mimeType' => 'application/zip',
+                'uploadType' => 'multipart',
+            ]
+        );
+        return true;
+    }
     private function dumpDatabase($outputFile)
     {
         $tables = DB::select('SHOW TABLES');

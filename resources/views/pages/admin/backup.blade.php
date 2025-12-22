@@ -10,30 +10,36 @@
         border: 1px solid #dbeafe;
         transition: all 0.3s ease;
     }
+
     .backup-card:hover {
         box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
     }
+
     .header-card {
         background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         border: 1px solid #bfdbfe;
         border-radius: 16px;
     }
+
     .restore-card {
         background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
         border: 1px solid #fbbf24;
         border-radius: 12px;
         transition: all 0.3s ease;
     }
+
     .restore-card.drag-over {
         background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
         border-color: #f59e0b;
         transform: scale(1.01);
         box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
     }
+
     .restore-card.has-file {
         background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
         border-color: #10b981;
     }
+
     .badge-success-custom {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
@@ -41,6 +47,7 @@
         border-radius: 20px;
         font-size: 0.75rem;
     }
+
     .badge-danger-custom {
         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         color: white;
@@ -48,6 +55,7 @@
         border-radius: 20px;
         font-size: 0.75rem;
     }
+
     .btn-backup {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         border: none;
@@ -56,10 +64,12 @@
         font-weight: 500;
         transition: all 0.3s ease;
     }
+
     .btn-backup:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
     }
+
     .btn-restore-upload {
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         border: none;
@@ -68,10 +78,12 @@
         font-weight: 500;
         transition: all 0.3s ease;
     }
+
     .btn-restore-upload:hover {
         background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
         transform: translateY(-2px);
     }
+
     .restore-drop-zone {
         border: 2px dashed #fbbf24;
         border-radius: 12px;
@@ -79,39 +91,48 @@
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        background: rgba(255,255,255,0.5);
+        background: rgba(255, 255, 255, 0.5);
     }
+
     .restore-drop-zone:hover {
         border-color: #f59e0b;
-        background: rgba(255,255,255,0.8);
+        background: rgba(255, 255, 255, 0.8);
     }
+
     .restore-drop-zone.drag-over {
         border-color: #d97706;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255, 255, 255, 0.9);
     }
+
     .restore-drop-zone.has-file {
         border-color: #10b981;
         border-style: solid;
         background: white;
     }
+
     .restore-file-info {
         display: none;
     }
+
     .restore-drop-zone.has-file .restore-prompt {
         display: none;
     }
+
     .restore-drop-zone.has-file .restore-file-info {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 1rem;
     }
+
     .file-input-hidden {
         display: none;
     }
+
     .empty-state {
         padding: 3rem 1rem;
     }
+
     .empty-state i {
         color: #93c5fd;
     }
@@ -121,8 +142,12 @@
 @section('content')
 <div class="card shadow-sm backup-card mb-4">
     <div class="card-body p-3 p-md-4">
-        
+
         {{-- Header Section --}}
+        <a href="{{ url('/google/auth') }}" class="btn btn-danger">
+            <i class="bi bi-google"></i> Connect Google Drive
+        </a>
+
         <div class="header-card p-3 p-md-4 mb-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                 <div>
@@ -155,7 +180,7 @@
                 @csrf
                 <div class="restore-drop-zone" id="restoreDropZone">
                     <input type="file" name="backup_zip" class="file-input-hidden" id="restoreFileInput" accept=".zip" required>
-                    
+
                     {{-- Default Prompt --}}
                     <div class="restore-prompt">
                         <i class="bi bi-file-earmark-zip display-6" style="color: #f59e0b;"></i>
@@ -165,7 +190,7 @@
                             <i class="bi bi-info-circle me-1"></i>Hanya file .zip
                         </span>
                     </div>
-                    
+
                     {{-- File Info --}}
                     <div class="restore-file-info">
                         <div class="d-flex align-items-center gap-3">
@@ -182,7 +207,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="text-end mt-3">
                     <button type="button" class="btn btn-warning btn-restore-upload" id="btnRestoreUpload">
                         <i class="bi bi-arrow-clockwise me-2"></i>Restore Backup
@@ -214,10 +239,10 @@
             <div class="col-6 col-md-3">
                 <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border: 1px solid #c4b5fd;">
                     @php
-                        $totalSize = $backups->sum('ukuran_file');
-                        $sizeDisplay = $totalSize >= 1048576 
-                            ? number_format($totalSize / 1048576, 2) . ' MB' 
-                            : number_format($totalSize / 1024, 2) . ' KB';
+                    $totalSize = $backups->sum('ukuran_file');
+                    $sizeDisplay = $totalSize >= 1048576
+                    ? number_format($totalSize / 1048576, 2) . ' MB'
+                    : number_format($totalSize / 1024, 2) . ' KB';
                     @endphp
                     <h4 class="fw-bold mb-0" style="color: #5b21b6;">{{ $sizeDisplay }}</h4>
                     <small class="text-muted">Total Ukuran</small>
@@ -361,111 +386,111 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const restoreDropZone = document.getElementById('restoreDropZone');
-    const restoreCard = document.getElementById('restoreCard');
-    const restoreFileInput = document.getElementById('restoreFileInput');
-    const restoreFileName = document.getElementById('restoreFileName');
-    const restoreFileSize = document.getElementById('restoreFileSize');
-    const removeRestoreFile = document.getElementById('removeRestoreFile');
+    document.addEventListener('DOMContentLoaded', function() {
+        const restoreDropZone = document.getElementById('restoreDropZone');
+        const restoreCard = document.getElementById('restoreCard');
+        const restoreFileInput = document.getElementById('restoreFileInput');
+        const restoreFileName = document.getElementById('restoreFileName');
+        const restoreFileSize = document.getElementById('restoreFileSize');
+        const removeRestoreFile = document.getElementById('removeRestoreFile');
 
-    // Click to open file browser
-    restoreDropZone.addEventListener('click', function(e) {
-        if (!e.target.closest('#removeRestoreFile')) {
-            restoreFileInput.click();
-        }
-    });
-
-    // Drag events
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        restoreDropZone.addEventListener(eventName, preventDefaults, false);
-        restoreCard.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // Drag enter/over - highlight
-    ['dragenter', 'dragover'].forEach(eventName => {
-        restoreDropZone.addEventListener(eventName, () => restoreDropZone.classList.add('drag-over'), false);
-        restoreCard.addEventListener(eventName, () => restoreCard.classList.add('drag-over'), false);
-    });
-
-    // Drag leave/drop - unhighlight
-    ['dragleave', 'drop'].forEach(eventName => {
-        restoreDropZone.addEventListener(eventName, () => restoreDropZone.classList.remove('drag-over'), false);
-        restoreCard.addEventListener(eventName, () => restoreCard.classList.remove('drag-over'), false);
-    });
-
-    // Handle drop on card or zone
-    [restoreDropZone, restoreCard].forEach(el => {
-        el.addEventListener('drop', function(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            
-            if (files.length > 0) {
-                restoreFileInput.files = files;
-                handleRestoreFile(files[0]);
+        // Click to open file browser
+        restoreDropZone.addEventListener('click', function(e) {
+            if (!e.target.closest('#removeRestoreFile')) {
+                restoreFileInput.click();
             }
         });
-    });
 
-    // Handle file input change
-    restoreFileInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            handleRestoreFile(this.files[0]);
+        // Drag events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            restoreDropZone.addEventListener(eventName, preventDefaults, false);
+            restoreCard.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-    });
 
-    function handleRestoreFile(file) {
-        const ext = file.name.split('.').pop().toLowerCase();
-        
-        if (ext !== 'zip') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Format Tidak Valid',
-                text: 'Hanya file .zip yang diizinkan untuk restore backup.',
-                confirmButtonColor: '#3b82f6'
+        // Drag enter/over - highlight
+        ['dragenter', 'dragover'].forEach(eventName => {
+            restoreDropZone.addEventListener(eventName, () => restoreDropZone.classList.add('drag-over'), false);
+            restoreCard.addEventListener(eventName, () => restoreCard.classList.add('drag-over'), false);
+        });
+
+        // Drag leave/drop - unhighlight
+        ['dragleave', 'drop'].forEach(eventName => {
+            restoreDropZone.addEventListener(eventName, () => restoreDropZone.classList.remove('drag-over'), false);
+            restoreCard.addEventListener(eventName, () => restoreCard.classList.remove('drag-over'), false);
+        });
+
+        // Handle drop on card or zone
+        [restoreDropZone, restoreCard].forEach(el => {
+            el.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length > 0) {
+                    restoreFileInput.files = files;
+                    handleRestoreFile(files[0]);
+                }
             });
+        });
+
+        // Handle file input change
+        restoreFileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                handleRestoreFile(this.files[0]);
+            }
+        });
+
+        function handleRestoreFile(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            if (ext !== 'zip') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Format Tidak Valid',
+                    text: 'Hanya file .zip yang diizinkan untuk restore backup.',
+                    confirmButtonColor: '#3b82f6'
+                });
+                resetRestoreInput();
+                return;
+            }
+
+            // Show file info
+            restoreDropZone.classList.add('has-file');
+            restoreCard.classList.add('has-file');
+            restoreFileName.textContent = file.name;
+            restoreFileSize.textContent = formatFileSize(file.size);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes >= 1048576) {
+                return (bytes / 1048576).toFixed(2) + ' MB';
+            } else if (bytes >= 1024) {
+                return (bytes / 1024).toFixed(2) + ' KB';
+            }
+            return bytes + ' Bytes';
+        }
+
+        function resetRestoreInput() {
+            restoreFileInput.value = '';
+            restoreDropZone.classList.remove('has-file');
+            restoreCard.classList.remove('has-file');
+        }
+
+        // Remove file button
+        removeRestoreFile.addEventListener('click', function(e) {
+            e.stopPropagation();
             resetRestoreInput();
-            return;
-        }
+        });
 
-        // Show file info
-        restoreDropZone.classList.add('has-file');
-        restoreCard.classList.add('has-file');
-        restoreFileName.textContent = file.name;
-        restoreFileSize.textContent = formatFileSize(file.size);
-    }
-
-    function formatFileSize(bytes) {
-        if (bytes >= 1048576) {
-            return (bytes / 1048576).toFixed(2) + ' MB';
-        } else if (bytes >= 1024) {
-            return (bytes / 1024).toFixed(2) + ' KB';
-        }
-        return bytes + ' Bytes';
-    }
-
-    function resetRestoreInput() {
-        restoreFileInput.value = '';
-        restoreDropZone.classList.remove('has-file');
-        restoreCard.classList.remove('has-file');
-    }
-
-    // Remove file button
-    removeRestoreFile.addEventListener('click', function(e) {
-        e.stopPropagation();
-        resetRestoreInput();
-    });
-
-    // Buat Backup - Konfirmasi
-    document.getElementById('btnCreateBackup').addEventListener('click', function() {
-        Swal.fire({
-            title: '<i class="bi bi-database-add" style="color: #3b82f6; font-size: 2rem;"></i>',
-            html: `
+        // Buat Backup - Konfirmasi
+        document.getElementById('btnCreateBackup').addEventListener('click', function() {
+            Swal.fire({
+                title: '<i class="bi bi-database-add" style="color: #3b82f6; font-size: 2rem;"></i>',
+                html: `
                 <div style="text-align: center;">
                     <h5 style="color: #1e293b; margin-bottom: 0.5rem;">Buat Backup Baru?</h5>
                     <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 0;">
@@ -473,40 +498,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     </p>
                 </div>
             `,
-            showCancelButton: true,
-            confirmButtonText: '<i class="bi bi-check-lg me-1"></i> Ya, Buat Backup',
-            cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Batal',
-            confirmButtonColor: '#3b82f6',
-            cancelButtonColor: '#64748b',
-            customClass: {
-                popup: 'swal-popup-custom',
-                confirmButton: 'swal-confirm-custom',
-                cancelButton: 'swal-cancel-custom'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('backupForm').submit();
-            }
-        });
-    });
-
-    // Restore Upload - Konfirmasi
-    document.getElementById('btnRestoreUpload').addEventListener('click', function() {
-        if (!restoreFileInput.value) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'File Belum Dipilih',
-                text: 'Silakan pilih atau seret file backup (.zip) terlebih dahulu.',
-                confirmButtonColor: '#3b82f6'
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-check-lg me-1"></i> Ya, Buat Backup',
+                cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Batal',
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#64748b',
+                customClass: {
+                    popup: 'swal-popup-custom',
+                    confirmButton: 'swal-confirm-custom',
+                    cancelButton: 'swal-cancel-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('backupForm').submit();
+                }
             });
-            return;
-        }
+        });
 
-        const fileName = restoreFileInput.files[0].name;
+        // Restore Upload - Konfirmasi
+        document.getElementById('btnRestoreUpload').addEventListener('click', function() {
+            if (!restoreFileInput.value) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Belum Dipilih',
+                    text: 'Silakan pilih atau seret file backup (.zip) terlebih dahulu.',
+                    confirmButtonColor: '#3b82f6'
+                });
+                return;
+            }
 
-        Swal.fire({
-            title: '<i class="bi bi-exclamation-triangle" style="color: #f59e0b; font-size: 2rem;"></i>',
-            html: `
+            const fileName = restoreFileInput.files[0].name;
+
+            Swal.fire({
+                title: '<i class="bi bi-exclamation-triangle" style="color: #f59e0b; font-size: 2rem;"></i>',
+                html: `
                 <div style="text-align: center;">
                     <h5 style="color: #1e293b; margin-bottom: 0.5rem;">Restore dari File Backup?</h5>
                     <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
@@ -517,42 +542,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `,
-            showCancelButton: true,
-            confirmButtonText: '<i class="bi bi-arrow-clockwise me-1"></i> Ya, Restore',
-            cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Batal',
-            confirmButtonColor: '#f59e0b',
-            cancelButtonColor: '#64748b',
-            customClass: {
-                popup: 'swal-popup-custom',
-                confirmButton: 'swal-confirm-custom',
-                cancelButton: 'swal-cancel-custom'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('restoreUploadForm').submit();
-            }
-        });
-    });
-
-    // Restore by ID - Konfirmasi
-    document.querySelectorAll('.restore-form').forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fileName = this.dataset.name;
-
-            Swal.fire({
-                title: '<i class="bi bi-exclamation-triangle" style="color: #f59e0b; font-size: 2rem;"></i>',
-                html: `
-                    <div style="text-align: center;">
-                        <h5 style="color: #1e293b; margin-bottom: 0.5rem;">Restore Backup Ini?</h5>
-                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-                            <strong style="color: #dc2626;">Perhatian:</strong> Semua data saat ini akan digantikan dengan data dari backup.
-                        </p>
-                        <div style="background: #fef3c7; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #fbbf24;">
-                            <small style="color: #92400e;">File: <strong>${fileName}</strong></small>
-                        </div>
-                    </div>
-                `,
                 showCancelButton: true,
                 confirmButtonText: '<i class="bi bi-arrow-clockwise me-1"></i> Ya, Restore',
                 cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Batal',
@@ -565,11 +554,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    document.getElementById('restoreUploadForm').submit();
                 }
             });
         });
+
+        // Restore by ID - Konfirmasi
+        document.querySelectorAll('.restore-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fileName = this.dataset.name;
+
+                Swal.fire({
+                    title: '<i class="bi bi-exclamation-triangle" style="color: #f59e0b; font-size: 2rem;"></i>',
+                    html: `
+                    <div style="text-align: center;">
+                        <h5 style="color: #1e293b; margin-bottom: 0.5rem;">Restore Backup Ini?</h5>
+                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                            <strong style="color: #dc2626;">Perhatian:</strong> Semua data saat ini akan digantikan dengan data dari backup.
+                        </p>
+                        <div style="background: #fef3c7; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #fbbf24;">
+                            <small style="color: #92400e;">File: <strong>${fileName}</strong></small>
+                        </div>
+                    </div>
+                `,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-arrow-clockwise me-1"></i> Ya, Restore',
+                    cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Batal',
+                    confirmButtonColor: '#f59e0b',
+                    cancelButtonColor: '#64748b',
+                    customClass: {
+                        popup: 'swal-popup-custom',
+                        confirmButton: 'swal-confirm-custom',
+                        cancelButton: 'swal-cancel-custom'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
     });
-});
 </script>
 @endpush

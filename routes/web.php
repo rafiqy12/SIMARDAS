@@ -7,6 +7,7 @@ use App\Http\Controllers\Home;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Register;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GoogleDriveController;
 use Illuminate\Support\Facades\Route;
 
 // =============================================
@@ -83,7 +84,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/backup/download/{id}', [BackupController::class, 'download'])->name('backup.download');
         Route::post('/backup/restore', [BackupController::class, 'restore'])->name('backup.restore');
         Route::post('/backup/restore/{id}', [BackupController::class, 'restoreById'])->name('backup.restore.byid');
+        Route::get('/google/auth', [GoogleDriveController::class, 'redirect'])->name('google.auth');
+        Route::get('/google/callback', [GoogleDriveController::class, 'callback'])->name('google.callback');
     });
-
-
 });
