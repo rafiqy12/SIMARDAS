@@ -169,7 +169,7 @@
 							<label class="form-label small fw-semibold" style="color: #374151;">
                                 <i class="bi bi-folder me-1" style="color: #3b82f6;"></i>Kategori Dokumen
                             </label>
-							<select name="kategori" class="form-select" required>
+							<select name="kategori" class="form-select rounded-xl shadow-sm border border-primary-200 focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all" required>
 								<option value="">-- Pilih Kategori --</option>
 								<option value="Administrasi">Administrasi</option>
 								<option value="Keuangan">Keuangan</option>

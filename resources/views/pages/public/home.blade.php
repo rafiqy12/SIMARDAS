@@ -23,7 +23,7 @@
             <!-- BUTTONS -->
             <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
                 <a href="{{ route('search.page') }}" class="btn btn-primary px-4 py-2">
-                    <i class="bi bi-search me-1"></i>Akses Sistem <i class="bi bi-arrow-right ms-1"></i>
+                    <i class="bi bi-search me-1"></i>Cari Arsip <i class="bi bi-arrow-right ms-1"></i>
                 </a>
                 <a href="#" class="btn btn-outline-primary px-4 py-2">
                     <i class="bi bi-book me-1"></i>Panduan Penggunaan

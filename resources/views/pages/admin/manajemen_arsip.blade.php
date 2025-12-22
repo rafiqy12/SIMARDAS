@@ -5,25 +5,36 @@
 
 
 
+
 @section('content')
-<div class="page-header">
-    <div class="d-flex align-items-center">
-        <div class="me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-            <i class="bi bi-archive-fill text-white" style="font-size: 1.2rem;"></i>
-        </div>
-        <div>
-            <h5 class="fw-bold mb-1">Manajemen Arsip Digital</h5>
-            <p class="text-muted small mb-0">Kelola dan atur dokumen arsip dengan mudah</p>
+<div class="arsip-main-wrapper">
+    <div class="page-header">
+        <div class="d-flex align-items-center">
+            <div class="me-3" style="width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-archive-fill text-white" style="font-size: 1.2rem;"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-1">Manajemen Arsip Digital</h5>
+                <p class="text-muted small mb-0">Kelola dan atur dokumen arsip dengan mudah</p>
+            </div>
         </div>
     </div>
-</div>
 
-@include('pages.partials._arsip_content', [
-    'dokumens' => $dokumens,
-    'search' => $search ?? '',
-    'perPage' => $perPage ?? 10,
-    'searchRoute' => route('dokumen.index'),
-    'canUpload' => true,
-    'canEdit' => true
-])
+    @include('pages.partials._arsip_content', [
+        'dokumens' => $dokumens,
+        'search' => $search ?? '',
+        'perPage' => $perPage ?? 10,
+        'searchRoute' => route('dokumen.index'),
+        'canUpload' => true,
+        'canEdit' => true
+    ])
+</div>
+<style>
+.arsip-main-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+</style>
 @endsection

@@ -4,9 +4,26 @@
         border-radius: 16px;
         border: 1px solid #dbeafe;
         transition: all 0.3s ease;
+        overflow: hidden;
     }
     .arsip-card:hover {
         box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+    }
+    .arsip-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .table-arsip {
+        width: 100%;
+        min-width: 650px;
+    }
+    .table-arsip td, .table-arsip th {
+        white-space: nowrap;
+    }
+    .table-arsip td.wrap-text {
+        white-space: normal;
+        word-break: break-word;
+        max-width: 200px;
     }
     .table-arsip thead {
         background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
@@ -29,11 +46,6 @@
     .btn-action:hover {
         transform: translateY(-2px);
     }
-    .badge-type {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-        border-radius: 6px;
-    }
     .mobile-arsip-card {
         border-radius: 12px;
         border: 1px solid #e2e8f0;
@@ -44,7 +56,8 @@
         box-shadow: 0 5px 15px rgba(37, 99, 235, 0.1);
     }
 </style>
-<div class="card shadow-sm arsip-card">
+<div class="card-arsip-wrapper">
+    <div class="card shadow-sm arsip-card">
     <div class="card-body p-2 p-md-3">
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
             <h5 class="fw-bold m-0 fs-6 fs-md-5" style="color: #1e293b;">
@@ -90,13 +103,32 @@
 
         {{-- Mobile Card View --}}
         <div class="d-md-none">
+            @php
+                $fileColors = [
+                    'pdf' => ['color' => '#ef4444', 'bg' => '#fee2e2'],
+                    'doc' => ['color' => '#2563eb', 'bg' => '#dbeafe'],
+                    'docx' => ['color' => '#2563eb', 'bg' => '#dbeafe'],
+                    'xls' => ['color' => '#16a34a', 'bg' => '#dcfce7'],
+                    'xlsx' => ['color' => '#16a34a', 'bg' => '#dcfce7'],
+                    'jpg' => ['color' => '#f59e42', 'bg' => '#fef9c3'],
+                    'jpeg' => ['color' => '#f59e42', 'bg' => '#fef9c3'],
+                    'png' => ['color' => '#f59e42', 'bg' => '#fef9c3'],
+                    'zip' => ['color' => '#a16207', 'bg' => '#fef3c7'],
+                    'rar' => ['color' => '#a16207', 'bg' => '#fef3c7'],
+                    'default' => ['color' => '#64748b', 'bg' => '#f1f5f9'],
+                ];
+            @endphp
             @forelse($dokumens as $index => $dokumen)
+            @php
+                $fileType = strtolower($dokumen->tipe_file ?? '');
+                $colorData = $fileColors[$fileType] ?? $fileColors['default'];
+            @endphp
             <div class="card mb-2 mobile-arsip-card">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
                             <h6 class="fw-bold mb-1" style="color: #1e293b;">{{ $dokumen->judul }}</h6>
-                            <small class="text-muted">{{ $dokumen->kategori }} • <span class="badge badge-type">{{ strtoupper($dokumen->tipe_file) }}</span></small>
+                            <small class="text-muted">{{ $dokumen->kategori }} • <span class="badge" style="background: {{ $colorData['bg'] }}; color: {{ $colorData['color'] }};">{{ strtoupper($dokumen->tipe_file) }}</span></small>
                         </div>
                         <span class="badge" style="background: #dbeafe; color: #1d4ed8;">{{ $dokumens->firstItem() + $index }}</span>
                     </div>
@@ -126,26 +158,30 @@
         </div>
 
         {{-- Desktop Table View --}}
-        <div class="table-responsive d-none d-md-block">
+        <div class="arsip-table-wrapper d-none d-md-block">
             <table class="table table-hover align-middle table-sm table-arsip" style="border-radius: 12px; overflow: hidden;">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th style="width: 50px;">No</th>
                         <th>Judul</th>
                         <th>Kategori</th>
-                        <th>Tipe</th>
+                        <th style="width: 60px;">Tipe</th>
                         <th>Tanggal Upload</th>
                         <th>Diunggah Oleh</th>
-                        <th>Aksi</th>
+                        <th style="width: 150px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($dokumens as $index => $dokumen)
                     <tr>
                         <td><span class="badge" style="background: #dbeafe; color: #1d4ed8;">{{ $dokumens->firstItem() + $index }}</span></td>
-                        <td class="fw-semibold" style="color: #1e293b;">{{ $dokumen->judul }}</td>
+                        <td class="fw-semibold wrap-text" style="color: #1e293b;">{{ $dokumen->judul }}</td>
                         <td>{{ $dokumen->kategori }}</td>
-                        <td><span class="badge badge-type">{{ strtoupper($dokumen->tipe_file) }}</span></td>
+                        @php
+                            $fileType = strtolower($dokumen->tipe_file ?? '');
+                            $colorData = $fileColors[$fileType] ?? $fileColors['default'];
+                        @endphp
+                        <td><span class="badge" style="background: {{ $colorData['bg'] }}; color: {{ $colorData['color'] }}; font-size: 0.75rem; padding: 0.35em 0.7em; font-weight: 600; letter-spacing: 0.5px; border-radius: 6px;">{{ strtoupper($dokumen->tipe_file) }}</span></td>
                         <td>{{ $dokumen->tanggal_upload }}</td>
                         <td>{{ $dokumen->user->nama ?? '-' }}</td>
                         <td>
@@ -188,4 +224,13 @@
         </div>
         @endif
     </div>
+    </div>
 </div>
+<style>
+.card-arsip-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+}
+</style>

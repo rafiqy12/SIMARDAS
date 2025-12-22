@@ -46,7 +46,7 @@
                         <label class="form-label small fw-semibold" for="formRole" style="color: #374151;">
                             <i class="bi bi-shield-check me-1" style="color: #3b82f6;"></i>Role
                         </label>
-                        <select name="role" id="formRole" class="form-select @error('role') is-invalid @enderror">
+                        <select name="role" id="formRole" class="form-select rounded-xl shadow-sm border border-primary-200 focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all @error('role') is-invalid @enderror">
                             <option value="Admin" {{ old('role') === 'Admin' ? 'selected' : '' }}>Admin</option>
                             <option value="Petugas" {{ old('role') === 'Petugas' ? 'selected' : '' }}>Petugas</option>
                             <option value="Umum" {{ old('role', 'Umum') === 'Umum' ? 'selected' : '' }}>Umum</option>

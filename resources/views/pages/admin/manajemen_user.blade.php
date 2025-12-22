@@ -49,7 +49,7 @@
                 <form method="GET" action="{{ route('user.index') }}" class="d-inline-flex align-items-center gap-2">
                     <input type="hidden" name="search" value="{{ $search ?? '' }}">
                     <label class="mb-0 small text-muted">Tampilkan:</label>
-                    <select name="per_page" class="form-select form-select-sm" style="width: auto; border-radius: 8px;" onchange="this.form.submit()">
+                    <select name="per_page" class="form-select form-select-sm rounded-xl shadow-sm border border-primary-200 focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all" style="width: auto;" onchange="this.form.submit()">
                         <option value="5" {{ ($perPage ?? 10) == 5 ? 'selected' : '' }}>5</option>
                         <option value="10" {{ ($perPage ?? 10) == 10 ? 'selected' : '' }}>10</option>
                         <option value="25" {{ ($perPage ?? 10) == 25 ? 'selected' : '' }}>25</option>

@@ -47,17 +47,15 @@
 							</div>
 						</div>
 					</div>
-
 					<div class="mb-3">
 						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-file-text me-2" style="color: #3b82f6;"></i>Deskripsi</h6>
 						<p class="small text-muted">{{ $document->deskripsi ?? '-' }}</p>
 					</div>
-
 					<div class="mb-3">
 						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-info-circle me-2" style="color: #3b82f6;"></i>Informasi Dokumen</h6>
 						<div class="table-responsive">
 							<table class="table table-bordered table-sm info-table" style="border-radius: 8px; overflow: hidden;">
-								<tr>
+										<tr>
 									<th style="width: 140px; white-space: nowrap;">Nama File</th>
 									<td>{{ $document->judul ?? '-' }}</td>
 								</tr>
@@ -67,7 +65,26 @@
 								</tr>
 								<tr>
 									<th>Tipe</th>
-									<td><span class="badge" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">{{ $document->tipe_file ?? '-' }}</span></td>
+									<td>
+										@php
+											$fileType = strtolower($document->tipe_file ?? '');
+											$fileColors = [
+												'pdf' => ['color' => '#ef4444', 'bg' => '#fee2e2'],
+												'doc' => ['color' => '#2563eb', 'bg' => '#dbeafe'],
+												'docx' => ['color' => '#2563eb', 'bg' => '#dbeafe'],
+												'xls' => ['color' => '#16a34a', 'bg' => '#dcfce7'],
+												'xlsx' => ['color' => '#16a34a', 'bg' => '#dcfce7'],
+												'jpg' => ['color' => '#f59e42', 'bg' => '#fef9c3'],
+												'jpeg' => ['color' => '#f59e42', 'bg' => '#fef9c3'],
+												'png' => ['color' => '#f59e42', 'bg' => '#fef9c3'],
+												'zip' => ['color' => '#a16207', 'bg' => '#fef3c7'],
+												'rar' => ['color' => '#a16207', 'bg' => '#fef3c7'],
+												'default' => ['color' => '#64748b', 'bg' => '#f1f5f9'],
+											];
+											$colorData = $fileColors[$fileType] ?? $fileColors['default'];
+										@endphp
+										<span class="badge" style="background: {{ $colorData['bg'] }}; color: {{ $colorData['color'] }}; font-weight:600;">{{ strtoupper($document->tipe_file ?? '-') }}</span>
+									</td>
 								</tr>
 								<tr>
 									<th>Diunggah Oleh</th>
@@ -144,6 +161,60 @@
 					</div>
 				</div>
 			</div>
+							</div>
+							</div>
+						</div>
+
+				</div>
+				<div class="col-12 col-lg-4 d-flex flex-column">
+					<div class="mb-4 mb-lg-0 h-100 d-flex flex-column">
+						<div class="mb-3">
+							<div class="d-flex align-items-center mb-3 justify-content-center text-center">
+								<div class="me-2" style="width: 38px; height: 38px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+									<i class="bi bi-stars text-white fs-5"></i>
+								</div>
+								<div>
+									<h5 class="fw-bold mb-0" style="color: #1d4ed8;">Rekomendasi Arsip Terkait</h5>
+									<small class="text-muted">Arsip lain yang sangat relevan dengan dokumen ini</small>
+								</div>
+							</div>
+							<div class="d-flex flex-column align-items-center gap-3">
+								@foreach($recommendations as $rec)
+								<div class="col-12 col-md-10 col-lg-8 px-0" style="max-width: 500px;">
+									<div class="card h-100 shadow-sm mx-auto" style="border-radius: 14px; border: 1px solid #dbeafe; background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%); transition: all 0.3s ease; margin-left:auto; margin-right:auto;">
+										<div class="card-body p-3">
+											<div class="d-flex align-items-start mb-2">
+												<div class="me-2 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+													style="width: 45px; height: 45px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 1px solid #3b82f6;">
+													<strong style="color: #1d4ed8; font-size: 0.75rem;">{{ strtoupper($rec->tipe_file) }}</strong>
+												</div>
+												<div class="flex-grow-1 min-w-0">
+													<h6 class="fw-bold mb-1 text-truncate" style="color: #1e293b; max-width: 180px;" title="{{ $rec->judul }}">
+														{{ \Illuminate\Support\Str::limit($rec->judul, 40) }}
+													</h6>
+													<span class="badge" style="background: #dbeafe; color: #1d4ed8; font-size: 0.7rem;">{{ $rec->kategori }}</span>
+												</div>
+											</div>
+											<p class="text-muted small mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%;">
+												{{ \Illuminate\Support\Str::limit($rec->deskripsi ?? 'Tidak ada deskripsi', 70) }}
+											</p>
+											<div class="d-flex gap-1">
+												<a href="{{ route('dokumen.detail', $rec->id_dokumen) }}" class="btn btn-outline-primary btn-sm flex-grow-1" style="border-radius: 7px; font-size: 0.75rem;">
+													<i class="bi bi-eye"></i> Detail
+												</a>
+												<a href="{{ route('dokumen.download', $rec->id_dokumen) }}" class="btn btn-primary btn-sm flex-grow-1 text-white" style="border-radius: 7px; font-size: 0.75rem;">
+													<i class="bi bi-download"></i> Unduh
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								@endforeach
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -153,43 +224,42 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.btn-preview-unavailable').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const title = this.dataset.title;
-            const type = this.dataset.type;
-            const downloadUrl = this.dataset.downloadUrl;
-            
-            Swal.fire({
-                title: '<i class="bi bi-exclamation-circle" style="color: #f59e0b;"></i>',
-                html: `
-                    <div style="text-align: center;">
-                        <h5 style="color: #1e293b; margin-bottom: 0.5rem;">Preview Tidak Tersedia</h5>
-                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-                            File dengan format <strong style="color: #3b82f6;">${type}</strong> tidak dapat ditampilkan di browser.
-                        </p>
-                        <div style="background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
-                            <small style="color: #64748b;">Nama File:</small><br>
-                            <strong style="color: #1e293b; font-size: 0.9rem;">${title}</strong>
-                        </div>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '<i class="bi bi-download me-1"></i> Download',
-                cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Tutup',
-                confirmButtonColor: '#10b981',
-                cancelButtonColor: '#64748b',
-                customClass: {
-                    popup: 'swal-popup-custom',
-                    confirmButton: 'swal-confirm-custom',
-                    cancelButton: 'swal-cancel-custom'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = downloadUrl;
-                }
-            });
-        });
-    });
+	document.querySelectorAll('.btn-preview-unavailable').forEach(function(btn) {
+		btn.addEventListener('click', function() {
+			const title = this.dataset.title;
+			const type = this.dataset.type;
+			const downloadUrl = this.dataset.downloadUrl;
+			Swal.fire({
+				title: '<i class="bi bi-exclamation-circle" style="color: #f59e0b;"></i>',
+				html: `
+					<div style="text-align: center;">
+						<h5 style="color: #1e293b; margin-bottom: 0.5rem;">Preview Tidak Tersedia</h5>
+						<p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+							File dengan format <strong style="color: #3b82f6;">${type}</strong> tidak dapat ditampilkan di browser.
+						</p>
+						<div style="background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+							<small style="color: #64748b;">Nama File:</small><br>
+							<strong style="color: #1e293b; font-size: 0.9rem;">${title}</strong>
+						</div>
+					</div>
+				`,
+				showCancelButton: true,
+				confirmButtonText: '<i class="bi bi-download me-1"></i> Download',
+				cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Tutup',
+				confirmButtonColor: '#10b981',
+				cancelButtonColor: '#64748b',
+				customClass: {
+					popup: 'swal-popup-custom',
+					confirmButton: 'swal-confirm-custom',
+					cancelButton: 'swal-cancel-custom'
+				}
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.location.href = downloadUrl;
+				}
+			});
+		});
+	});
 });
 </script>
 @endpush

@@ -97,6 +97,9 @@
         padding: 1.25rem;
         margin-bottom: 1.25rem;
         border: 1px solid #bfdbfe;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
     }
     .page-header h5 {
         background: linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -211,7 +214,13 @@
         background: #475569;
     }
     
+    html {
+        max-width: 100vw !important;
+    }
+    
     body {
+        max-width: 100vw !important;
+        padding-right: 0 !important;
         font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
@@ -219,10 +228,12 @@
         display: flex;
         min-height: 100vh;
         gap: 0;
+        /* overflow-x: hidden; */
     }
     
     #sidebar {
         width: 260px;
+        min-width: 260px;
         height: 100vh;
         position: sticky;
         top: 0;
@@ -406,12 +417,29 @@
         display: flex;
         flex-direction: column;
         background: #f1f5f9;
+        overflow-x: hidden;
+        min-width: 0;
+        width: 0;
+        flex: 1 1 0%;
     }
     
     /* Ensure no visual gap between sidebar and content */
     .admin-flex > main {
         margin-left: 0;
         border-left: none;
+    }
+    
+    /* Page content must not overflow */
+    .page-content {
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-width: 100%;
+        word-wrap: break-word;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .page-content > * {
+        max-width: 100%;
     }
     
     /* Content wrapper */
@@ -434,11 +462,6 @@
         background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-    }
-    
-    /* Page content animation */
-    .page-content {
-        animation: fadeIn 0.5s ease;
     }
     
     @keyframes fadeIn {
@@ -478,8 +501,8 @@
         }
     }
 </style>
-<body class="bg-light">
-    <div class="container-fluid p-0">
+<body class="bg-light" style="overflow-x: hidden;">
+    <div class="container-fluid p-0" style="max-width: 100vw;">
         <div class="admin-flex">
             <!-- SIDEBAR -->
             <aside id="sidebar" class="d-flex flex-column justify-content-between">
@@ -606,6 +629,15 @@
         </div>
     </div>
 
+    <!-- Reset any leftover styles from SweetAlert2 -->
+    <script>
+        // Immediately reset body styles on page load
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        document.body.classList.remove('swal2-shown', 'swal2-height-auto', 'swal2-iosfix');
+        document.documentElement.classList.remove('swal2-shown', 'swal2-height-auto', 'swal2-iosfix');
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sidebar open/close
@@ -690,6 +722,9 @@
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            // Reset body overflow sebelum submit
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
                             this.submit();
                         }
                     });
@@ -699,6 +734,15 @@
     </script>
 
     <style>
+        /* Fix SweetAlert2 body overflow issue */
+        body.swal2-shown {
+            overflow: hidden !important;
+            padding-right: 0 !important;
+        }
+        body.swal2-height-auto {
+            height: auto !important;
+        }
+        
         /* SweetAlert2 Custom Theme */
         .swal-popup-custom {
             border-radius: 20px !important;
