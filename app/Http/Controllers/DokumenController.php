@@ -9,7 +9,9 @@ use Illuminate\Support\Str;
 use App\Models\Dokumen;
 use App\Models\User;
 use App\Models\LogAktivitas;
+use App\Models\Barcode;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Milon\Barcode\Facades\DNS1DFacade as DNS1D;
 
 
 class DokumenController
@@ -22,37 +24,37 @@ class DokumenController
         $searchQuery = $request->q;
         $documents = collect();
         $recommendations = collect();
-        
+
         if ($request->filled('q')) {
             // Pecah query menjadi kata-kata individual
             $keywords = $this->parseSearchKeywords($searchQuery);
-            
+
             // Dapatkan semua dokumen yang cocok dengan minimal satu kata
             $query = Dokumen::with('user');
-            
+
             $query->where(function ($q) use ($keywords) {
                 foreach ($keywords as $keyword) {
                     $q->orWhere('judul', 'like', '%' . $keyword . '%')
-                      ->orWhere('deskripsi', 'like', '%' . $keyword . '%')
-                      ->orWhere('kategori', 'like', '%' . $keyword . '%');
+                        ->orWhere('deskripsi', 'like', '%' . $keyword . '%')
+                        ->orWhere('kategori', 'like', '%' . $keyword . '%');
                 }
             });
-            
+
             // Terapkan filter tambahan
             $this->applyFilters($query, $request);
-            
+
             $results = $query->get();
-            
+
             // Hitung skor relevansi untuk setiap dokumen
             $scoredResults = $results->map(function ($doc) use ($keywords, $searchQuery) {
                 $score = $this->calculateRelevanceScore($doc, $keywords, $searchQuery);
                 $doc->relevance_score = $score;
                 return $doc;
             });
-            
+
             // Urutkan berdasarkan skor relevansi (tertinggi dulu)
             $sortedResults = $scoredResults->sortByDesc('relevance_score');
-            
+
             // Format hasil
             $documents = $sortedResults->map(function ($doc) {
                 return (object)[
@@ -67,11 +69,11 @@ class DokumenController
                     'relevance_score' => $doc->relevance_score
                 ];
             });
-            
+
             // Dapatkan rekomendasi berdasarkan kategori dari hasil teratas
             if ($documents->isNotEmpty()) {
                 $topCategories = $documents->take(3)->pluck('category')->unique()->filter();
-                
+
                 $recommendations = Dokumen::with('user')
                     ->whereIn('kategori', $topCategories)
                     ->whereNotIn('id_dokumen', $documents->pluck('id')->toArray())
@@ -95,14 +97,14 @@ class DokumenController
             // Jika tidak ada query, tampilkan berdasarkan filter saja
             $query = Dokumen::with('user');
             $this->applyFilters($query, $request);
-            
+
             $sort = $request->get('sort', 'desc');
             if ($sort === 'nama') {
                 $query->orderBy('judul', 'asc');
             } else {
                 $query->orderBy('tanggal_upload', $sort);
             }
-            
+
             $documents = $query->get()->map(function ($doc) {
                 return (object)[
                     'id'           => $doc->id_dokumen,
@@ -152,27 +154,52 @@ class DokumenController
     {
         // Stop words dalam bahasa Indonesia yang tidak perlu dicari
         $stopWords = [
-            'dan', 'atau', 'yang', 'di', 'ke', 'dari', 'untuk', 'dengan', 
-            'pada', 'adalah', 'ini', 'itu', 'akan', 'juga', 'sudah', 'telah',
-            'bisa', 'dapat', 'harus', 'dalam', 'oleh', 'sebagai', 'seperti',
-            'dokumen', 'file', 'arsip', 'data', 'surat', 'berkas'
+            'dan',
+            'atau',
+            'yang',
+            'di',
+            'ke',
+            'dari',
+            'untuk',
+            'dengan',
+            'pada',
+            'adalah',
+            'ini',
+            'itu',
+            'akan',
+            'juga',
+            'sudah',
+            'telah',
+            'bisa',
+            'dapat',
+            'harus',
+            'dalam',
+            'oleh',
+            'sebagai',
+            'seperti',
+            'dokumen',
+            'file',
+            'arsip',
+            'data',
+            'surat',
+            'berkas'
         ];
-        
+
         // Bersihkan dan pecah query
         $query = strtolower(trim($query));
         $words = preg_split('/\s+/', $query);
-        
+
         // Filter kata-kata pendek dan stop words
         $keywords = array_filter($words, function ($word) use ($stopWords) {
             $word = trim($word);
             return strlen($word) >= 2 && !in_array($word, $stopWords);
         });
-        
+
         // Jika semua kata terfilter, kembalikan kata asli
         if (empty($keywords)) {
             return array_filter($words, fn($w) => strlen(trim($w)) >= 2);
         }
-        
+
         return array_values($keywords);
     }
 
@@ -186,40 +213,40 @@ class DokumenController
         $deskripsi = strtolower($doc->deskripsi ?? '');
         $kategori = strtolower($doc->kategori ?? '');
         $originalQuery = strtolower($originalQuery);
-        
+
         // Exact match pada judul (skor tertinggi)
         if (strpos($judul, $originalQuery) !== false) {
             $score += 100;
         }
-        
+
         // Exact match pada deskripsi
         if (strpos($deskripsi, $originalQuery) !== false) {
             $score += 50;
         }
-        
+
         // Hitung per kata kunci
         foreach ($keywords as $keyword) {
             // Keyword ada di judul
             if (strpos($judul, $keyword) !== false) {
                 $score += 30;
-                
+
                 // Bonus jika keyword di awal judul
                 if (strpos($judul, $keyword) === 0) {
                     $score += 10;
                 }
             }
-            
+
             // Keyword ada di kategori
             if (strpos($kategori, $keyword) !== false) {
                 $score += 25;
             }
-            
+
             // Keyword ada di deskripsi
             if (strpos($deskripsi, $keyword) !== false) {
                 $score += 15;
             }
         }
-        
+
         // Bonus jika semua keyword ditemukan
         $allFound = true;
         foreach ($keywords as $keyword) {
@@ -231,7 +258,7 @@ class DokumenController
         if ($allFound && count($keywords) > 1) {
             $score += 50;
         }
-        
+
         return $score;
     }
 
@@ -265,6 +292,55 @@ class DokumenController
         }
     }
 
+    public function scanBarcodePage()
+    {
+        return view('pages.public.scan_barcode');
+    }
+
+    public function scanBarcodeProcess(Request $request)
+    {
+        try {
+            $request->validate([
+                'kode_barcode' => 'required|string'
+            ]);
+            \Log::info('BARCODE SCAN:', [
+                'hasil_scan' => $request->kode_barcode
+            ]);
+
+            $kode = trim($request->kode_barcode);
+
+            $barcode = Barcode::with('dokumen')
+                ->where('kode_barcode', $kode)
+                ->first();
+
+            if (!$barcode) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Barcode tidak ditemukan'
+                ]);
+            }
+
+            if (!$barcode->dokumen) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Barcode belum terhubung ke dokumen'
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'redirect' => route('dokumen.detail', $barcode->id_dokumen)
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'SERVER ERROR',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     /**
      * Download dokumen
      */
@@ -274,7 +350,7 @@ class DokumenController
 
         // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
         $pathFile = $doc->path_file;
-        
+
         // Jika path sudah include "documents/", gunakan langsung
         if (str_starts_with($pathFile, 'documents/')) {
             $storagePath = $pathFile;
@@ -315,7 +391,7 @@ class DokumenController
             }
 
             // Filter hanya yang sangat relevan (skor >= 100)
-            $filtered = $docs->filter(function($doc) {
+            $filtered = $docs->filter(function ($doc) {
                 return $doc->relevance_score >= 100;
             });
             $recommendations = $filtered->sortByDesc('relevance_score')->take(3);
@@ -333,7 +409,7 @@ class DokumenController
 
         // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
         $pathFile = $dokumen->path_file;
-        
+
         if (str_starts_with($pathFile, 'documents/')) {
             $storagePath = $pathFile;
         } else {
@@ -411,17 +487,23 @@ class DokumenController
         );
 
         /** 6️⃣ Simpan ke DB (HANYA NAMA FILE) */
-        Dokumen::create([
+        $dokumen = Dokumen::create([
             'judul'          => $request->judul,
             'deskripsi'      => $request->deskripsi,
             'kategori'       => $request->kategori,
             'tipe_file'      => 'pdf',
             'tanggal_upload' => now(),
-            'path_file'      => $pdfName, // 🔥 PENTING
+            'path_file'      => $pdfName,
             'ukuran_file'    => $fileSize,
             'id_user'        => 2,
         ]);
 
+        $kodeBarcode = 'B' . str_pad($dokumen->id_dokumen, 5, '0', STR_PAD_LEFT);
+
+        Barcode::create([
+            'kode_barcode' => $kodeBarcode,
+            'id_dokumen'   => $dokumen->id_dokumen,
+        ]);
         /** 7️⃣ Hapus file temp */
         Storage::disk('public')->deleteDirectory('temp_scan');
 
@@ -467,6 +549,13 @@ class DokumenController
             'path_file'      => $path,
             'ukuran_file'    => $file->getSize(),
         ]);
+        $kodeBarcode = 'B' . str_pad($dokumen->id_dokumen, 5, '0', STR_PAD_LEFT);
+
+        Barcode::create([
+            'kode_barcode' => $kodeBarcode,
+            'id_dokumen'   => $dokumen->id_dokumen,
+        ]);
+
 
         LogAktivitas::create([
             'id_user' => auth()->user()->id_user,
@@ -477,7 +566,65 @@ class DokumenController
 
         return back()->with('success', 'Dokumen berhasil diupload');
     }
+    public function downloadBarcode($id)
+    {
+        $dokumen = Dokumen::with('barcode')->findOrFail($id);
+        abort_if(!$dokumen->barcode, 404);
 
+        // Generate barcode (hitam transparan)
+        $barcodeBase64 = DNS1D::getBarcodePNG(
+            $dokumen->barcode->kode_barcode,
+            'C128',
+            3,
+            100
+        );
+
+        $barcodeImage = imagecreatefromstring(base64_decode($barcodeBase64));
+
+        // Ukuran barcode
+        $bw = imagesx($barcodeImage);
+        $bh = imagesy($barcodeImage);
+
+        // Margin wajib (quiet zone)
+        $marginX = 30;
+        $marginY = 20;
+
+        // Canvas putih
+        $canvas = imagecreatetruecolor(
+            $bw + ($marginX * 2),
+            $bh + ($marginY * 2)
+        );
+
+        $white = imagecolorallocate($canvas, 255, 255, 255);
+        imagefill($canvas, 0, 0, $white);
+
+        // Tempel barcode ke tengah
+        imagecopy(
+            $canvas,
+            $barcodeImage,
+            $marginX,
+            $marginY,
+            0,
+            0,
+            $bw,
+            $bh
+        );
+
+        // Output
+        ob_start();
+        imagepng($canvas);
+        $imageData = ob_get_clean();
+
+        imagedestroy($barcodeImage);
+        imagedestroy($canvas);
+
+        return response($imageData)
+            ->header('Content-Type', 'image/png')
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="barcode_' . $dokumen->barcode->kode_barcode . '.png"'
+            );
+    }
     /**
      * Halaman manajemen arsip (admin)
      */
@@ -491,13 +638,13 @@ class DokumenController
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('judul', 'like', '%' . $search . '%')
-                  ->orWhere('kategori', 'like', '%' . $search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $search . '%');
+                    ->orWhere('kategori', 'like', '%' . $search . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $search . '%');
             });
         }
 
         $dokumens = $query->orderBy('tanggal_upload', 'desc')->paginate($perPage)->appends($request->query());
-        
+
         return view('pages.admin.manajemen_arsip', compact('dokumens', 'search', 'perPage'));
     }
 
@@ -578,13 +725,13 @@ class DokumenController
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('judul', 'like', '%' . $search . '%')
-                  ->orWhere('kategori', 'like', '%' . $search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $search . '%');
+                    ->orWhere('kategori', 'like', '%' . $search . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $search . '%');
             });
         }
 
         $dokumens = $query->orderBy('tanggal_upload', 'desc')->paginate($perPage)->appends($request->query());
-        
+
         // Petugas bisa upload dan edit
         $user = auth()->user();
         $canUpload = $user && in_array($user->role, ['Admin', 'Petugas']);

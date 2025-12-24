@@ -9,10 +9,13 @@ class Barcode extends Model
     protected $table = 'barcode';
 
     protected $fillable = [
-        'id_dokumen',
         'kode_barcode',
-        'tanggal_generate',
+        'id_dokumen'
     ];
+    public $timestamps = false; 
 
-    public $timestamps = false;
+    public function dokumen()
+    {
+        return $this->belongsTo(Dokumen::class, 'id_dokumen');
+    }
 }

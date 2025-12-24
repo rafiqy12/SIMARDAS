@@ -560,6 +560,7 @@
                             </a>
                         <ul class="dropdown-menu" aria-labelledby="fiturDropdown">
                             <li><a class="dropdown-item" href="{{ route('search.page') }}">Search</a></li>
+                            <li><a class="dropdown-item" href="{{ route('scan.barcode.page') }}">Search With Barcode</a></li>
                             @if(Auth::check() && in_array(Auth::user()->role, ['Admin', 'Petugas']))
                             <li><a class="dropdown-item" href="{{ route('scan_dokumen.page') }}">Scan</a></li>
                             <li><a class="dropdown-item" href="{{ route('dokumen_upload.page') }}">Upload</a></li>

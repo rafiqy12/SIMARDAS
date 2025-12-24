@@ -34,6 +34,12 @@ Route::middleware('auth')->group(function () {
         Route::get('dokumen/{id}', 'show')->name('dokumen.detail');
         Route::get('dokumen/{id}/download', 'download')->name('dokumen.download');
         Route::get('dokumen/{id}/preview', 'preview')->name('dokumen.preview');
+        Route::get('/search-with-barcode', [DokumenController::class, 'scanBarcodePage'])
+            ->name('scan.barcode.page');
+        Route::post('/search-with-barcode', [DokumenController::class, 'scanBarcodeProcess'])
+            ->name('scan.barcode.process');
+        Route::get('/barcode/{id}/download', [DokumenController::class, 'downloadBarcode'])
+            ->name('barcode.download');
     });
 });
 
