@@ -143,11 +143,32 @@
 <div class="card shadow-sm backup-card mb-4">
     <div class="card-body p-3 p-md-4">
 
-        {{-- Header Section --}}
-        <a href="{{ url('/google/auth') }}" class="btn btn-danger">
-            <i class="bi bi-google"></i> Connect Google Drive
-        </a>
+        {{-- GOOGLE DRIVE STATUS BAR --}}
+        <div class="d-flex justify-content-end mb-2">
+            <div class="d-flex align-items-center gap-2">
+                @if(session()->has('google_drive_token'))
+                <span class="badge-success-custom">
+                    <i class="bi bi-cloud-check me-1"></i>
+                    Google Drive terhubung
+                </span>
+                <a href="{{ url('/google/auth') }}"
+                    class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-repeat"></i> Ganti Akun
+                </a>
+                @else
+                <span class="badge-danger-custom">
+                    <i class="bi bi-cloud-slash me-1"></i>
+                    Google Drive belum terhubung
+                </span>
+                <a href="{{ url('/google/auth') }}"
+                    class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-google"></i> Hubungkan
+                </a>
+                @endif
+            </div>
+        </div>
 
+        {{-- Header Section --}}
         <div class="header-card p-3 p-md-4 mb-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                 <div>

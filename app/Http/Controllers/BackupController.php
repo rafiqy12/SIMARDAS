@@ -282,7 +282,8 @@ class BackupController
 
         $fileMetadata = new DriveFile([
             'name' => $fileName,
-            'parents' => ['1J6Gty5kgq1Bm0HQZ2TrcwPH87Wn3umrE']
+            // 'parents' => ['1J6Gty5kgq1Bm0HQZ2TrcwPH87Wn3umrE'] // akun simardas
+            'parents' => ['1BoHRF5PUbtX_tdcXVb6dIsdRnyI-lctZ'] // akun student
         ]);
 
         $service->files->create(
