@@ -18,10 +18,16 @@
 		color: #1e40af;
 	}
 
-	.barcode-card {
-		background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+	.barcode-wrapper {
+		padding: 1.5rem;
+		background: #f8fafc;
+		border-radius: 8px;
 		border: 1px solid #e2e8f0;
-		border-radius: 12px;
+	}
+
+	.barcode-wrapper svg {
+		margin: 0 auto;
+		display: block;
 	}
 
 	.btn-action {
@@ -32,30 +38,29 @@
 	.btn-action:hover {
 		transform: translateY(-2px);
 	}
+
+	.recommendation-card {
+		border-radius: 12px;
+		border: 1px solid #dbeafe;
+		transition: all 0.3s ease;
+	}
+
+	.recommendation-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+	}
 </style>
 
 <div class="container py-3 py-md-4">
-	<div class="row justify-content-center">
-		<div class="col-12 col-lg-8">
+	@php
+		$hasRecommendations = isset($recommendations) && count($recommendations) > 0;
+	@endphp
+	
+	<div class="row {{ $hasRecommendations ? '' : 'justify-content-center' }}">
+		<!-- Kolom Detail Dokumen -->
+		<div class="col-12 {{ $hasRecommendations ? 'col-md-7' : '' }}" style="{{ !$hasRecommendations ? 'max-width: 800px;' : '' }}">
 			<div class="card shadow-sm mb-4 detail-card">
 				<div class="card-body p-3 p-md-4">
-					<div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center mb-4 gap-3">
-						<div class="doc-icon d-flex align-items-center justify-content-center flex-shrink-0" style="width:60px; height:60px;">
-							<strong class="small" style="color: #1d4ed8;">{{ $document->tipe_file ?? '-' }}</strong>
-						</div>
-						<div>
-							<h4 class="fw-bold mb-1 fs-5 fs-md-4" style="color: #1d4ed8;">{{ $document->judul ?? 'Judul Dokumen' }}</h4>
-							<div class="text-muted small">
-								<span class="badge" style="background: #dbeafe; color: #1d4ed8;">{{ $document->kategori ?? '-' }}</span>
-								<span class="ms-1"><i class="bi bi-calendar"></i> {{ $document->tanggal_upload ?? '-' }}</span>
-								<span class="ms-1"><i class="bi bi-person"></i> {{ $document->user->nama ?? '-' }}</span>
-							</div>
-						</div>
-					</div>
-					<div class="mb-3">
-						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-file-text me-2" style="color: #3b82f6;"></i>Deskripsi</h6>
-						<p class="small text-muted">{{ $document->deskripsi ?? '-' }}</p>
-					</div>
 					<div class="mb-3">
 						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-info-circle me-2" style="color: #3b82f6;"></i>Informasi Dokumen</h6>
 						<div class="table-responsive">
@@ -108,36 +113,27 @@
 					</div>
 
 					<div class="mb-4">
-						<h6 class="fw-bold" style="color: #1e293b;"><i class="bi bi-upc-scan me-2" style="color: #3b82f6;"></i>Barcode Arsip</h6>
-						<div class="card barcode-card">
-							<div class="barcode-card p-4 d-flex justify-content-center">
-								@if($document->barcode)
-								<div class="barcode-wrapper text-center">
-									<div class="barcode-image">
-										{!! DNS1D::getBarcodeHTML($document->barcode->kode_barcode,'C128',2,80) !!}
-									</div>
-
-									<div class="barcode-code mt-2">
-										{{ $document->barcode->kode_barcode }}
-									</div>
-
-									<div class="barcode-meta mt-1">
-										<i class="bi bi-clock me-1"></i>
-										Digenerate otomatis
-									</div>
-									<a href="{{ route('barcode.download', $document->id_dokumen) }}"
-										class="btn btn-outline-primary btn-sm mt-2">
-										<i class="bi bi-download"></i> Download Barcode
-									</a>
-								</div>
-								@else
-								<div class="text-center">
-									<i class="bi bi-upc display-5 text-muted"></i>
-									<p class="text-muted mb-0">Barcode belum tersedia</p>
-								</div>
-								@endif
+						<h6 class="fw-bold mb-3" style="color: #1e293b;"><i class="bi bi-upc-scan me-2" style="color: #3b82f6;"></i>Barcode Arsip</h6>
+						@if($document->barcode)
+						<div class="barcode-wrapper text-center">
+							{!! DNS1D::getBarcodeHTML($document->barcode->kode_barcode,'C128',2,80) !!}
+							<div class="mt-2 fw-semibold" style="color: #475569; font-size: 0.9rem;">
+								{{ $document->barcode->kode_barcode }}
 							</div>
+							<div class="text-muted small mt-1">
+								<i class="bi bi-clock me-1"></i>Digenerate otomatis
+							</div>
+							<a href="{{ route('barcode.download', $document->id_dokumen) }}"
+								class="btn btn-outline-primary btn-sm mt-3">
+								<i class="bi bi-download"></i> Download Barcode
+							</a>
 						</div>
+						@else
+						<div class="barcode-wrapper text-center">
+							<i class="bi bi-upc display-6 text-muted"></i>
+							<p class="text-muted mb-0 mt-2 small">Barcode belum tersedia</p>
+						</div>
+						@endif
 					</div>
 					<div class="d-flex flex-wrap gap-2">
 						@php
@@ -171,61 +167,58 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
 
-</div>
-<div class="col-12 col-lg-4 d-flex flex-column">
-	<div class="mb-4 mb-lg-0 h-100 d-flex flex-column">
-		<div class="mb-3">
-			<div class="d-flex align-items-center mb-3 justify-content-center text-center">
-				<div class="me-2" style="width: 38px; height: 38px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-					<i class="bi bi-stars text-white fs-5"></i>
-				</div>
-				<div>
-					<h5 class="fw-bold mb-0" style="color: #1d4ed8;">Rekomendasi Arsip Terkait</h5>
-					<small class="text-muted">Arsip lain yang sangat relevan dengan dokumen ini</small>
-				</div>
-			</div>
-			<div class="d-flex flex-column align-items-center gap-3">
-				@foreach($recommendations as $rec)
-				<div class="col-12 col-md-10 col-lg-8 px-0" style="max-width: 500px;">
-					<div class="card h-100 shadow-sm mx-auto" style="border-radius: 14px; border: 1px solid #dbeafe; background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%); transition: all 0.3s ease; margin-left:auto; margin-right:auto;">
-						<div class="card-body p-3">
-							<div class="d-flex align-items-start mb-2">
-								<div class="me-2 rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
-									style="width: 45px; height: 45px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 1px solid #3b82f6;">
-									<strong style="color: #1d4ed8; font-size: 0.75rem;">{{ strtoupper($rec->tipe_file) }}</strong>
-								</div>
-								<div class="flex-grow-1 min-w-0">
-									<h6 class="fw-bold mb-1 text-truncate" style="color: #1e293b; max-width: 180px;" title="{{ $rec->judul }}">
-										{{ \Illuminate\Support\Str::limit($rec->judul, 40) }}
-									</h6>
-									<span class="badge" style="background: #dbeafe; color: #1d4ed8; font-size: 0.7rem;">{{ $rec->kategori }}</span>
-								</div>
-							</div>
-							<p class="text-muted small mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%;">
-								{{ \Illuminate\Support\Str::limit($rec->deskripsi ?? 'Tidak ada deskripsi', 70) }}
-							</p>
-							<div class="d-flex gap-1">
-								<a href="{{ route('dokumen.detail', $rec->id_dokumen) }}" class="btn btn-outline-primary btn-sm flex-grow-1" style="border-radius: 7px; font-size: 0.75rem;">
-									<i class="bi bi-eye"></i> Detail
-								</a>
-								<a href="{{ route('dokumen.download', $rec->id_dokumen) }}" class="btn btn-primary btn-sm flex-grow-1 text-white" style="border-radius: 7px; font-size: 0.75rem;">
-									<i class="bi bi-download"></i> Unduh
-								</a>
-							</div>
+		<!-- Kolom Rekomendasi (hanya tampil jika ada) -->
+		@if($hasRecommendations)
+		<div class="col-12 col-md-5">
+			<div class="card shadow-sm" style="border-radius: 14px; border: 1px solid #bfdbfe; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+				<div class="card-body p-3 p-md-4">
+					<div class="d-flex align-items-center mb-3 gap-2">
+						<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 10px; display: flex; align-items-center; justify-content-center;">
+							<i class="bi bi-stars text-white"></i>
+						</div>
+						<div>
+							<h6 class="fw-bold mb-0" style="color: #1d4ed8;">Rekomendasi Terkait</h6>
+							<small class="text-muted">Dokumen relevan lainnya</small>
 						</div>
 					</div>
+
+					<div class="d-flex flex-column gap-3">
+						@foreach($recommendations as $rec)
+						<div class="card recommendation-card shadow-sm">
+							<div class="card-body p-3">
+								<div class="d-flex gap-2 mb-2">
+									<div class="rounded d-flex align-items-center justify-content-center flex-shrink-0"
+										style="width: 38px; height: 38px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 1px solid #3b82f6;">
+										<strong style="color: #1d4ed8; font-size: 0.7rem;">{{ strtoupper($rec->tipe_file) }}</strong>
+									</div>
+									<div class="flex-grow-1 min-w-0">
+										<h6 class="fw-bold mb-1 text-truncate" style="color: #1e293b; font-size: 0.9rem;" title="{{ $rec->judul }}">
+											{{ \Illuminate\Support\Str::limit($rec->judul, 35) }}
+										</h6>
+										<span class="badge" style="background: #dbeafe; color: #1d4ed8; font-size: 0.65rem;">{{ $rec->kategori }}</span>
+									</div>
+								</div>
+								<p class="text-muted small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.85rem;">
+									{{ \Illuminate\Support\Str::limit($rec->deskripsi ?? 'Tidak ada deskripsi', 70) }}
+								</p>
+								<div class="d-grid gap-2">
+									<a href="{{ route('dokumen.detail', $rec->id_dokumen) }}" class="btn btn-outline-primary btn-sm">
+										<i class="bi bi-eye"></i> Lihat Detail
+									</a>
+									<a href="{{ route('dokumen.download', $rec->id_dokumen) }}" class="btn btn-primary btn-sm text-white">
+										<i class="bi bi-download"></i> Unduh
+									</a>
+								</div>
+							</div>
+						</div>
+						@endforeach
+					</div>
 				</div>
-				@endforeach
 			</div>
 		</div>
+		@endif
 	</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 
 @endsection

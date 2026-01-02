@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Barcode extends Model
 {
     protected $table = 'barcode';
+    protected $primaryKey = 'id_dokumen';
+    public $timestamps = false; 
 
     protected $fillable = [
         'kode_barcode',
         'id_dokumen'
     ];
-    public $timestamps = false; 
 
     public function dokumen()
     {
