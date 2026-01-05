@@ -72,6 +72,7 @@ Route::middleware(['auth', 'petugas'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     // Dashboard Admin
     Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])->name('dashboard.page');
+    Route::get('log-aktivitas', [Dashboard::class, 'showLogAktivitas'])->name('log-aktivitas.index');
 
     // Manajemen User - hanya Admin
     Route::controller(UserController::class)->group(function () {
