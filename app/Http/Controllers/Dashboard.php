@@ -68,4 +68,49 @@ class Dashboard
         }
         return $bytes . ' B';
     }
+
+    /**
+     * Show all activity logs
+     */
+    public function showLogAktivitas(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $jenisFilter = $request->input('jenis');
+
+        $query = LogAktivitas::with('user')
+            ->orderBy('waktu_aktivitas', 'desc');
+
+        // Filter by search
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('deskripsi', 'like', '%' . $search . '%')
+                    ->orWhere('jenis_aktivitas', 'like', '%' . $search . '%')
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('nama', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        // Filter by jenis aktivitas
+        if ($jenisFilter) {
+            $query->where('jenis_aktivitas', $jenisFilter);
+        }
+
+        $logAktivitas = $query->paginate($perPage)->withQueryString();
+
+        // Get unique jenis aktivitas for filter dropdown
+        $jenisAktivitasList = LogAktivitas::select('jenis_aktivitas')
+            ->distinct()
+            ->orderBy('jenis_aktivitas')
+            ->pluck('jenis_aktivitas');
+
+        return view('pages.admin.log_aktivitas', compact(
+            'logAktivitas',
+            'search',
+            'perPage',
+            'jenisFilter',
+            'jenisAktivitasList'
+        ));
+    }
 }

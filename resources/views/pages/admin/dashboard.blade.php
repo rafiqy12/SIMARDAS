@@ -303,7 +303,7 @@
                     <h6 class="fw-bold mb-0">
                         <i class="bi bi-activity text-primary me-2"></i>Aktivitas Terbaru
                     </h6>
-                    <a href="{{ route('dokumen.index') }}" class="btn btn-sm btn-outline-primary">
+                    <a href="{{ route('log-aktivitas.index') }}" class="btn btn-sm btn-outline-primary">
                         Lihat Semua <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
