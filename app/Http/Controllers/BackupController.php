@@ -136,12 +136,21 @@ class BackupController
         ]);
 
         try {
-            // Ensure restore directory exists with proper permissions
-            $backupDir = storage_path('app/restore');
+            // Use Laravel's Storage facade to ensure directory exists
+            $restorePath = 'restore';
+            if (!Storage::disk('local')->exists($restorePath)) {
+                Storage::disk('local')->makeDirectory($restorePath);
+            }
+            
+            $backupDir = storage_path('app/' . $restorePath);
+            
+            // Double-check directory exists and is writable
             if (!is_dir($backupDir)) {
-                if (!mkdir($backupDir, 0755, true)) {
-                    throw new \Exception('Gagal membuat direktori restore');
-                }
+                @mkdir($backupDir, 0755, true);
+            }
+            
+            if (!is_writable($backupDir)) {
+                throw new \Exception('Direktori restore tidak writable: ' . $backupDir);
             }
             
             // Clean any existing files in restore directory
@@ -150,10 +159,14 @@ class BackupController
             /** ==========================
              * 1️⃣ SIMPAN ZIP
              * ========================== */
-            $zipPath = $backupDir . '/' . time() . '.zip';
-            $uploaded = $request->file('backup_zip');
+            $zipFilename = time() . '.zip';
+            $zipPath = $backupDir . '/' . $zipFilename;
             
-            if (!$uploaded->move($backupDir, basename($zipPath))) {
+            // Use storeAs instead of move for better compatibility
+            $uploaded = $request->file('backup_zip');
+            $stored = $uploaded->storeAs($restorePath, $zipFilename, 'local');
+            
+            if (!$stored || !file_exists($zipPath)) {
                 throw new \Exception('Gagal menyimpan file ZIP');
             }
 
@@ -165,10 +178,34 @@ class BackupController
             if ($openResult !== true) {
                 throw new \Exception('Gagal membuka file ZIP (Error code: ' . $openResult . ')');
             }
-
-            if (!$zip->extractTo($backupDir)) {
-                $zip->close();
-                throw new \Exception('Gagal mengekstrak file ZIP ke: ' . $backupDir);
+            
+            // Extract file by file to avoid permission issues
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $filename = $zip->getNameIndex($i);
+                $targetPath = $backupDir . '/' . $filename;
+                
+                // Create directory if extracting a folder
+                if (substr($filename, -1) === '/') {
+                    @mkdir($targetPath, 0755, true);
+                    continue;
+                }
+                
+                // Ensure parent directory exists
+                $parentDir = dirname($targetPath);
+                if (!is_dir($parentDir)) {
+                    @mkdir($parentDir, 0755, true);
+                }
+                
+                // Extract single file
+                $content = $zip->getFromIndex($i);
+                if ($content === false) {
+                    continue; // Skip if can't read
+                }
+                
+                if (file_put_contents($targetPath, $content) === false) {
+                    $zip->close();
+                    throw new \Exception('Gagal mengekstrak: ' . $filename);
+                }
             }
             $zip->close();
 
@@ -238,18 +275,42 @@ class BackupController
         }
 
         try {
-            $restoreDir = storage_path('app/restore_temp');
+            // Use Laravel's Storage facade to ensure directory exists
+            $restorePath = 'restore_temp';
+            if (!Storage::disk('local')->exists($restorePath)) {
+                Storage::disk('local')->makeDirectory($restorePath);
+            }
+            
+            $restoreDir = storage_path('app/' . $restorePath);
 
             // Bersihkan folder sementara jika ada
-            $this->deleteDirectory($restoreDir);
-            mkdir($restoreDir, 0755, true);
+            $this->cleanDirectory($restoreDir);
 
-            // Extract ZIP
+            // Extract ZIP file by file (more reliable than extractTo)
             $zip = new \ZipArchive;
             if ($zip->open($zipPath) !== true) {
                 throw new \Exception('Gagal membuka file ZIP');
             }
-            $zip->extractTo($restoreDir);
+            
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $filename = $zip->getNameIndex($i);
+                $targetPath = $restoreDir . '/' . $filename;
+                
+                if (substr($filename, -1) === '/') {
+                    @mkdir($targetPath, 0755, true);
+                    continue;
+                }
+                
+                $parentDir = dirname($targetPath);
+                if (!is_dir($parentDir)) {
+                    @mkdir($parentDir, 0755, true);
+                }
+                
+                $content = $zip->getFromIndex($i);
+                if ($content !== false) {
+                    file_put_contents($targetPath, $content);
+                }
+            }
             $zip->close();
 
             $sqlFile = $restoreDir . '/database.sql';
@@ -265,6 +326,10 @@ class BackupController
             $targetDocs = storage_path('app/public/documents');
 
             if (file_exists($sourceDocs)) {
+                // Ensure target directory exists
+                if (!is_dir($targetDocs)) {
+                    @mkdir($targetDocs, 0755, true);
+                }
                 $this->copyFolder($sourceDocs, $targetDocs);
             }
 
