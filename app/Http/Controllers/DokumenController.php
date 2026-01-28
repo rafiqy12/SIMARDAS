@@ -495,7 +495,7 @@ class DokumenController
             'tanggal_upload' => now(),
             'path_file'      => $pdfName,
             'ukuran_file'    => $fileSize,
-            'id_user'        => 2,
+            'id_user'        => auth()->user()->id_user,
         ]);
 
         $kodeBarcode = 'B' . str_pad($dokumen->id_dokumen, 5, '0', STR_PAD_LEFT);

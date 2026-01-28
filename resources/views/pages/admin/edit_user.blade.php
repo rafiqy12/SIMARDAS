@@ -44,13 +44,24 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label small fw-semibold" for="formUsername" style="color: #374151;">
+                            <i class="bi bi-at me-1" style="color: #3b82f6;"></i>Username
+                        </label>
+                        <input type="text" id="formUsername" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username', $user->username) }}" required />
+                        @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label small fw-semibold" for="formRole" style="color: #374151;">
                             <i class="bi bi-shield-check me-1" style="color: #3b82f6;"></i>Role
                         </label>
                         <select name="role" id="formRole" class="form-select rounded-xl shadow-sm border border-primary-200 focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all @error('role') is-invalid @enderror">
                             <option value="Admin" {{ old('role', $user->role)==='Admin' ? 'selected' : '' }}>Admin</option>
                             <option value="Petugas" {{ old('role', $user->role)==='Petugas' ? 'selected' : '' }}>Petugas</option>
-                            <option value="Umum" {{ old('role', $user->role)==='Umum' ? 'selected' : '' }}>Umum</option>
+                            <option value="Petugas Arsip" {{ old('role', $user->role)==='Petugas Arsip' ? 'selected' : '' }}>Petugas Arsip</option>
+                            <option value="User" {{ old('role', $user->role)==='User' ? 'selected' : '' }}>User</option>
                         </select>
                         @error('role')
                             <div class="invalid-feedback">{{ $message }}</div>

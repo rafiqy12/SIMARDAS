@@ -21,7 +21,7 @@ class PetugasMiddleware
             return redirect()->route('login.page')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $allowedRoles = ['Admin', 'Petugas'];
+        $allowedRoles = ['Admin', 'Petugas', 'Petugas Arsip'];
         
         if (!in_array(Auth::user()->role, $allowedRoles)) {
             return redirect()->route('home.page')->with('error', 'Anda tidak memiliki akses ke halaman ini.');

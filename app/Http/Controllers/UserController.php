@@ -45,6 +45,7 @@ class UserController
     {
         $request->validate([
             'nama' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:user,username',
             'email' => 'required|email|unique:user,email',
             'role' => 'required',
             'password' => 'required|min:6|confirmed',
@@ -52,6 +53,7 @@ class UserController
 
         User::create([
             'nama' => $request->nama,
+            'username' => $request->username,
             'email' => $request->email,
             'role' => $request->role,
             'password' => bcrypt($request->password),
@@ -83,12 +85,14 @@ class UserController
     {
         $request->validate([
             'nama' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:user,username,' . $user->id_user . ',id_user',
             'email' => 'required|email|unique:user,email,' . $user->id_user . ',id_user',
             'role' => 'required',
             'password' => 'nullable|min:6|confirmed',
         ]);
 
         $user->nama = $request->nama;
+        $user->username = $request->username;
         $user->email = $request->email;
         $user->role = $request->role;
         if ($request->filled('password')) {
