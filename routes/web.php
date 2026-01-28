@@ -84,6 +84,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Dashboard Admin
     Route::get('dashboard', [Dashboard::class, 'ShowDashboardPage'])->name('dashboard.page');
 
+    // Log Aktivitas - hanya Admin
+    Route::get('log-aktivitas', [\App\Http\Controllers\LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
+
     // Manajemen User - hanya Admin
     Route::controller(UserController::class)->group(function () {
         Route::get('manajemen_user', 'index')->name('user.index');

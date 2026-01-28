@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Backup;
+use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,11 +15,14 @@ use Google\Service\Drive\DriveFile;
 
 class BackupController
 {
-    /** TABEL YANG TIDAK DIBACKUP */
+    /** TABEL YANG TIDAK DIBACKUP/RESTORE (untuk menjaga session tetap aktif) */
     private array $excludeTables = [
         'backup',
         'backup_detail',
         'log_aktivitas',
+        'sessions',  // Jangan restore sessions agar user tetap login
+        'cache',
+        'cache_locks',
     ];
 
     public function index()
@@ -97,7 +101,12 @@ class BackupController
             ]);
 
             /** =========================
-             * 5️⃣ CLEAN TEMP
+             * 5️⃣ LOG AKTIVITAS
+             ========================= */
+            $this->logAktivitas('Backup', 'Membuat backup sistem: ' . $backupName . '.zip');
+
+            /** =========================
+             * 6️⃣ CLEAN TEMP
              ========================= */
             $this->deleteDirectory($basePath);
 
@@ -243,7 +252,14 @@ class BackupController
              * 5️⃣ BERSIHKAN FILE SEMENTARA
              * ========================== */
             unlink($zipPath);
-            unlink($sqlFile);
+            if (is_dir($backupDir . '/documents')) {
+                $this->deleteDirectory($backupDir . '/documents');
+            }
+
+            /** ==========================
+             * 6️⃣ LOG AKTIVITAS
+             * ========================== */
+            $this->logAktivitas('Restore', 'Melakukan restore sistem dari file upload');
 
             return redirect()
                 ->route('backup.index')
@@ -343,12 +359,32 @@ class BackupController
                 $this->copyFolder($sourceDocs, $targetDocs);
             }
 
+            // Log aktivitas
+            $this->logAktivitas('Restore', 'Melakukan restore sistem dari riwayat backup: ' . basename($backup->lokasi_file));
+
             // Bersihkan folder sementara
             $this->deleteDirectory($restoreDir);
 
             return redirect()->route('backup.index')->with('success', 'Restore sistem berhasil');
         } catch (\Exception $e) {
             return redirect()->route('backup.index')->with('error', 'Restore gagal: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Log aktivitas backup/restore
+     */
+    private function logAktivitas(string $jenis, string $deskripsi): void
+    {
+        try {
+            LogAktivitas::create([
+                'id_user' => auth()->user()->id_user ?? null,
+                'waktu_aktivitas' => now(),
+                'jenis_aktivitas' => $jenis,
+                'deskripsi' => $deskripsi,
+            ]);
+        } catch (\Exception $e) {
+            // Silently fail - don't interrupt backup/restore process
         }
     }
 
