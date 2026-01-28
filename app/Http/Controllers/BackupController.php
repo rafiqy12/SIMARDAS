@@ -374,18 +374,31 @@ class BackupController
             fn($s) => !empty($s)
         );
 
-        DB::beginTransaction();
+        // Disable foreign key checks for restore
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         
-        try {
-            foreach ($statements as $statement) {
-                if (!empty(trim($statement))) {
-                    DB::unprepared($statement);
-                }
+        $errors = [];
+        
+        foreach ($statements as $statement) {
+            $trimmed = trim($statement);
+            if (empty($trimmed)) continue;
+            
+            // Skip SET FOREIGN_KEY_CHECKS as we handle it separately
+            if (stripos($trimmed, 'SET FOREIGN_KEY_CHECKS') !== false) continue;
+            
+            try {
+                DB::unprepared($trimmed);
+            } catch (\Exception $e) {
+                // Log error but continue with other statements
+                $errors[] = $e->getMessage();
             }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw new \Exception('Restore database gagal: ' . $e->getMessage());
+        }
+        
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        
+        if (!empty($errors)) {
+            throw new \Exception('Beberapa query gagal: ' . implode('; ', array_slice($errors, 0, 3)));
         }
     }
 

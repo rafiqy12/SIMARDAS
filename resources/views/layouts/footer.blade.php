@@ -45,12 +45,12 @@
 
                 <p class="small mb-1">
                     <i class="bi bi-geo-alt me-2"></i>
-                    Jl. Raya Serang-Jakarta KM 5, Serang, Banten 42116
+                    Jl. Raya Serang - Cilegon KM. 3, Serang, Banten 42116
                 </p>
 
                 <p class="small mb-1">
                     <i class="bi bi-telephone me-2"></i>
-                    (0254) 200-100
+                    (0254) 200-123
                 </p>
 
                 <p class="small mb-3">
