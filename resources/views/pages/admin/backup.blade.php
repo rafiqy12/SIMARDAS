@@ -247,7 +247,7 @@
             </div>
             <div class="col-6 col-md-3">
                 <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #6ee7b7;">
-                    <h4 class="fw-bold mb-0" style="color: #065f46;">{{ $backups->where('status', 'success')->count() }}</h4>
+                    <h4 class="fw-bold mb-0" style="color: #065f46;">{{ $backups->where('status', 'completed')->count() }}</h4>
                     <small class="text-muted">Berhasil</small>
                 </div>
             </div>
@@ -295,7 +295,7 @@
                                 <i class="bi bi-person me-1"></i>{{ $b->user->nama ?? '-' }}
                             </small>
                         </div>
-                        @if($b->status === 'success')
+                        @if($b->status === 'completed')
                         <span class="badge-success-custom">
                             <i class="bi bi-check-circle me-1"></i>Success
                         </span>
@@ -365,7 +365,7 @@
                             {{ $b->user->nama ?? '-' }}
                         </td>
                         <td>
-                            @if($b->status === 'success')
+                            @if($b->status === 'completed')
                             <span class="badge-success-custom">
                                 <i class="bi bi-check-circle me-1"></i>Success
                             </span>

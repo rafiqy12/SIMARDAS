@@ -43,10 +43,16 @@ class BackupController
         try {
             $timestamp = now()->format('Ymd_His');
             $backupName = "backup_{$timestamp}";
-            $basePath = storage_path("app/backup/{$backupName}");
-
+            
+            // Ensure backup directory exists
+            $backupRoot = storage_path('app/backup');
+            if (!is_dir($backupRoot)) {
+                mkdir($backupRoot, 0755, true);
+            }
+            
+            $basePath = "{$backupRoot}/{$backupName}";
             if (!is_dir($basePath)) {
-                mkdir($basePath, 0777, true);
+                mkdir($basePath, 0755, true);
             }
 
             /** =========================
@@ -130,31 +136,45 @@ class BackupController
         ]);
 
         try {
+            // Ensure restore directory exists with proper permissions
             $backupDir = storage_path('app/restore');
-            if (!file_exists($backupDir)) {
-                mkdir($backupDir, 0755, true);
+            if (!is_dir($backupDir)) {
+                if (!mkdir($backupDir, 0755, true)) {
+                    throw new \Exception('Gagal membuat direktori restore');
+                }
             }
+            
+            // Clean any existing files in restore directory
+            $this->cleanDirectory($backupDir);
 
             /** ==========================
              * 1️⃣ SIMPAN ZIP
              * ========================== */
             $zipPath = $backupDir . '/' . time() . '.zip';
-            $request->file('backup_zip')->move($backupDir, basename($zipPath));
+            $uploaded = $request->file('backup_zip');
+            
+            if (!$uploaded->move($backupDir, basename($zipPath))) {
+                throw new \Exception('Gagal menyimpan file ZIP');
+            }
 
             /** ==========================
              * 2️⃣ EXTRACT ZIP
              * ========================== */
             $zip = new \ZipArchive;
-            if ($zip->open($zipPath) !== true) {
-                throw new \Exception('Gagal membuka file ZIP');
+            $openResult = $zip->open($zipPath);
+            if ($openResult !== true) {
+                throw new \Exception('Gagal membuka file ZIP (Error code: ' . $openResult . ')');
             }
 
-            $zip->extractTo($backupDir);
+            if (!$zip->extractTo($backupDir)) {
+                $zip->close();
+                throw new \Exception('Gagal mengekstrak file ZIP ke: ' . $backupDir);
+            }
             $zip->close();
 
             $sqlFile = $backupDir . '/database.sql';
             if (!file_exists($sqlFile)) {
-                throw new \Exception('File database.sql tidak ditemukan');
+                throw new \Exception('File database.sql tidak ditemukan dalam backup');
             }
 
             /** ==========================
@@ -381,6 +401,19 @@ class BackupController
             is_dir($path) ? $this->deleteDirectory($path) : unlink($path);
         }
         rmdir($dir);
+    }
+
+    /**
+     * Clean all files in a directory without removing the directory itself
+     */
+    private function cleanDirectory($dir)
+    {
+        if (!is_dir($dir)) return;
+        foreach (scandir($dir) as $file) {
+            if ($file === '.' || $file === '..') continue;
+            $path = "$dir/$file";
+            is_dir($path) ? $this->deleteDirectory($path) : unlink($path);
+        }
     }
 
     private function zipFolder($folder, ZipArchive $zip, $base = '')
