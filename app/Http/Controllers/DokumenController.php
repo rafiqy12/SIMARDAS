@@ -346,27 +346,33 @@ class DokumenController
      */
     public function download($id)
     {
-        $doc = Dokumen::findOrFail($id);
+        try {
+            $doc = Dokumen::findOrFail($id);
 
-        // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
-        $pathFile = $doc->path_file;
+            // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
+            $pathFile = $doc->path_file;
 
-        // Jika path sudah include "documents/", gunakan langsung
-        if (str_starts_with($pathFile, 'documents/')) {
-            $storagePath = $pathFile;
-        } else {
-            $storagePath = 'documents/' . $pathFile;
+            // Jika path sudah include "documents/", gunakan langsung
+            if (str_starts_with($pathFile, 'documents/')) {
+                $storagePath = $pathFile;
+            } else {
+                $storagePath = 'documents/' . $pathFile;
+            }
+
+            $fullPath = storage_path('app/public/' . $storagePath);
+
+            if (!file_exists($fullPath)) {
+                return back()->with('error', 'File tidak ditemukan');
+            }
+
+            // Nama file saat diunduh (pakai judul dokumen)
+            $ext = pathinfo($pathFile, PATHINFO_EXTENSION) ?: 'pdf';
+            $downloadName = Str::slug($doc->judul) . '.' . $ext;
+
+            return response()->download($fullPath, $downloadName);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengunduh file: ' . $e->getMessage());
         }
-
-        $fullPath = storage_path('app/public/' . $storagePath);
-
-        abort_if(!file_exists($fullPath), 404, 'File tidak ditemukan');
-
-        // Nama file saat diunduh (pakai judul dokumen)
-        $ext = pathinfo($pathFile, PATHINFO_EXTENSION) ?: 'pdf';
-        $downloadName = Str::slug($doc->judul) . '.' . $ext;
-
-        return response()->download($fullPath, $downloadName);
     }
 
 
@@ -405,38 +411,47 @@ class DokumenController
      */
     public function preview($id)
     {
-        $dokumen = Dokumen::with('user')->findOrFail($id);
+        try {
+            $dokumen = Dokumen::with('user')->findOrFail($id);
 
-        // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
-        $pathFile = $dokumen->path_file;
+            // path_file bisa berupa "documents/namafile.pdf" atau hanya "namafile.pdf"
+            $pathFile = $dokumen->path_file;
 
-        if (str_starts_with($pathFile, 'documents/')) {
-            $storagePath = $pathFile;
-        } else {
-            $storagePath = 'documents/' . $pathFile;
+            if (str_starts_with($pathFile, 'documents/')) {
+                $storagePath = $pathFile;
+            } else {
+                $storagePath = 'documents/' . $pathFile;
+            }
+
+            if (!Storage::disk('public')->exists($storagePath)) {
+                return back()->with('error', 'File tidak ditemukan');
+            }
+
+            $ext = strtolower(pathinfo($pathFile, PATHINFO_EXTENSION));
+            $previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $canPreview = in_array($ext, $previewableTypes);
+
+            // Jika tidak bisa preview, redirect ke halaman detail
+            if (!$canPreview) {
+                return redirect()->route('dokumen.detail', $id);
+            }
+
+            // Jika bisa preview (PDF/gambar), tampilkan langsung
+            $fullPath = storage_path('app/public/' . $storagePath);
+            
+            if (!file_exists($fullPath)) {
+                return back()->with('error', 'File tidak ditemukan');
+            }
+            
+            $mimeType = function_exists('mime_content_type') ? mime_content_type($fullPath) : 'application/octet-stream';
+
+            return response()->file($fullPath, [
+                'Content-Type' => $mimeType ?: 'application/octet-stream',
+                'Content-Disposition' => 'inline; filename="' . basename($pathFile) . '"'
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menampilkan preview: ' . $e->getMessage());
         }
-
-        if (!Storage::disk('public')->exists($storagePath)) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        $ext = strtolower(pathinfo($pathFile, PATHINFO_EXTENSION));
-        $previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $canPreview = in_array($ext, $previewableTypes);
-
-        // Jika tidak bisa preview, redirect ke halaman detail
-        if (!$canPreview) {
-            return redirect()->route('dokumen.detail', $id);
-        }
-
-        // Jika bisa preview (PDF/gambar), tampilkan langsung
-        $fullPath = storage_path('app/public/' . $storagePath);
-        $mimeType = mime_content_type($fullPath) ?: 'application/octet-stream';
-
-        return response()->file($fullPath, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . basename($pathFile) . '"'
-        ]);
     }
 
     /**
@@ -532,98 +547,122 @@ class DokumenController
             'deskripsi' => 'nullable|string'
         ]);
 
-        $file = $request->file('dokumen');
-        $ext  = $file->getClientOriginalExtension();
+        try {
+            $file = $request->file('dokumen');
+            $ext  = $file->getClientOriginalExtension();
 
-        $namaFile = Str::slug($request->judul) . '_' . time() . '.' . $ext;
+            $namaFile = Str::slug($request->judul) . '_' . time() . '.' . $ext;
 
-        $path = $file->storeAs('documents', $namaFile, 'public');
+            $path = $file->storeAs('documents', $namaFile, 'public');
+            
+            if (!$path) {
+                throw new \Exception('Gagal menyimpan file');
+            }
 
-        $dokumen = Dokumen::create([
-            'id_user'        => auth()->user()->id_user,
-            'judul'          => $request->judul,
-            'deskripsi'      => $request->deskripsi,
-            'kategori'       => $request->kategori,
-            'tipe_file'      => $ext,
-            'tanggal_upload' => now(),
-            'path_file'      => $path,
-            'ukuran_file'    => $file->getSize(),
-        ]);
-        $kodeBarcode = 'B' . str_pad($dokumen->id_dokumen, 5, '0', STR_PAD_LEFT);
+            $dokumen = Dokumen::create([
+                'id_user'        => auth()->user()->id_user,
+                'judul'          => $request->judul,
+                'deskripsi'      => $request->deskripsi,
+                'kategori'       => $request->kategori,
+                'tipe_file'      => $ext,
+                'tanggal_upload' => now(),
+                'path_file'      => $path,
+                'ukuran_file'    => $file->getSize(),
+            ]);
+            $kodeBarcode = 'B' . str_pad($dokumen->id_dokumen, 5, '0', STR_PAD_LEFT);
 
-        Barcode::create([
-            'kode_barcode' => $kodeBarcode,
-            'id_dokumen'   => $dokumen->id_dokumen,
-        ]);
+            Barcode::create([
+                'kode_barcode' => $kodeBarcode,
+                'id_dokumen'   => $dokumen->id_dokumen,
+            ]);
 
 
-        LogAktivitas::create([
-            'id_user' => auth()->user()->id_user,
-            'waktu_aktivitas' => now(),
-            'jenis_aktivitas' => 'Upload Arsip',
-            'deskripsi' => 'Mengupload arsip: ' . $request->judul
-        ]);
+            LogAktivitas::create([
+                'id_user' => auth()->user()->id_user,
+                'waktu_aktivitas' => now(),
+                'jenis_aktivitas' => 'Upload Arsip',
+                'deskripsi' => 'Mengupload arsip: ' . $request->judul
+            ]);
 
-        return back()->with('success', 'Dokumen berhasil diupload');
+            return back()->with('success', 'Dokumen berhasil diupload');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Upload gagal: ' . $e->getMessage());
+        }
     }
     public function downloadBarcode($id)
     {
-        $dokumen = Dokumen::with('barcode')->findOrFail($id);
-        abort_if(!$dokumen->barcode, 404);
+        try {
+            $dokumen = Dokumen::with('barcode')->findOrFail($id);
+            
+            if (!$dokumen->barcode) {
+                return back()->with('error', 'Barcode tidak ditemukan');
+            }
 
-        // Generate barcode (hitam transparan)
-        $barcodeBase64 = DNS1D::getBarcodePNG(
-            $dokumen->barcode->kode_barcode,
-            'C128',
-            3,
-            100
-        );
+            // Check if GD extension is available
+            if (!extension_loaded('gd')) {
+                return back()->with('error', 'PHP GD extension tidak tersedia');
+            }
 
-        $barcodeImage = imagecreatefromstring(base64_decode($barcodeBase64));
-
-        // Ukuran barcode
-        $bw = imagesx($barcodeImage);
-        $bh = imagesy($barcodeImage);
-
-        // Margin wajib (quiet zone)
-        $marginX = 30;
-        $marginY = 20;
-
-        // Canvas putih
-        $canvas = imagecreatetruecolor(
-            $bw + ($marginX * 2),
-            $bh + ($marginY * 2)
-        );
-
-        $white = imagecolorallocate($canvas, 255, 255, 255);
-        imagefill($canvas, 0, 0, $white);
-
-        // Tempel barcode ke tengah
-        imagecopy(
-            $canvas,
-            $barcodeImage,
-            $marginX,
-            $marginY,
-            0,
-            0,
-            $bw,
-            $bh
-        );
-
-        // Output
-        ob_start();
-        imagepng($canvas);
-        $imageData = ob_get_clean();
-
-        imagedestroy($barcodeImage);
-        imagedestroy($canvas);
-
-        return response($imageData)
-            ->header('Content-Type', 'image/png')
-            ->header(
-                'Content-Disposition',
-                'attachment; filename="barcode_' . $dokumen->barcode->kode_barcode . '.png"'
+            // Generate barcode (hitam transparan)
+            $barcodeBase64 = DNS1D::getBarcodePNG(
+                $dokumen->barcode->kode_barcode,
+                'C128',
+                3,
+                100
             );
+
+            $barcodeImage = imagecreatefromstring(base64_decode($barcodeBase64));
+
+            if (!$barcodeImage) {
+                throw new \Exception('Gagal membuat gambar barcode');
+            }
+
+            // Ukuran barcode
+            $bw = imagesx($barcodeImage);
+            $bh = imagesy($barcodeImage);
+
+            // Margin wajib (quiet zone)
+            $marginX = 30;
+            $marginY = 20;
+
+            // Canvas putih
+            $canvas = imagecreatetruecolor(
+                $bw + ($marginX * 2),
+                $bh + ($marginY * 2)
+            );
+
+            $white = imagecolorallocate($canvas, 255, 255, 255);
+            imagefill($canvas, 0, 0, $white);
+
+            // Tempel barcode ke tengah
+            imagecopy(
+                $canvas,
+                $barcodeImage,
+                $marginX,
+                $marginY,
+                0,
+                0,
+                $bw,
+                $bh
+            );
+
+            // Output
+            ob_start();
+            imagepng($canvas);
+            $imageData = ob_get_clean();
+
+            imagedestroy($barcodeImage);
+            imagedestroy($canvas);
+
+            return response($imageData)
+                ->header('Content-Type', 'image/png')
+                ->header(
+                    'Content-Disposition',
+                    'attachment; filename="barcode_' . $dokumen->barcode->kode_barcode . '.png"'
+                );
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membuat barcode: ' . $e->getMessage());
+        }
     }
     /**
      * Halaman manajemen arsip (admin)
@@ -668,21 +707,24 @@ class DokumenController
             'deskripsi' => 'nullable|string',
         ]);
 
-        $dokumen = Dokumen::findOrFail($id);
-        $judulLama = $dokumen->judul;
-        $dokumen->judul = $request->judul;
-        $dokumen->kategori = $request->kategori;
-        $dokumen->deskripsi = $request->deskripsi;
-        $dokumen->save();
+        try {
+            $dokumen = Dokumen::findOrFail($id);
+            $dokumen->judul = $request->judul;
+            $dokumen->kategori = $request->kategori;
+            $dokumen->deskripsi = $request->deskripsi;
+            $dokumen->save();
 
-        LogAktivitas::create([
-            'id_user' => auth()->user()->id_user,
-            'waktu_aktivitas' => now(),
-            'jenis_aktivitas' => 'Update Arsip',
-            'deskripsi' => 'Mengupdate arsip: ' . $request->judul
-        ]);
+            LogAktivitas::create([
+                'id_user' => auth()->user()->id_user,
+                'waktu_aktivitas' => now(),
+                'jenis_aktivitas' => 'Update Arsip',
+                'deskripsi' => 'Mengupdate arsip: ' . $request->judul
+            ]);
 
-        return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil diupdate');
+            return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil diupdate');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Update gagal: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -690,25 +732,29 @@ class DokumenController
      */
     public function destroy($id)
     {
-        $dokumen = Dokumen::findOrFail($id);
-        $judulDokumen = $dokumen->judul;
+        try {
+            $dokumen = Dokumen::findOrFail($id);
+            $judulDokumen = $dokumen->judul;
 
-        DB::table('barcode')->where('id_dokumen', $id)->delete();
+            DB::table('barcode')->where('id_dokumen', $id)->delete();
 
-        if ($dokumen->path_file && Storage::disk('public')->exists($dokumen->path_file)) {
-            Storage::disk('public')->delete($dokumen->path_file);
+            if ($dokumen->path_file && Storage::disk('public')->exists($dokumen->path_file)) {
+                Storage::disk('public')->delete($dokumen->path_file);
+            }
+
+            $dokumen->delete();
+
+            LogAktivitas::create([
+                'id_user' => auth()->user()->id_user,
+                'waktu_aktivitas' => now(),
+                'jenis_aktivitas' => 'Hapus Arsip',
+                'deskripsi' => 'Menghapus arsip: ' . $judulDokumen
+            ]);
+
+            return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil dihapus');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Hapus gagal: ' . $e->getMessage());
         }
-
-        $dokumen->delete();
-
-        LogAktivitas::create([
-            'id_user' => auth()->user()->id_user,
-            'waktu_aktivitas' => now(),
-            'jenis_aktivitas' => 'Hapus Arsip',
-            'deskripsi' => 'Menghapus arsip: ' . $judulDokumen
-        ]);
-
-        return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil dihapus');
     }
 
     /**

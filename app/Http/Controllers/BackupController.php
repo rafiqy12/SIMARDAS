@@ -35,56 +35,70 @@ class BackupController
      */
     public function create()
     {
-        $timestamp = now()->format('Ymd_His');
-        $backupName = "backup_{$timestamp}";
-        $basePath = storage_path("app/backup/{$backupName}");
-
-        if (!is_dir($basePath)) {
-            mkdir($basePath, 0777, true);
+        // Check if zip extension is available
+        if (!extension_loaded('zip')) {
+            return back()->with('error', 'PHP zip extension tidak tersedia di server');
         }
 
-        /** =========================
-         * 1️⃣ DUMP DATABASE
-         ========================= */
-        $sqlFile = "{$basePath}/database.sql";
-        $this->dumpDatabase($sqlFile);
+        try {
+            $timestamp = now()->format('Ymd_His');
+            $backupName = "backup_{$timestamp}";
+            $basePath = storage_path("app/backup/{$backupName}");
 
-        /** =========================
-         * 2️⃣ COPY FILE ARSIP
-         ========================= */
-        $documentsPath = storage_path('app/public/documents');
-        if (is_dir($documentsPath)) {
-            $this->copyDirectory($documentsPath, "{$basePath}/documents");
+            if (!is_dir($basePath)) {
+                mkdir($basePath, 0777, true);
+            }
+
+            /** =========================
+             * 1️⃣ DUMP DATABASE
+             ========================= */
+            $sqlFile = "{$basePath}/database.sql";
+            $this->dumpDatabase($sqlFile);
+
+            /** =========================
+             * 2️⃣ COPY FILE ARSIP
+             ========================= */
+            $documentsPath = storage_path('app/public/documents');
+            if (is_dir($documentsPath)) {
+                $this->copyDirectory($documentsPath, "{$basePath}/documents");
+            }
+
+            /** =========================
+             * 3️⃣ ZIP SEMUA
+             ========================= */
+            $zipPath = storage_path("app/backup/{$backupName}.zip");
+            $zip = new ZipArchive;
+            
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                throw new \Exception('Gagal membuat file ZIP');
+            }
+            
+            $this->zipFolder($basePath, $zip);
+            $zip->close();
+
+            // Upload ke Google Drive (jika token tersedia)
+            $this->uploadToGoogleDrive($zipPath, basename($zipPath));
+
+            /** =========================
+             * 4️⃣ SIMPAN KE DB
+             ========================= */
+            Backup::create([
+                'id_user' => auth()->user()->id_user,
+                'tanggal_backup' => now(),
+                'lokasi_file' => "backup/{$backupName}.zip",
+                'status' => 'success',
+                'ukuran_file' => filesize($zipPath),
+            ]);
+
+            /** =========================
+             * 5️⃣ CLEAN TEMP
+             ========================= */
+            $this->deleteDirectory($basePath);
+
+            return back()->with('success', 'Backup berhasil dibuat');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Backup gagal: ' . $e->getMessage());
         }
-
-        /** =========================
-         * 3️⃣ ZIP SEMUA
-         ========================= */
-        $zipPath = storage_path("app/backup/{$backupName}.zip");
-        $zip = new ZipArchive;
-        $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-        $this->zipFolder($basePath, $zip);
-        $zip->close();
-
-        $this->uploadToGoogleDrive($zipPath, basename($zipPath));
-
-        /** =========================
-         * 4️⃣ SIMPAN KE DB
-         ========================= */
-        Backup::create([
-            'id_user' => auth()->user()->id_user,
-            'tanggal_backup' => now(),
-            'lokasi_file' => "backup/{$backupName}.zip",
-            'status' => 'success',
-            'ukuran_file' => filesize($zipPath),
-        ]);
-
-        /** =========================
-         * 5️⃣ CLEAN TEMP
-         ========================= */
-        $this->deleteDirectory($basePath);
-
-        return back()->with('success', 'Backup berhasil dibuat');
     }
 
     /**
@@ -92,12 +106,18 @@ class BackupController
      */
     public function download($id)
     {
-        $backup = Backup::findOrFail($id);
-        $path = storage_path('app/' . $backup->lokasi_file);
+        try {
+            $backup = Backup::findOrFail($id);
+            $path = storage_path('app/' . $backup->lokasi_file);
 
-        abort_if(!file_exists($path), 404);
+            if (!file_exists($path)) {
+                return back()->with('error', 'File backup tidak ditemukan');
+            }
 
-        return response()->download($path);
+            return response()->download($path);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Download gagal: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -138,17 +158,9 @@ class BackupController
             }
 
             /** ==========================
-             * 3️⃣ RESTORE DATABASE
+             * 3️⃣ RESTORE DATABASE (Cross-platform)
              * ========================== */
-            $db = config('database.connections.mysql');
-            $mysql = 'C:\xampp\mysql\bin\mysql';
-
-            $command = "\"$mysql\" --user={$db['username']} --password={$db['password']} {$db['database']} < \"$sqlFile\"";
-            exec($command, $output, $result);
-
-            if ($result !== 0) {
-                throw new \Exception('Restore database gagal');
-            }
+            $this->restoreDatabase($sqlFile);
 
             /** ==========================
              * 4️⃣ RESTORE FILE ARSIP
@@ -225,16 +237,8 @@ class BackupController
                 throw new \Exception('File database.sql tidak ditemukan di backup');
             }
 
-            // Restore Database
-            $db = config('database.connections.mysql');
-            $mysql = 'C:\xampp\mysql\bin\mysql'; // sesuaikan dengan path MySQL
-
-            $command = "\"$mysql\" --user={$db['username']} --password={$db['password']} {$db['database']} < \"$sqlFile\"";
-            exec($command, $output, $result);
-
-            if ($result !== 0) {
-                throw new \Exception('Restore database gagal');
-            }
+            // Restore Database (Cross-platform)
+            $this->restoreDatabase($sqlFile);
 
             // Restore Dokumen
             $sourceDocs = $restoreDir . '/documents';
@@ -256,6 +260,39 @@ class BackupController
     /** =========================
      * HELPER FUNCTIONS
      ========================= */
+
+    /**
+     * Restore database from SQL file (cross-platform)
+     * Works on both Windows (XAMPP) and Linux (shared hosting)
+     */
+    private function restoreDatabase(string $sqlFile): void
+    {
+        $sql = file_get_contents($sqlFile);
+        
+        if ($sql === false) {
+            throw new \Exception('Gagal membaca file SQL');
+        }
+
+        // Split SQL statements by semicolon (handle multi-line statements)
+        $statements = array_filter(
+            array_map('trim', preg_split('/;[\r\n]+/', $sql)),
+            fn($s) => !empty($s)
+        );
+
+        DB::beginTransaction();
+        
+        try {
+            foreach ($statements as $statement) {
+                if (!empty(trim($statement))) {
+                    DB::unprepared($statement);
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception('Restore database gagal: ' . $e->getMessage());
+        }
+    }
 
     private function uploadToGoogleDrive(string $filePath, string $fileName)
     {
