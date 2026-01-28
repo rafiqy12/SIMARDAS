@@ -67,6 +67,15 @@
     .activity-item.delete {
         border-left-color: #ef4444;
     }
+    .activity-item.backup {
+        border-left-color: #06b6d4;
+    }
+    .activity-item.restore {
+        border-left-color: #f59e0b;
+    }
+    .activity-item.login {
+        border-left-color: #8b5cf6;
+    }
     .activity-icon {
         width: 40px;
         height: 40px;
@@ -86,6 +95,18 @@
     .activity-icon.delete {
         background: rgba(239, 68, 68, 0.1);
         color: #ef4444;
+    }
+    .activity-icon.backup {
+        background: rgba(6, 182, 212, 0.1);
+        color: #06b6d4;
+    }
+    .activity-icon.restore {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    .activity-icon.login {
+        background: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
     }
     
     /* Quick Action Buttons */
@@ -312,12 +333,42 @@
                 @forelse($aktivitasTerbaru as $aktivitas)
                 @php
                     $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
+                    $isBackup = str_contains($jenisAktivitas, 'backup');
+                    $isRestore = str_contains($jenisAktivitas, 'restore');
                     $isUpload = str_contains($jenisAktivitas, 'upload');
                     $isUpdate = str_contains($jenisAktivitas, 'update');
-                    $isDelete = str_contains($jenisAktivitas, 'hapus');
-                    $activityClass = $isUpload ? 'upload' : ($isUpdate ? 'update' : ($isDelete ? 'delete' : 'upload'));
-                    $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : 'bi-file-earmark-text'));
-                    $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : 'secondary'));
+                    $isDelete = str_contains($jenisAktivitas, 'hapus') || str_contains($jenisAktivitas, 'delete');
+                    $isLogin = str_contains($jenisAktivitas, 'login');
+                    
+                    if ($isBackup) {
+                        $activityClass = 'backup';
+                        $icon = 'bi-hdd';
+                        $badgeStyle = 'background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white;';
+                    } elseif ($isRestore) {
+                        $activityClass = 'restore';
+                        $icon = 'bi-arrow-counterclockwise';
+                        $badgeStyle = 'background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;';
+                    } elseif ($isUpload) {
+                        $activityClass = 'upload';
+                        $icon = 'bi-cloud-arrow-up';
+                        $badgeStyle = 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;';
+                    } elseif ($isUpdate) {
+                        $activityClass = 'update';
+                        $icon = 'bi-pencil-square';
+                        $badgeStyle = 'background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;';
+                    } elseif ($isDelete) {
+                        $activityClass = 'delete';
+                        $icon = 'bi-trash';
+                        $badgeStyle = 'background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;';
+                    } elseif ($isLogin) {
+                        $activityClass = 'login';
+                        $icon = 'bi-box-arrow-in-right';
+                        $badgeStyle = 'background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white;';
+                    } else {
+                        $activityClass = 'default';
+                        $icon = 'bi-file-earmark-text';
+                        $badgeStyle = 'background: linear-gradient(135deg, #64748b 0%, #475569 100%); color: white;';
+                    }
                 @endphp
                 <div class="activity-item {{ $activityClass }} d-flex align-items-start mb-2">
                     <div class="activity-icon {{ $activityClass }} me-3 flex-shrink-0">
@@ -332,7 +383,7 @@
                                 </p>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-{{ $badgeClass }}">
+                                <span class="badge" style="{{ $badgeStyle }}">
                                     {{ $aktivitas->jenis_aktivitas }}
                                 </span>
                                 <p class="mb-0 text-muted small mt-1">
