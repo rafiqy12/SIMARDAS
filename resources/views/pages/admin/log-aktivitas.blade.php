@@ -1,23 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.app_admin')
 
 @section('title', 'Log Aktivitas - SIMARDAS')
+@section('page-title', 'Log Aktivitas')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid">
     
-    {{-- Header --}}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-        <div class="mb-3 mb-md-0">
-            <h4 class="fw-bold mb-1">
-                <i class="bi bi-activity text-primary me-2"></i>Log Aktivitas
-            </h4>
-            <p class="text-muted mb-0">Riwayat seluruh aktivitas sistem</p>
-        </div>
-        <a href="{{ route('dashboard.page') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard
-        </a>
-    </div>
-
     {{-- Filter & Search Card --}}
     <div class="card shadow-sm mb-4" style="border-radius: 12px;">
         <div class="card-body p-3">

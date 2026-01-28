@@ -404,6 +404,9 @@ class BackupController
             throw new \Exception('Gagal membaca file SQL');
         }
 
+        // Tabel yang tidak boleh di-restore (agar session tetap aktif)
+        $skipTables = ['sessions', 'cache', 'cache_locks', 'backup', 'log_aktivitas'];
+
         // Split SQL statements by semicolon (handle multi-line statements)
         $statements = array_filter(
             array_map('trim', preg_split('/;[\r\n]+/', $sql)),
@@ -421,6 +424,18 @@ class BackupController
             
             // Skip SET FOREIGN_KEY_CHECKS as we handle it separately
             if (stripos($trimmed, 'SET FOREIGN_KEY_CHECKS') !== false) continue;
+            
+            // Skip statements yang mempengaruhi tabel tertentu (sessions, cache, dll)
+            $shouldSkip = false;
+            foreach ($skipTables as $skipTable) {
+                // Match: TRUNCATE TABLE `sessions`, INSERT INTO `sessions`, etc
+                if (preg_match('/\b(TRUNCATE\s+TABLE|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+`?' . $skipTable . '`?/i', $trimmed)) {
+                    $shouldSkip = true;
+                    break;
+                }
+            }
+            
+            if ($shouldSkip) continue;
             
             try {
                 DB::unprepared($trimmed);

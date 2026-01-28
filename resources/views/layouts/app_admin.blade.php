@@ -543,6 +543,12 @@
                             <span class="menu-text">Backup dan Restore Data</span>
                         </a>
 
+                        <a href="{{ route('log-aktivitas.index') }}"
+                           class="nav-link btn {{ $currentRoute == 'log-aktivitas.index' ? 'active-menu' : 'btn-light' }} sidebar-item border d-flex align-items-center gap-3">
+                            <span class="menu-icon"><i class="bi bi-activity"></i></span>
+                            <span class="menu-text">Log Aktivitas</span>
+                        </a>
+
                         <a href="{{ route('dokumen.index') }}"
                            class="nav-link btn {{ in_array($currentRoute, ['dokumen.index', 'dokumen.edit', 'dokumen_upload.page']) ? 'active-menu' : 'btn-light' }} sidebar-item d-flex align-items-center gap-3">
                             <span class="menu-icon"><i class="bi bi-folder"></i></span>
