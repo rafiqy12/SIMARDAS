@@ -162,12 +162,22 @@ class BackupController
             $zipFilename = time() . '.zip';
             $zipPath = $backupDir . '/' . $zipFilename;
             
-            // Use storeAs instead of move for better compatibility
+            // Use move() with try-catch for better error handling
             $uploaded = $request->file('backup_zip');
-            $stored = $uploaded->storeAs($restorePath, $zipFilename, 'local');
             
-            if (!$stored || !file_exists($zipPath)) {
-                throw new \Exception('Gagal menyimpan file ZIP');
+            try {
+                // Try move first (faster)
+                $uploaded->move($backupDir, $zipFilename);
+            } catch (\Exception $e) {
+                // Fallback: copy file contents manually
+                $content = file_get_contents($uploaded->getRealPath());
+                if ($content === false || file_put_contents($zipPath, $content) === false) {
+                    throw new \Exception('Gagal menyimpan file ZIP: ' . $e->getMessage());
+                }
+            }
+            
+            if (!file_exists($zipPath)) {
+                throw new \Exception('File ZIP tidak tersimpan di server');
             }
 
             /** ==========================

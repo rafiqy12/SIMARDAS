@@ -36,19 +36,19 @@
                 <!-- MENU KIRI -->
                 <ul class="navbar-nav me-auto mb-1 mb-lg-0 gap-2">
                     <li class="nav-item">
-                        <a class="nav-link small active py-2 px-2" href="#">Beranda</a>
+                        <a class="nav-link small active py-2 px-2" href="{{ route('home.page') }}">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link small py-2 px-2" href="#">Profil</a>
+                        <a class="nav-link small py-2 px-2" href="{{ route('profile.page') }}">Profil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link small py-2 px-2" href="#">Fitur Sistem</a>
+                        <a class="nav-link small py-2 px-2" href="{{ route('search.page') }}">Fitur Sistem</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link small py-2 px-2" href="#">Layanan</a>
+                        <a class="nav-link small py-2 px-2" href="{{ route('search.page') }}">Layanan</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link small py-2 px-2" href="#">Kontak</a>
+                        <a class="nav-link small py-2 px-2" href="{{ route('kontak.page') }}">Kontak</a>
                     </li>
                 </ul>
 

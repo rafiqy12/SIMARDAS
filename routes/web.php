@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Register;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KontakController;
 use Illuminate\Support\Facades\Route;
 
 // =============================================
@@ -19,7 +21,12 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout');
 });
 
+// Register routes
 Route::get('register', [Register::class, 'ShowRegisterpage'])->name('register.page');
+Route::post('register', [Register::class, 'register'])->name('register.process');
+
+// Kontak - bisa diakses tanpa login
+Route::get('kontak', [KontakController::class, 'index'])->name('kontak.page');
 
 // =============================================
 // AUTH ROUTES (Harus login - semua role)
@@ -27,6 +34,10 @@ Route::get('register', [Register::class, 'ShowRegisterpage'])->name('register.pa
 Route::middleware('auth')->group(function () {
     // Home page untuk user yang sudah login
     Route::get('home', [Home::class, 'ShowHomePage'])->name('home.page');
+
+    // Profile
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.page');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Dokumen - akses untuk semua user yang sudah login (hanya baca/lihat)
     Route::controller(DokumenController::class)->group(function () {

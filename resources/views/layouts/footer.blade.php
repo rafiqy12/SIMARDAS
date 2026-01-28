@@ -21,11 +21,11 @@
             <div class="col-md-3">
                 <h6 class="fw-bold mb-3">Tautan Cepat</h6>
                 <ul class="list-unstyled small">
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-1">Beranda</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-1">Profil</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-1">Fitur Sistem</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-1">Layanan</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-1">Kontak</a></li>
+                    <li><a href="{{ route('home.page') }}" class="text-white text-decoration-none d-block mb-1">Beranda</a></li>
+                    <li><a href="{{ route('profile.page') }}" class="text-white text-decoration-none d-block mb-1">Profil</a></li>
+                    <li><a href="{{ route('search.page') }}" class="text-white text-decoration-none d-block mb-1">Fitur Sistem</a></li>
+                    <li><a href="{{ route('search.page') }}" class="text-white text-decoration-none d-block mb-1">Layanan</a></li>
+                    <li><a href="{{ route('kontak.page') }}" class="text-white text-decoration-none d-block mb-1">Kontak</a></li>
                 </ul>
             </div>
 

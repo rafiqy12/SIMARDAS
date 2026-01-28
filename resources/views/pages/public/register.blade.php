@@ -126,7 +126,7 @@
 					<div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
 						<div class="card register-card shadow">
 							<div class="card-body p-4 p-lg-5 text-black">
-								<form method="POST" action="/home">
+								<form method="POST" action="{{ route('register.process') }}">
 									@csrf
 
 									<!-- LOGO CENTER -->

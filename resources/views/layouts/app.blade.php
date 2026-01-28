@@ -552,7 +552,7 @@
                         </li>
                         @endif
                         <li class="nav-item">
-                            <a class="nav-link small py-2 px-2" href="#">Profil</a>
+                            <a class="nav-link small py-2 px-2" href="{{ route('profile.page') }}">Profil</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link small py-2 px-2 dropdown-toggle" href="#" id="fiturDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -572,7 +572,7 @@
                         </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link small py-2 px-2" href="#">Kontak</a>
+                            <a class="nav-link small py-2 px-2" href="{{ route('kontak.page') }}">Kontak</a>
                         </li>
                     </ul>
 
@@ -627,10 +627,10 @@
                 </h6>
                 <ul class="list-unstyled small">
                     <li><a href="{{ route('home.page') }}" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Beranda</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Profil</a></li>
+                    <li><a href="{{ route('profile.page') }}" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Profil</a></li>
                     <li><a href="{{ route('search.page') }}" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Fitur Sistem</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Layanan</a></li>
-                    <li><a href="#" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Kontak</a></li>
+                    <li><a href="{{ route('search.page') }}" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Layanan</a></li>
+                    <li><a href="{{ route('kontak.page') }}" class="text-white text-decoration-none d-block mb-2 opacity-75"><i class="bi bi-chevron-right me-1"></i>Kontak</a></li>
                 </ul>
             </div>
 
