@@ -86,7 +86,7 @@ class BackupController
                 'id_user' => auth()->user()->id_user,
                 'tanggal_backup' => now(),
                 'lokasi_file' => "backup/{$backupName}.zip",
-                'status' => 'success',
+                'status' => 'completed',
                 'ukuran_file' => filesize($zipPath),
             ]);
 
