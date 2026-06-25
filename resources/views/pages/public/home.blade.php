@@ -91,7 +91,7 @@
     </h3>
 
     <p class="text-muted mx-auto" style="max-width: 600px;">
-        Berbagai fitur canggih untuk mendukung pengelolaan arsip daerah 
+        Berbagai fitur canggih untuk mendukung pengelolaan arsip
         yang modern, efisien, dan sesuai dengan standar kearsipan nasional.
     </p>
 
@@ -182,7 +182,7 @@
             <!-- Background decoration -->
             <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
             <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-            
+
             <div class="position-relative" style="z-index: 1;">
                 <h3 class="fw-bold mb-3">
                     <i class="bi bi-rocket-takeoff me-2"></i>Mulai Kelola Arsip Anda Sekarang

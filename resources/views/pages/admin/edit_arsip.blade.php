@@ -10,39 +10,48 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+
     .edit-card {
         border-radius: 16px;
         border: 1px solid #dbeafe;
         overflow: hidden;
     }
+
     .form-card-header {
         background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         border-bottom: 1px solid #bfdbfe;
         padding: 1.25rem;
     }
-    .form-control:focus, .form-select:focus {
+
+    .form-control:focus,
+    .form-select:focus {
         border-color: #93c5fd;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
+
     .info-box {
         background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         border: 1px solid #bfdbfe;
         border-radius: 12px;
         padding: 1rem;
     }
+
     .info-box-item {
         display: flex;
         align-items: center;
         padding: 0.5rem 0;
         border-bottom: 1px dashed #bfdbfe;
     }
+
     .info-box-item:last-child {
         border-bottom: none;
     }
+
     .info-box-item i {
         width: 24px;
         color: #3b82f6;
     }
+
     .btn-submit {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         border: none;
@@ -52,11 +61,13 @@
         box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         transition: all 0.3s ease;
     }
+
     .btn-submit:hover {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
     }
+
     .badge-file-type {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
@@ -64,6 +75,7 @@
         border-radius: 8px;
         font-weight: 600;
     }
+
     .btn-submit-custom {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         border: none;
@@ -73,11 +85,13 @@
         box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         transition: all 0.3s ease;
     }
+
     .btn-submit-custom:hover {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
     }
+
     .btn-submit-custom:active {
         transform: translateY(0);
     }
@@ -138,7 +152,7 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="card-body p-3 p-md-4">
                     <form method="POST" action="{{ route('dokumen.update', $dokumen->id_dokumen) }}">
                         @csrf
@@ -197,13 +211,13 @@
                                     <span class="small"><strong>Ukuran File:</strong></span>
                                     <span class="ms-2 small text-muted">
                                         @if($dokumen->ukuran_file)
-                                            @if($dokumen->ukuran_file >= 1048576)
-                                                {{ number_format($dokumen->ukuran_file / 1048576, 2) }} MB
-                                            @else
-                                                {{ number_format($dokumen->ukuran_file / 1024, 2) }} KB
-                                            @endif
+                                        @if($dokumen->ukuran_file >= 1048576)
+                                        {{ number_format($dokumen->ukuran_file / 1048576, 2) }} MB
                                         @else
-                                            -
+                                        {{ number_format($dokumen->ukuran_file / 1024, 2) }} KB
+                                        @endif
+                                        @else
+                                        -
                                         @endif
                                     </span>
                                 </div>
@@ -217,7 +231,7 @@
 
                         {{-- Submit Button --}}
                         <div class="text-center">
-                            <button type="submit" class="btn w-100 text-white" 
+                            <button type="submit" class="btn w-100 text-white"
                                 style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; border-radius: 12px; padding: 14px 28px; font-weight: 600; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: all 0.3s ease; display: block !important; visibility: visible !important;"
                                 onmouseover="this.style.background='linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(37, 99, 235, 0.4)';"
                                 onmouseout="this.style.background='linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(37, 99, 235, 0.3)';">

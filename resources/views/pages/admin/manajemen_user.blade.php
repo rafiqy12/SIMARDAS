@@ -11,6 +11,7 @@
         border: 1px solid #dbeafe;
         transition: all 0.3s ease;
     }
+
     .user-card:hover {
         box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
     }

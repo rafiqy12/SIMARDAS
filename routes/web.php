@@ -20,6 +20,7 @@ Route::controller(LoginController::class)->group(function () {
 });
 
 Route::get('register', [Register::class, 'ShowRegisterpage'])->name('register.page');
+Route::post('register', [Register::class, 'store'])->name('register.store');
 
 // =============================================
 // AUTH ROUTES (Harus login - semua role)

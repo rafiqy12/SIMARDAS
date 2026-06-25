@@ -1,59 +1,187 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/Logo_kabupaten_serang.png" width="150" alt="Logo Kabupaten Serang">
 </p>
 
-## About Laravel
+<h1 align="center">SIMARDAS</h1>
+<h3 align="center">Sistem Informasi Manajemen Arsip Daerah Serang</h3>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <strong>Sistem Digitalisasi dan Manajemen Arsip Daerah Kabupaten Serang</strong>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="center">
+  <a href="#fitur">Fitur</a> •
+  <a href="#teknologi">Teknologi</a> •
+  <a href="#instalasi">Instalasi</a> •
+  <a href="#penggunaan">Penggunaan</a>
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📋 Tentang SIMARDAS
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**SIMARDAS** (Sistem Informasi Manajemen Arsip Daerah Serang) adalah sistem manajemen arsip digital yang dirancang untuk membantu Pemerintah Kabupaten Serang dalam mengelola, menyimpan, dan mengakses dokumen arsip secara efisien. Dengan antarmuka yang modern dan fitur-fitur canggih, SIMARDAS mewujudkan transformasi digital dalam pengelolaan arsip daerah.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🎯 Tujuan
 
-## Laravel Sponsors
+- Mewujudkan tata kelola arsip daerah yang modern dan efisien
+- Mempermudah digitalisasi dokumen fisik menjadi format digital
+- Menyediakan sistem pencarian arsip yang cepat dan akurat
+- Meningkatkan keamanan dan aksesibilitas dokumen arsip
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ✨ Fitur
 
-### Premium Partners
+### 📤 Upload & Digitalisasi Dokumen
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Upload dokumen dalam berbagai format (PDF, gambar, dll)
+- Digitalisasi dokumen fisik dengan mudah
+- Kategorisasi dan pengorganisasian dokumen terstruktur
+- Upload dokumen via scan kamera
 
-## Contributing
+### 🔍 Pencarian Arsip Canggih
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Pencarian berdasarkan berbagai kriteria (judul, tanggal, kategori)
+- Filter dan sorting yang fleksibel
+- Hasil pencarian yang cepat dan akurat
 
-## Code of Conduct
+### 📱 Scan Barcode
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Pindai barcode dokumen untuk akses cepat
+- Generate barcode otomatis untuk setiap dokumen
+- Integrasi dengan sistem labeling dokumen
 
-## Security Vulnerabilities
+### 🔐 Keamanan Data
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Sistem autentikasi multi-level
+- Role-based access control (Admin, Petugas, User)
+- Enkripsi data dan backup otomatis
 
-## License
+### 📊 Dashboard & Laporan
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Dashboard statistik real-time
+- Laporan aktivitas dan penggunaan sistem
+- Log aktivitas untuk audit trail
+
+### 💾 Backup & Restore
+
+- Backup data otomatis dan manual
+- Integrasi dengan Google Drive
+- Restore data dengan mudah
+
+### 👤 Registrasi Pengguna
+
+- Registrasi mandiri untuk pengguna umum
+- Verifikasi email
+- Role default sebagai User biasa
+
+## 🛠️ Teknologi
+
+| Kategori       | Teknologi                         |
+| -------------- | --------------------------------- |
+| Backend        | Laravel 12 (PHP 8.2+)             |
+| Frontend       | Bootstrap 5, Blade Templates      |
+| Database       | MySQL                             |
+| Authentication | Laravel Auth                      |
+| File Storage   | Laravel Storage, Google Drive API |
+| PDF Generation | DomPDF                            |
+| Barcode        | DNS1D Barcode Generator           |
+
+## 📦 Instalasi
+
+### Prasyarat
+
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL
+- XAMPP/Laragon (opsional)
+
+### Langkah Instalasi
+
+1. **Clone repository**
+
+    ```bash
+    git clone https://github.com/yourusername/simardas.git
+    cd simardas
+    ```
+
+2. **Install dependencies**
+
+    ```bash
+    composer install
+    npm install
+    ```
+
+3. **Konfigurasi environment**
+
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+4. **Setup database**
+    - Buat database baru di MySQL
+    - Update konfigurasi database di file `.env`
+
+5. **Jalankan migrasi**
+
+    ```bash
+    php artisan migrate
+    ```
+
+6. **Build assets**
+
+    ```bash
+    npm run build
+    ```
+
+7. **Jalankan server**
+
+    ```bash
+    php artisan serve
+    ```
+
+8. Akses aplikasi di `http://localhost:8000`
+
+## 📖 Penggunaan
+
+### Role Pengguna
+
+| Role        | Akses                                                           |
+| ----------- | --------------------------------------------------------------- |
+| **Admin**   | Full access - kelola user, arsip, backup, dan pengaturan sistem |
+| **Petugas** | Upload, edit, dan kelola dokumen arsip                          |
+| **User**    | Lihat dan cari dokumen arsip                                    |
+| **Umum**    | Akses terbatas setelah registrasi                               |
+
+### Alur Kerja Dasar
+
+1. **Login/Register** ke sistem
+2. **Upload** dokumen arsip baru atau scan dokumen fisik
+3. **Kategorikan** dokumen sesuai klasifikasi
+4. **Cari** dokumen menggunakan fitur pencarian atau scan barcode
+5. **Kelola** dokumen (edit, hapus, download)
+
+## 🔒 Keamanan
+
+SIMARDAS mengimplementasikan berbagai lapisan keamanan:
+
+- Password hashing dengan bcrypt
+- CSRF protection
+- XSS protection
+- Role-based access control
+- Session management
+
+## 📄 Lisensi
+
+Project ini dilindungi hak cipta. © 2025 Pemerintah Kabupaten Serang.
+
+## 👥 Tim Pengembang
+
+Dikembangkan untuk Pemerintah Kabupaten Serang.
+
+---
+
+<p align="center">
+  <strong>SIMARDAS</strong> - Sistem Informasi Manajemen Arsip Daerah Serang
+</p>

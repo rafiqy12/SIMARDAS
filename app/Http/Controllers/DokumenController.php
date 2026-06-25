@@ -54,7 +54,15 @@ class DokumenController
 
             // Urutkan berdasarkan skor relevansi (tertinggi dulu)
             $sortedResults = $scoredResults->sortByDesc('relevance_score');
+            $sort = $request->get('sort');
 
+            if ($sort === 'nama') {
+                $sortedResults = $sortedResults->sortBy('judul');
+            } elseif ($sort === 'terbaru') {
+                $sortedResults = $sortedResults->sortByDesc('tanggal_upload');
+            } elseif ($sort === 'terlama') {
+                $sortedResults = $sortedResults->sortBy('tanggal_upload');
+            }
             // Format hasil
             $documents = $sortedResults->map(function ($doc) {
                 return (object)[
@@ -98,11 +106,14 @@ class DokumenController
             $query = Dokumen::with('user');
             $this->applyFilters($query, $request);
 
-            $sort = $request->get('sort', 'desc');
+            $sort = $request->get('sort');
+
             if ($sort === 'nama') {
                 $query->orderBy('judul', 'asc');
+            } elseif ($sort === 'terlama') {
+                $query->orderBy('tanggal_upload', 'asc');
             } else {
-                $query->orderBy('tanggal_upload', $sort);
+                $query->orderBy('tanggal_upload', 'desc');
             }
 
             $documents = $query->get()->map(function ($doc) {
@@ -135,6 +146,23 @@ class DokumenController
         $users = User::whereIn('role', ['Admin', 'Petugas', 'Petugas Arsip'])
             ->orderBy('nama')
             ->get();
+
+        if ($documents->isEmpty()) {
+            $query = Dokumen::with('user');
+            $this->applyFilters($query, $request);
+            $documents = $query->orderBy('tanggal_upload', 'desc')->get()->map(function ($doc) {
+                return (object)[
+                    'id'           => $doc->id_dokumen,
+                    'title'        => $doc->judul,
+                    'description'  => $doc->deskripsi,
+                    'category'     => $doc->kategori,
+                    'type'         => strtoupper($doc->tipe_file),
+                    'uploaded_at'  => $doc->tanggal_upload,
+                    'uploaded_by'  => $doc->user->nama ?? '-',
+                    'file_size'    => $doc->file_size ?? '-'
+                ];
+            });
+        }
 
         return view('pages.public.search', compact(
             'documents',

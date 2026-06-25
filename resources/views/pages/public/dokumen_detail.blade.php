@@ -23,9 +23,19 @@
 		background: #f8fafc;
 		border-radius: 8px;
 		border: 1px solid #e2e8f0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.barcode-wrapper svg {
+	.barcode-wrapper>div:first-child {
+		display: flex;
+		justify-content: center;
+	}
+
+	.barcode-wrapper svg,
+	.barcode-wrapper img {
 		margin: 0 auto;
 		display: block;
 	}
@@ -53,9 +63,9 @@
 
 <div class="container py-3 py-md-4">
 	@php
-		$hasRecommendations = isset($recommendations) && count($recommendations) > 0;
+	$hasRecommendations = isset($recommendations) && count($recommendations) > 0;
 	@endphp
-	
+
 	<div class="row {{ $hasRecommendations ? '' : 'justify-content-center' }}">
 		<!-- Kolom Detail Dokumen -->
 		<div class="col-12 {{ $hasRecommendations ? 'col-md-7' : '' }}" style="{{ !$hasRecommendations ? 'max-width: 800px;' : '' }}">

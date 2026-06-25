@@ -21,20 +21,20 @@
     </div>
 
     @include('pages.partials._arsip_content', [
-        'dokumens' => $dokumens,
-        'search' => $search ?? '',
-        'perPage' => $perPage ?? 10,
-        'searchRoute' => route('dokumen.index'),
-        'canUpload' => true,
-        'canEdit' => true
+    'dokumens' => $dokumens,
+    'search' => $search ?? '',
+    'perPage' => $perPage ?? 10,
+    'searchRoute' => route('dokumen.index'),
+    'canUpload' => true,
+    'canEdit' => true
     ])
 </div>
 <style>
-.arsip-main-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-  box-sizing: border-box;
-}
+    .arsip-main-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        box-sizing: border-box;
+    }
 </style>
 @endsection

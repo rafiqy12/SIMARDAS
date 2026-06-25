@@ -87,8 +87,8 @@
                         <div class="col-6 col-md-3">
                             <label class="form-label small mb-1">Urutkan</label>
                             <select class="form-select form-select-sm rounded-xl shadow-sm border border-primary-200 focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all" name="sort">
-                                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
-                                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
+                                <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama</option>
                                 <option value="nama" {{ request('sort') == 'nama' ? 'selected' : '' }}>Nama</option>
                             </select>
                         </div>

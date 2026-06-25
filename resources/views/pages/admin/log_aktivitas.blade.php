@@ -11,6 +11,7 @@
         border: 1px solid #dbeafe;
         transition: all 0.3s ease;
     }
+
     .log-card:hover {
         box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
     }
@@ -25,25 +26,32 @@
         margin-bottom: 12px;
         border: 1px solid #e2e8f0;
     }
+
     .activity-item:hover {
         background: var(--primary-50);
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
+
     .activity-item.upload {
         border-left-color: #10b981;
     }
+
     .activity-item.update {
         border-left-color: var(--primary-500);
     }
+
     .activity-item.delete {
         border-left-color: #ef4444;
     }
+
     .activity-item.login {
         border-left-color: #8b5cf6;
     }
+
     .activity-item.download {
         border-left-color: #f59e0b;
     }
+
     .activity-icon {
         width: 48px;
         height: 48px;
@@ -53,22 +61,27 @@
         justify-content: center;
         font-size: 1.25rem;
     }
+
     .activity-icon.upload {
         background: rgba(16, 185, 129, 0.1);
         color: #10b981;
     }
+
     .activity-icon.update {
         background: rgba(59, 130, 246, 0.1);
         color: var(--primary-500);
     }
+
     .activity-icon.delete {
         background: rgba(239, 68, 68, 0.1);
         color: #ef4444;
     }
+
     .activity-icon.login {
         background: rgba(139, 92, 246, 0.1);
         color: #8b5cf6;
     }
+
     .activity-icon.download {
         background: rgba(245, 158, 11, 0.1);
         color: #f59e0b;
@@ -78,6 +91,7 @@
     .table-themed thead {
         background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     }
+
     .table-themed thead th {
         color: #1e40af;
         font-weight: 600;
@@ -85,11 +99,13 @@
         padding: 12px 16px;
         font-size: 0.85rem;
     }
+
     .table-themed tbody td {
         padding: 14px 16px;
         vertical-align: middle;
         border-color: #e2e8f0;
     }
+
     .table-themed tbody tr:hover {
         background: var(--primary-50);
     }
@@ -109,9 +125,11 @@
         border: 1px solid #e2e8f0;
         transition: all 0.2s ease;
     }
+
     .stats-mini:hover {
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
+
     .stats-mini .stats-icon {
         width: 36px;
         height: 36px;
@@ -144,10 +162,10 @@
                         <label class="form-label small fw-semibold text-primary mb-1">
                             <i class="bi bi-search me-1"></i>Pencarian
                         </label>
-                        <input type="text" name="search" class="form-control form-control-sm" 
-                               placeholder="Cari nama user, deskripsi..." 
-                               value="{{ $search ?? '' }}" 
-                               style="border-radius: 8px;">
+                        <input type="text" name="search" class="form-control form-control-sm"
+                            placeholder="Cari nama user, deskripsi..."
+                            value="{{ $search ?? '' }}"
+                            style="border-radius: 8px;">
                     </div>
                     <div class="col-12 col-md-3">
                         <label class="form-label small fw-semibold text-primary mb-1">
@@ -156,9 +174,9 @@
                         <select name="jenis" class="form-select form-select-sm" style="border-radius: 8px;">
                             <option value="">Semua Jenis</option>
                             @foreach($jenisAktivitasList as $jenis)
-                                <option value="{{ $jenis }}" {{ ($jenisFilter ?? '') == $jenis ? 'selected' : '' }}>
-                                    {{ $jenis }}
-                                </option>
+                            <option value="{{ $jenis }}" {{ ($jenisFilter ?? '') == $jenis ? 'selected' : '' }}>
+                                {{ $jenis }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -193,16 +211,16 @@
         <div class="d-md-none">
             @forelse($logAktivitas as $aktivitas)
             @php
-                $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
-                $isUpload = str_contains($jenisAktivitas, 'upload');
-                $isUpdate = str_contains($jenisAktivitas, 'update') || str_contains($jenisAktivitas, 'edit');
-                $isDelete = str_contains($jenisAktivitas, 'hapus') || str_contains($jenisAktivitas, 'delete');
-                $isLogin = str_contains($jenisAktivitas, 'login');
-                $isDownload = str_contains($jenisAktivitas, 'download');
-                
-                $activityClass = $isUpload ? 'upload' : ($isUpdate ? 'update' : ($isDelete ? 'delete' : ($isLogin ? 'login' : ($isDownload ? 'download' : 'upload'))));
-                $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : ($isLogin ? 'bi-box-arrow-in-right' : ($isDownload ? 'bi-download' : 'bi-file-earmark-text'))));
-                $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : ($isLogin ? 'info' : ($isDownload ? 'warning' : 'secondary'))));
+            $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
+            $isUpload = str_contains($jenisAktivitas, 'upload');
+            $isUpdate = str_contains($jenisAktivitas, 'update') || str_contains($jenisAktivitas, 'edit');
+            $isDelete = str_contains($jenisAktivitas, 'hapus') || str_contains($jenisAktivitas, 'delete');
+            $isLogin = str_contains($jenisAktivitas, 'login');
+            $isDownload = str_contains($jenisAktivitas, 'download');
+
+            $activityClass = $isUpload ? 'upload' : ($isUpdate ? 'update' : ($isDelete ? 'delete' : ($isLogin ? 'login' : ($isDownload ? 'download' : 'upload'))));
+            $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : ($isLogin ? 'bi-box-arrow-in-right' : ($isDownload ? 'bi-download' : 'bi-file-earmark-text'))));
+            $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : ($isLogin ? 'info' : ($isDownload ? 'warning' : 'secondary'))));
             @endphp
             <div class="activity-item {{ $activityClass }}">
                 <div class="d-flex align-items-start gap-3">
@@ -252,17 +270,17 @@
                 <tbody>
                     @forelse($logAktivitas as $index => $aktivitas)
                     @php
-                        $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
-                        $isUpload = str_contains($jenisAktivitas, 'upload');
-                        $isUpdate = str_contains($jenisAktivitas, 'update') || str_contains($jenisAktivitas, 'edit');
-                        $isDelete = str_contains($jenisAktivitas, 'hapus') || str_contains($jenisAktivitas, 'delete');
-                        $isLogin = str_contains($jenisAktivitas, 'login');
-                        $isDownload = str_contains($jenisAktivitas, 'download');
-                        
-                        $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : ($isLogin ? 'bi-box-arrow-in-right' : ($isDownload ? 'bi-download' : 'bi-file-earmark-text'))));
-                        $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : ($isLogin ? 'info' : ($isDownload ? 'warning' : 'secondary'))));
-                        $iconBg = $isUpload ? 'rgba(16, 185, 129, 0.1)' : ($isUpdate ? 'rgba(59, 130, 246, 0.1)' : ($isDelete ? 'rgba(239, 68, 68, 0.1)' : ($isLogin ? 'rgba(139, 92, 246, 0.1)' : ($isDownload ? 'rgba(245, 158, 11, 0.1)' : 'rgba(100, 116, 139, 0.1)'))));
-                        $iconColor = $isUpload ? '#10b981' : ($isUpdate ? '#3b82f6' : ($isDelete ? '#ef4444' : ($isLogin ? '#8b5cf6' : ($isDownload ? '#f59e0b' : '#64748b'))));
+                    $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
+                    $isUpload = str_contains($jenisAktivitas, 'upload');
+                    $isUpdate = str_contains($jenisAktivitas, 'update') || str_contains($jenisAktivitas, 'edit');
+                    $isDelete = str_contains($jenisAktivitas, 'hapus') || str_contains($jenisAktivitas, 'delete');
+                    $isLogin = str_contains($jenisAktivitas, 'login');
+                    $isDownload = str_contains($jenisAktivitas, 'download');
+
+                    $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : ($isLogin ? 'bi-box-arrow-in-right' : ($isDownload ? 'bi-download' : 'bi-file-earmark-text'))));
+                    $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : ($isLogin ? 'info' : ($isDownload ? 'warning' : 'secondary'))));
+                    $iconBg = $isUpload ? 'rgba(16, 185, 129, 0.1)' : ($isUpdate ? 'rgba(59, 130, 246, 0.1)' : ($isDelete ? 'rgba(239, 68, 68, 0.1)' : ($isLogin ? 'rgba(139, 92, 246, 0.1)' : ($isDownload ? 'rgba(245, 158, 11, 0.1)' : 'rgba(100, 116, 139, 0.1)'))));
+                    $iconColor = $isUpload ? '#10b981' : ($isUpdate ? '#3b82f6' : ($isDelete ? '#ef4444' : ($isLogin ? '#8b5cf6' : ($isDownload ? '#f59e0b' : '#64748b'))));
                     @endphp
                     <tr>
                         <td>

@@ -26,7 +26,7 @@
                     <div class="alert alert-danger" style="border-radius: 10px; border: none; background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
                         <ul class="mb-0">
                             @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                            <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -38,7 +38,7 @@
                         </label>
                         <input type="text" id="formName" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" required autofocus placeholder="Masukkan nama lengkap" />
                         @error('nama')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -52,7 +52,7 @@
                             <option value="Umum" {{ old('role', 'Umum') === 'Umum' ? 'selected' : '' }}>Umum</option>
                         </select>
                         @error('role')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -62,7 +62,7 @@
                         </label>
                         <input type="email" id="formEmail" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required placeholder="contoh@email.com" />
                         @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -72,7 +72,7 @@
                         </label>
                         <input type="password" id="formPassword" name="password" class="form-control @error('password') is-invalid @enderror" required placeholder="Minimal 8 karakter" />
                         @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 

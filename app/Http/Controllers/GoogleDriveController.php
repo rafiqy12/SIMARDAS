@@ -13,7 +13,8 @@ class GoogleDriveController
         $client = new Client();
         $client->setClientId(config('services.google.client_id'));
         $client->setClientSecret(config('services.google.client_secret'));
-        $client->setRedirectUri(route('google.callback'));
+        // Use one redirect URI source for both auth request and token exchange.
+        $client->setRedirectUri(config('services.google.redirect') ?: route('google.callback'));
         $client->addScope(Drive::DRIVE_FILE);
         $client->setAccessType('offline');
         $client->setPrompt('consent');
@@ -28,10 +29,12 @@ class GoogleDriveController
 
     public function callback(Request $request)
     {
-        $client = new Client();
-        $client->setClientId(config('services.google.client_id'));
-        $client->setClientSecret(config('services.google.client_secret'));
-        $client->setRedirectUri(config('services.google.redirect'));
+        if (!$request->filled('code')) {
+            return redirect()->route('backup.index')
+                ->with('error', 'Google authentication failed: missing authorization code');
+        }
+
+        $client = $this->client();
 
         $token = $client->fetchAccessTokenWithAuthCode($request->code);
 

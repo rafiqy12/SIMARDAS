@@ -43,23 +43,14 @@ class BackupController
             mkdir($basePath, 0777, true);
         }
 
-        /** =========================
-         * 1️⃣ DUMP DATABASE
-         ========================= */
         $sqlFile = "{$basePath}/database.sql";
         $this->dumpDatabase($sqlFile);
 
-        /** =========================
-         * 2️⃣ COPY FILE ARSIP
-         ========================= */
         $documentsPath = storage_path('app/public/documents');
         if (is_dir($documentsPath)) {
             $this->copyDirectory($documentsPath, "{$basePath}/documents");
         }
 
-        /** =========================
-         * 3️⃣ ZIP SEMUA
-         ========================= */
         $zipPath = storage_path("app/backup/{$backupName}.zip");
         $zip = new ZipArchive;
         $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
@@ -68,9 +59,6 @@ class BackupController
 
         $this->uploadToGoogleDrive($zipPath, basename($zipPath));
 
-        /** =========================
-         * 4️⃣ SIMPAN KE DB
-         ========================= */
         Backup::create([
             'id_user' => auth()->user()->id_user,
             'tanggal_backup' => now(),
@@ -79,9 +67,6 @@ class BackupController
             'ukuran_file' => filesize($zipPath),
         ]);
 
-        /** =========================
-         * 5️⃣ CLEAN TEMP
-         ========================= */
         $this->deleteDirectory($basePath);
 
         return back()->with('success', 'Backup berhasil dibuat');
@@ -115,15 +100,9 @@ class BackupController
                 mkdir($backupDir, 0755, true);
             }
 
-            /** ==========================
-             * 1️⃣ SIMPAN ZIP
-             * ========================== */
             $zipPath = $backupDir . '/' . time() . '.zip';
             $request->file('backup_zip')->move($backupDir, basename($zipPath));
 
-            /** ==========================
-             * 2️⃣ EXTRACT ZIP
-             * ========================== */
             $zip = new \ZipArchive;
             if ($zip->open($zipPath) !== true) {
                 throw new \Exception('Gagal membuka file ZIP');
@@ -137,9 +116,6 @@ class BackupController
                 throw new \Exception('File database.sql tidak ditemukan');
             }
 
-            /** ==========================
-             * 3️⃣ RESTORE DATABASE
-             * ========================== */
             $db = config('database.connections.mysql');
             $mysql = 'C:\xampp\mysql\bin\mysql';
 
@@ -150,9 +126,6 @@ class BackupController
                 throw new \Exception('Restore database gagal');
             }
 
-            /** ==========================
-             * 4️⃣ RESTORE FILE ARSIP
-             * ========================== */
             $sourceDocs = $backupDir . '/documents';
             $targetDocs = storage_path('app/public/documents');
 
@@ -160,9 +133,6 @@ class BackupController
                 $this->copyFolder($sourceDocs, $targetDocs);
             }
 
-            /** ==========================
-             * 5️⃣ BERSIHKAN FILE SEMENTARA
-             * ========================== */
             unlink($zipPath);
             unlink($sqlFile);
 

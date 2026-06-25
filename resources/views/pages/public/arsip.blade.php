@@ -10,6 +10,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+
     .page-header p {
         color: #475569;
     }
@@ -45,12 +46,12 @@
     @endif
 
     @include('pages.partials._arsip_content', [
-        'dokumens' => $dokumens,
-        'search' => $search ?? '',
-        'perPage' => $perPage ?? 10,
-        'searchRoute' => route('arsip.public'),
-        'canUpload' => $canUpload ?? false,
-        'canEdit' => $canEdit ?? false
+    'dokumens' => $dokumens,
+    'search' => $search ?? '',
+    'perPage' => $perPage ?? 10,
+    'searchRoute' => route('arsip.public'),
+    'canUpload' => $canUpload ?? false,
+    'canEdit' => $canEdit ?? false
     ])
 </div>
 @endsection

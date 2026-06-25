@@ -14,11 +14,13 @@
         position: relative;
         border: 1px solid var(--primary-100);
     }
+
     .stat-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15) !important;
         border-color: var(--primary-300);
     }
+
     .stat-card .stat-icon {
         width: 60px;
         height: 60px;
@@ -28,6 +30,7 @@
         justify-content: center;
         font-size: 1.5rem;
     }
+
     .stat-card .stat-value {
         font-size: 2rem;
         font-weight: 700;
@@ -37,17 +40,19 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
+
     .stat-card .stat-label {
         font-size: 0.85rem;
         color: #6c757d;
         margin-bottom: 0;
     }
+
     .stat-card .stat-trend {
         font-size: 0.75rem;
         padding: 2px 8px;
         border-radius: 20px;
     }
-    
+
     /* Activity Card */
     .activity-item {
         padding: 12px;
@@ -55,18 +60,23 @@
         transition: all 0.2s ease;
         border-left: 3px solid transparent;
     }
+
     .activity-item:hover {
         background: var(--primary-50);
     }
+
     .activity-item.upload {
         border-left-color: #10b981;
     }
+
     .activity-item.update {
         border-left-color: var(--primary-500);
     }
+
     .activity-item.delete {
         border-left-color: #ef4444;
     }
+
     .activity-icon {
         width: 40px;
         height: 40px;
@@ -75,19 +85,22 @@
         align-items: center;
         justify-content: center;
     }
+
     .activity-icon.upload {
         background: rgba(16, 185, 129, 0.1);
         color: #10b981;
     }
+
     .activity-icon.update {
         background: rgba(59, 130, 246, 0.1);
         color: var(--primary-500);
     }
+
     .activity-icon.delete {
         background: rgba(239, 68, 68, 0.1);
         color: #ef4444;
     }
-    
+
     /* Quick Action Buttons */
     .quick-action-btn {
         border: 2px dashed var(--primary-200);
@@ -95,63 +108,80 @@
         transition: all 0.3s ease;
         background: #fff;
     }
+
     .quick-action-btn:hover {
         border-color: var(--primary-500);
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
         transform: scale(1.02);
     }
+
     .quick-action-btn i {
         transition: transform 0.3s ease;
     }
+
     .quick-action-btn:hover i {
         transform: scale(1.2);
         color: var(--primary-600);
     }
-    
+
     /* Progress bar animation */
     .progress-animated .progress-bar {
         animation: progressAnimation 1.5s ease-out;
         background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-600) 100%);
     }
+
     @keyframes progressAnimation {
-        from { width: 0; }
+        from {
+            width: 0;
+        }
     }
-    
+
     /* Kategori badges */
     .kategori-item {
         padding: 8px 12px;
         border-radius: 8px;
         transition: all 0.2s ease;
     }
+
     .kategori-item:hover {
         background: var(--primary-50);
     }
-    
+
     /* Counter animation */
     .counter {
         display: inline-block;
     }
-    
+
     /* Card hover effect */
     .card-hover {
         transition: all 0.3s ease;
         border: 1px solid var(--primary-100);
     }
+
     .card-hover:hover {
         box-shadow: 0 5px 20px rgba(37, 99, 235, 0.1) !important;
         border-color: var(--primary-200);
     }
-    
+
     /* Pulse animation for online status */
     .pulse {
         animation: pulse 2s infinite;
     }
+
     @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
     }
-    
+
     /* Welcome section - Blue Theme */
     .welcome-section {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
@@ -159,6 +189,7 @@
         position: relative;
         overflow: hidden;
     }
+
     .welcome-section::before {
         content: '';
         position: absolute;
@@ -166,9 +197,10 @@
         right: -20%;
         width: 400px;
         height: 400px;
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 50%;
     }
+
     .welcome-section::after {
         content: '';
         position: absolute;
@@ -176,20 +208,23 @@
         left: -10%;
         width: 300px;
         height: 300px;
-        background: rgba(255,255,255,0.05);
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 50%;
     }
-    
+
     /* Gradient backgrounds - Blue Primary Theme */
     .bg-gradient-primary {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     }
+
     .bg-gradient-success {
         background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
     }
+
     .bg-gradient-warning {
         background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
     }
+
     .bg-gradient-info {
         background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
     }
@@ -311,13 +346,13 @@
             <div class="card-body p-3">
                 @forelse($aktivitasTerbaru as $aktivitas)
                 @php
-                    $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
-                    $isUpload = str_contains($jenisAktivitas, 'upload');
-                    $isUpdate = str_contains($jenisAktivitas, 'update');
-                    $isDelete = str_contains($jenisAktivitas, 'hapus');
-                    $activityClass = $isUpload ? 'upload' : ($isUpdate ? 'update' : ($isDelete ? 'delete' : 'upload'));
-                    $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : 'bi-file-earmark-text'));
-                    $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : 'secondary'));
+                $jenisAktivitas = strtolower($aktivitas->jenis_aktivitas ?? '');
+                $isUpload = str_contains($jenisAktivitas, 'upload');
+                $isUpdate = str_contains($jenisAktivitas, 'update');
+                $isDelete = str_contains($jenisAktivitas, 'hapus');
+                $activityClass = $isUpload ? 'upload' : ($isUpdate ? 'update' : ($isDelete ? 'delete' : 'upload'));
+                $icon = $isUpload ? 'bi-cloud-arrow-up' : ($isUpdate ? 'bi-pencil-square' : ($isDelete ? 'bi-trash' : 'bi-file-earmark-text'));
+                $badgeClass = $isUpload ? 'success' : ($isUpdate ? 'primary' : ($isDelete ? 'danger' : 'secondary'));
                 @endphp
                 <div class="activity-item {{ $activityClass }} d-flex align-items-start mb-2">
                     <div class="activity-icon {{ $activityClass }} me-3 flex-shrink-0">
@@ -379,12 +414,12 @@
                         <small class="text-{{ $storagePercentage > 80 ? 'danger' : ($storagePercentage > 50 ? 'warning' : 'success') }}">{{ $storagePercentage }}%</small>
                     </div>
                     <div class="progress progress-animated" style="height: 10px; border-radius: 10px;">
-                        <div class="progress-bar bg-{{ $storagePercentage > 80 ? 'danger' : ($storagePercentage > 50 ? 'warning' : 'success') }}" 
-                             role="progressbar" 
-                             style="width: {{ $storagePercentage }}%; border-radius: 10px;"
-                             aria-valuenow="{{ $storagePercentage }}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100"></div>
+                        <div class="progress-bar bg-{{ $storagePercentage > 80 ? 'danger' : ($storagePercentage > 50 ? 'warning' : 'success') }}"
+                            role="progressbar"
+                            style="width: {{ $storagePercentage }}%; border-radius: 10px;"
+                            aria-valuenow="{{ $storagePercentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"></div>
                     </div>
                     <small class="text-muted">{{ $storageUsed }} dari 500 GB</small>
                 </div>
@@ -464,28 +499,28 @@
 
 @push('scripts')
 <script>
-// Counter Animation
-document.addEventListener('DOMContentLoaded', function() {
-    const counters = document.querySelectorAll('.counter');
-    
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target')) || parseInt(counter.textContent.replace(/,/g, ''));
-        const duration = 1500;
-        const step = target / (duration / 16);
-        let current = 0;
-        
-        const updateCounter = () => {
-            current += step;
-            if (current < target) {
-                counter.textContent = Math.floor(current).toLocaleString();
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = target.toLocaleString();
-            }
-        };
-        
-        updateCounter();
+    // Counter Animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.counter');
+
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target')) || parseInt(counter.textContent.replace(/,/g, ''));
+            const duration = 1500;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const updateCounter = () => {
+                current += step;
+                if (current < target) {
+                    counter.textContent = Math.floor(current).toLocaleString();
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.textContent = target.toLocaleString();
+                }
+            };
+
+            updateCounter();
+        });
     });
-});
 </script>
 @endpush
